@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject.Home
 
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -22,16 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@Preview(showBackground = true)
-@Composable
-fun HomeCircularIndicator(){
-    var budget by remember{
-        mutableStateOf(1000)
-    }
 
-    var expense by remember {
-        mutableStateOf(500)
-    }
+@Composable
+fun HomeCircularIndicator(budget:Int , expense:Int){
+
     val indicatorBackgroundColor : Color = Color.LightGray
     val indicatorForegroundColor : Color = Green
     val indicatorBackgroundStrokeWidth:Float=100F
@@ -61,7 +56,7 @@ fun HomeCircularIndicator(){
                 sweepAngle = sweepAngle
             )
         } ,verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-        Text(text = "50%" , fontWeight = FontWeight.Bold , fontSize = 30.sp , color= Green )
+        Text(text = "${percentage*100} %" , fontWeight = FontWeight.Bold , fontSize = 30.sp , color= Green )
 
 
     }
