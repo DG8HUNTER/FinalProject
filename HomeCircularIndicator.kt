@@ -22,22 +22,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 
 @Composable
-fun HomeCircularIndicator(budget:Int , expense:Int){
+fun HomeCircularIndicator(budget:Int , expenses:Int){
 
+    val spending = animateFloatAsState(targetValue = expenses.toFloat() , animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+
+
+val percentage = animateFloatAsState(targetValue =if(budget==0 && expenses==0) 0f else (expenses.toFloat()/budget.toFloat()) ,
+    animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing )
+)
     val indicatorBackgroundColor : Color = Color.LightGray
     val indicatorForegroundColor : Color = Green
     val indicatorBackgroundStrokeWidth:Float=100F
     val indicatorForegroundStrokeWidth:Float=100F
-    val percentage= (expense.toFloat()/budget.toFloat())
-    val sweepAngle by animateFloatAsState(targetValue = percentage*240f , animationSpec = tween(
+    val sweepAngle by animateFloatAsState(targetValue = percentage.value*240f , animationSpec = tween(
         durationMillis = 1000,
         easing = FastOutSlowInEasing
     ) )
-
-
 
     Column(modifier= Modifier
         .size(350.dp)
@@ -56,7 +61,22 @@ fun HomeCircularIndicator(budget:Int , expense:Int){
                 sweepAngle = sweepAngle
             )
         } ,verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-        Text(text = "${percentage*100} %" , fontWeight = FontWeight.Bold , fontSize = 30.sp , color= Green )
+        Row(verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.Center){
+            Text(
+                text ="${(spending.value).toLong()}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                color = Green.copy(alpha=0.5f)
+            )
+            Text(
+                text =" / $budget",
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                color = Green
+            )
+        }
+
+
 
 
     }
@@ -81,7 +101,6 @@ fun DrawScope.drawBackgroundCircularIndicator(componentSize: Size, indicatorBack
             x=(size.width-componentSize.width)/2f,
             y=(size.height-componentSize.height)/2f
         )
-
     )
 
 }
