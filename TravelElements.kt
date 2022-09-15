@@ -279,7 +279,13 @@ fun TravelElement(){
                     }
 
                 }
-                Button(onClick = { /*TODO*/ } , colors = ButtonDefaults.buttonColors(
+                Button(onClick = {
+                    country=null
+                    price=null
+                    day=null
+                    month=null
+                    day=null
+                    year=null} , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
                     Box(modifier = Modifier.clip(shape = RoundedCornerShape(15.dp))

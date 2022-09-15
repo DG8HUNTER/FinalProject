@@ -298,7 +298,14 @@ fun FoodElements(){
                     }
 
                 }
-                Button(onClick = { /*TODO*/ } , colors = ButtonDefaults.buttonColors(
+                Button(onClick = {
+                    name=null
+                    price=null
+                    day=null
+                    month=null
+                    day=null
+                    year=null
+                } , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
                     Box(modifier = Modifier
