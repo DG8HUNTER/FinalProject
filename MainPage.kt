@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -19,8 +20,8 @@ import com.example.expensetrackerproject.ui.theme.lightGreen
 
 
 @Composable
-fun MainPage(navController:NavController) {
-        val Items: List<BottomNavigationItemInfo> = listOf(
+fun MainPage(navController:NavController , FirstName:String , LastName :String) {
+        val items: List<BottomNavigationItemInfo> = listOf(
             BottomNavigationItemInfo.Home,
             BottomNavigationItemInfo.Categorie,
             BottomNavigationItemInfo.Settings
@@ -37,7 +38,7 @@ fun MainPage(navController:NavController) {
                 modifier = Modifier.height(60.dp)
             ) {
 
-                Items.forEach { Item ->
+                items.forEach { Item ->
                     BottomNavigationItem(
                         selected = selectedButton == Item.name,
                         onClick = { selectedButton = Item.name
@@ -54,7 +55,6 @@ fun MainPage(navController:NavController) {
                                 contentDescription = "${Item.name} icon",
 
                                 )
-
                         }
                     )
                 }
@@ -64,8 +64,9 @@ fun MainPage(navController:NavController) {
         {
             Column(modifier=Modifier.fillMaxSize()) {
                 when (selectedButton) {
-                    "Home" -> Home()
-                    "Categorie" -> Categories()
+                    "Home" ->{ Home(FirstName=FirstName , LastName = LastName)
+                    }
+                    "Categorie" -> Categories(FirstName=FirstName , LastName = LastName)
                     "Settings" -> Settings(navController =navController)
                 }
 
