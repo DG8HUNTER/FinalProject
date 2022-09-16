@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject.Categories
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -32,14 +33,16 @@ import com.example.expensetrackerproject.ui.theme.darkYellow
 import com.example.expensetrackerproject.ui.theme.lightViolet
 import com.example.expensetrackerproject.ui.theme.violet
 import com.example.expensetrackerproject.ui.theme.yellow
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 
 
 @Composable
 
 
-fun RentElements(){
-
+fun RentElements(FirstName:String, LastName:String){
+ val db =Firebase.firestore
     val focusManager = LocalFocusManager.current
     var name :String?by remember{
         mutableStateOf(null)
@@ -334,7 +337,33 @@ fun RentElements(){
         item{
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
-                Button(onClick = { /*TODO*/ } , colors = ButtonDefaults.buttonColors(
+                Button(onClick = {
+                    val data = hashMapOf(
+                        "id" to "${FirstName}_${LastName}",
+                        "categorie" to "Rent" ,
+                        "name" to name,
+                        "price" to price,
+                        "date"  to "$day/$month/$year",
+
+
+                        )
+                    db.collection("expenses").document("${FirstName}_${LastName}")
+                        .set(data)
+                        .addOnSuccessListener {
+                            Log.d(
+                                "user",
+                                "DocumentSnapshot successfully written!"
+                            )
+                        }
+                        .addOnFailureListener { e -> Log.w("User", "Error writing document", e)
+                           }
+                    name=null
+                    price=null
+                    day=null
+                    month=null
+                    day=null
+                    year=null
+                } , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
                     Box(modifier = Modifier
@@ -364,7 +393,6 @@ fun RentElements(){
                         .border(width = 2.dp, shape = RoundedCornerShape(20.dp), color = Color.Red)
                         .height(50.dp) , contentAlignment = Alignment.Center){
                         Text(text = "Reset" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.Red )
-
 
                     }
 

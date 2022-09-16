@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject.Categories
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
@@ -30,12 +32,15 @@ import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Darkblue
 import com.example.expensetrackerproject.ui.theme.lightBlue
 import com.example.expensetrackerproject.ui.theme.pink
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 
 
-@Preview(showBackground = true)
+
 @Composable
-fun FoodElements(){
+fun FoodElements(FirstName:String, LastName:String){
+    val db = Firebase.firestore
     val focusManager = LocalFocusManager.current
     var name :String?by remember{
         mutableStateOf(null)
@@ -43,10 +48,16 @@ fun FoodElements(){
     var price:Float? by remember{
         mutableStateOf(null)
     }
+    var quantity:Float? by remember{
+        mutableStateOf(null)
+    }
     val nameClearIcon = animateColorAsState(targetValue = if(name!=null) Color.Gray else Color.Transparent ,
         animationSpec = tween(durationMillis = 1000 , easing = FastOutSlowInEasing)
     )
     val priceClearIcon = animateColorAsState(targetValue = if(price!=null) Color.Gray else Color.Transparent ,
+        animationSpec = tween(durationMillis = 1000 , easing = FastOutSlowInEasing))
+
+    val quantityClearIcon = animateColorAsState(targetValue = if(quantity!=null) Color.Gray else Color.Transparent ,
         animationSpec = tween(durationMillis = 1000 , easing = FastOutSlowInEasing)
     )
     var day:Int? by remember {
@@ -123,6 +134,51 @@ fun FoodElements(){
 
         }
         item{
+            OutlinedTextField(value =if(quantity!=null) quantity.toString() else "", onValueChange = {
+                quantity = if(it.isNotEmpty())  it.toFloat() else null
+            } , label ={
+                Text(text ="Quantity" , fontSize=18.sp , fontWeight = FontWeight.Medium)
+            } ,
+                placeholder ={
+                    Text(text ="Enter quantity" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color= Color.LightGray)
+                } ,
+                leadingIcon = {
+                    Icon(painter = painterResource(id = R.drawable.basket), contentDescription ="dollar icon" , tint = Color.LightGray)
+                } ,
+                trailingIcon = {
+                    IconButton(onClick = {quantity=null }) {
+                        Icon(imageVector = Icons.Filled.Clear, contentDescription ="Clear icon" , tint=quantityClearIcon.value )
+
+                    }
+                }  ,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ) ,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ) ,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(5.dp)) ,
+                colors = TextFieldDefaults.textFieldColors(
+
+                    backgroundColor = Color.LightGray.copy(0.08f),
+                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = Color.Transparent ,
+                    focusedIndicatorColor = Darkblue,
+                    cursorColor = Color.LightGray,
+                    focusedLabelColor = Darkblue
+
+                ),
+
+
+                )
+        }
+
+        item{
             OutlinedTextField(value =if(price!=null)  price.toString() else "", onValueChange = {
                 price = if(it.isNotEmpty())  it.toFloat() else null
             } , label ={
@@ -135,7 +191,7 @@ fun FoodElements(){
                     Icon(painter = painterResource(id = R.drawable.ic_dollar), contentDescription ="dollar icon" , tint = Color.LightGray)
                 } ,
                 trailingIcon = {
-                    IconButton(onClick = { price=null }) {
+                    IconButton(onClick = {quantity=null }) {
                         Icon(imageVector = Icons.Filled.Clear, contentDescription ="Clear icon" , tint=priceClearIcon.value )
 
                     }
@@ -164,8 +220,11 @@ fun FoodElements(){
                 ),
 
 
-            )
+                )
+
         }
+
+
         item {
             Row(modifier= Modifier
                 .clip(shape = RoundedCornerShape(5.dp))
@@ -284,7 +343,35 @@ fun FoodElements(){
         item{
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
-                Button(onClick = { /*TODO*/ } , colors = ButtonDefaults.buttonColors(
+                Button(onClick = {
+                    val data = hashMapOf(
+                        "id" to "${FirstName}_${LastName}",
+                        "categorie" to "Food" ,
+                        "name" to name,
+                        "quantity" to quantity,
+                        "price" to price,
+                        "date"  to "$day/$month/$year",
+
+
+                        )
+                    db.collection("expenses")
+                        .add(data)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("expenses", "Error adding document", e)
+                        }
+                    name=null
+                    price=null
+                    quantity=null
+                    day=null
+                    month=null
+                    day=null
+                    year=null
+
+
+                } , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
                     Box(modifier = Modifier

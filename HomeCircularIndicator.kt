@@ -27,12 +27,12 @@ import kotlin.math.roundToLong
 
 
 @Composable
-fun HomeCircularIndicator(budget:Int , expenses:Int){
+fun HomeCircularIndicator(budget:Float , expenses:Float){
 
-    val spending = animateFloatAsState(targetValue = expenses.toFloat() , animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+    val spending = animateFloatAsState(targetValue = expenses , animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
 
 
-val percentage = animateFloatAsState(targetValue =if(budget==0 && expenses==0) 0f else (expenses.toFloat()/budget.toFloat()) ,
+val percentage = animateFloatAsState(targetValue =if(budget==0f && expenses==0f) 0f else (expenses/budget) ,
     animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing )
 )
     val indicatorBackgroundColor : Color = Color.LightGray
