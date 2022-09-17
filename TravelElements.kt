@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
@@ -28,13 +29,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.pink
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 
 @Composable
 fun TravelElement(FirstName:String , LastName:String){
+
     val db = Firebase.firestore
+
+    var travelExpenses:MutableList<HashMap<String,Any>> by remember{
+        mutableStateOf(
+            mutableListOf(
+                hashMapOf()
+            )
+        )
+    }
+    var totalTravelSpending  by remember {
+        mutableStateOf(0f)
+    }
 
     val focusManager = LocalFocusManager.current
     var country :String?by remember{
@@ -176,7 +190,9 @@ fun TravelElement(FirstName:String , LastName:String){
                         Text(text = "DD" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
 
                     } ,
-                    modifier = Modifier.width(60.dp).clip(shape= RoundedCornerShape(5.dp)),
+                    modifier = Modifier
+                        .width(60.dp)
+                        .clip(shape = RoundedCornerShape(5.dp)),
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.LightGray.copy(0.08f),
                         unfocusedLabelColor = Color.LightGray,
@@ -202,7 +218,9 @@ fun TravelElement(FirstName:String , LastName:String){
                         Text(text = "MM" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
 
                     } ,
-                    modifier = Modifier.width(70.dp).clip(shape= RoundedCornerShape(5.dp)),
+                    modifier = Modifier
+                        .width(70.dp)
+                        .clip(shape = RoundedCornerShape(5.dp)),
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.LightGray.copy(0.08f),
                         unfocusedLabelColor = Color.LightGray,
@@ -228,7 +246,9 @@ fun TravelElement(FirstName:String , LastName:String){
                         Text(text = "YYYY" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
 
                     } ,
-                    modifier = Modifier.width(80.dp).clip(shape= RoundedCornerShape(5.dp)),
+                    modifier = Modifier
+                        .width(80.dp)
+                        .clip(shape = RoundedCornerShape(5.dp)),
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.LightGray.copy(0.08f),
                         unfocusedLabelColor = Color.LightGray,
@@ -269,6 +289,8 @@ fun TravelElement(FirstName:String , LastName:String){
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
 
+               if(country!=null && price!=null && day!=null && month!=null && year!=null){
+
                     val data = hashMapOf(
                         "id" to "${FirstName}_${LastName}",
                         "categorie" to "Travel" ,
@@ -285,20 +307,68 @@ fun TravelElement(FirstName:String , LastName:String){
                         }
                         .addOnFailureListener { e ->
                             Log.w("expenses", "Error adding document", e)
+                        }
+
+
+                            db.collection("expenses")
+                                .whereEqualTo("categorie" ,"Travel")
+                                .whereEqualTo("id" , "${FirstName}_${LastName}")
+                                .get()
+                                .addOnSuccessListener { documents ->
+                                   travelExpenses= mutableListOf()
+                                    Log.d("documents" , documents.toString())
+                                    for (document in documents) {
+                                        Log.d("user", "${document.id} => ${document.data}")
+                                        Log.d("data" , document.data.toString())
+                                        travelExpenses=addTo(travelExpenses , document.data as HashMap<String,Any>)
+                                    }
+                                    Log.d("travelExpenses" , travelExpenses.toString())
+                                    Log.d("Size" , travelExpenses.size.toString())
+                                    if(travelExpenses.size>0){
+                                        totalTravelSpending=0.0f
+                                        travelExpenses.forEach{
+                                                travelExpense ->
+                                            totalTravelSpending+= travelExpense["price"].toString().toFloat()
+                                        }
+                                        Log.d("total" , totalTravelSpending.toString())
+                                        val docRef= db.collection("Users").document("${FirstName}_${LastName}")
+                                        docRef
+                                            .update("travel", totalTravelSpending)
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+                                        docRef
+                                            .update("expenses", FieldValue.delete())
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+                                        docRef
+                                            .update("expenses", FieldValue.increment(totalTravelSpending.toLong()))
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+                                    }
+
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.w("user", "Error getting documents: ", exception)
+                                }
+
+
+
 
                         }
                     country=null
                     price=null
                     day=null
                     month=null
-                    day=null
                     year=null
+
 
                 } , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
-                    Box(modifier = Modifier.clip(shape = RoundedCornerShape(15.dp))
-                        .width(150.dp).background(color=pink)
+                    Box(modifier = Modifier
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .width(150.dp)
+                        .background(color = pink)
                         .height(50.dp) , contentAlignment = Alignment.Center){
                         Text(text = "Save" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.White )
                     }
@@ -312,13 +382,19 @@ fun TravelElement(FirstName:String , LastName:String){
                     year=null} , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.White
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
-                    Box(modifier = Modifier.clip(shape = RoundedCornerShape(15.dp))
-                        .width(150.dp).background(color= Color.White).border(width = 2.dp , shape = RoundedCornerShape(20.dp), color= Color.Red)
+                    Box(modifier = Modifier
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .width(150.dp)
+                        .background(color = Color.White)
+                        .border(width = 2.dp, shape = RoundedCornerShape(20.dp), color = Color.Red)
                         .height(50.dp) , contentAlignment = Alignment.Center){
                         Text(text = "Reset" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.Red )
 
 
                     }
+
+
+
 
                 }
 
@@ -327,4 +403,13 @@ fun TravelElement(FirstName:String , LastName:String){
 
     }
 }
+
+fun addTo(array:MutableList<HashMap<String,Any>> , document:HashMap<String,Any>):MutableList<HashMap<String,Any>>{
+    val newArray:MutableList<HashMap<String,Any>> =array
+//   newArray[newArray.size]=document
+    newArray.add(element=document)
+    Log.d("newArray" , newArray.toString())
+    return newArray
+}
+
 

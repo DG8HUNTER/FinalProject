@@ -38,7 +38,6 @@ import kotlin.collections.HashMap
 import kotlin.reflect.KProperty
 
 
-
 @Composable
 fun Home(FirstName:String, LastName: String) {
     var user: MutableMap<String, Any> by remember {
@@ -48,14 +47,15 @@ fun Home(FirstName:String, LastName: String) {
                 "lastName" to "",
                 "budget" to 0f,
                 "expenses" to 0f,
-                "travel" to 0,
-                "food" to 0,
-                "shopping" to 0,
-                "rent" to 0
+                "travel" to 0f,
+                "food" to 0f,
+                "shopping" to 0f,
+                "rent" to 0f
 
             )
         )
     }
+
     var firstName :String by remember{
         mutableStateOf(user["firstName"].toString())
     }
@@ -68,20 +68,21 @@ fun Home(FirstName:String, LastName: String) {
     var expenses :Float by remember {
         mutableStateOf(user["expenses"].toString().toFloat())
         }
-    var travel:Int by remember {
-        mutableStateOf(user["travel"].toString().toInt())
+    var travel:Float by remember {
+        mutableStateOf(user["travel"].toString().toFloat())
     }
-    var food :Int by remember{
-        mutableStateOf(user["food"].toString().toInt())
+    var food :Float by remember{
+        mutableStateOf(user["food"].toString().toFloat())
     }
-    var shopping :Int by remember{
-        mutableStateOf(user["shopping"].toString().toInt())
+    var shopping :Float by remember{
+        mutableStateOf(user["shopping"].toString().toFloat())
     }
-    var rent :Int by remember{
-        mutableStateOf(user["rent"].toString().toInt())
+    var rent :Float by remember{
+        mutableStateOf(user["rent"].toString().toFloat())
     }
 
     val db = Firebase.firestore
+
     val docRef = db.collection("Users").document("${FirstName}_${LastName}")
     docRef.get()
         .addOnSuccessListener { document ->
@@ -110,6 +111,7 @@ fun Home(FirstName:String, LastName: String) {
             Log.d("user", "Current data: null")
         }
     }
+
 
 //    val u = hashMapOf(
 //        "first" to "Ada",
@@ -146,13 +148,13 @@ fun Home(FirstName:String, LastName: String) {
     Log.d("budget" , user["budget"].toString())
     expenses=user["expenses"].toString().toFloat()
     Log.d("expenses", expenses.toString())
-    travel=user["travel"].toString().toInt()
+    travel=user["travel"].toString().toFloat()
     Log.d("Travel" , travel.toString())
-    food =user["food"].toString().toInt()
+    food =user["food"].toString().toFloat()
     Log.d("food" , food.toString())
-   shopping =user["shopping"].toString().toInt()
+   shopping =user["shopping"].toString().toFloat()
     Log.d("shopping" , shopping.toString())
-   rent=user["rent"].toString().toInt()
+   rent=user["rent"].toString().toFloat()
     Log.d("rent" , travel.toString())
 
 
@@ -163,15 +165,15 @@ fun Home(FirstName:String, LastName: String) {
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float , travel:Int , food:Int  ,shopping:Int , rent:Int ) {
- val travelPercentage = animateFloatAsState(targetValue =if(travel==0) 0f else (travel.toFloat()/expenses.toFloat()) ,
+fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float , travel:Float , food:Float  ,shopping:Float , rent:Float ) {
+ val travelPercentage = animateFloatAsState(targetValue =if(travel==0f) 0f else (travel.toFloat()/expenses.toFloat()) ,
  animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing)
  )
     val travelIndicatorColor= animateColorAsState(targetValue =if(travelPercentage.value==0f)Color.Transparent else Red)
     val travelIndicatorWidth =if(expenses!=0f) ((travel*290)/expenses).dp else 0.dp
 
 
-    val foodPercentage = animateFloatAsState(targetValue =if(food==0) 0f else (food.toFloat()/expenses.toFloat()) ,
+    val foodPercentage = animateFloatAsState(targetValue =if(food==0f) 0f else (food.toFloat()/expenses.toFloat()) ,
         animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing)
     )
 
@@ -180,7 +182,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
     val foodIndicatorWidth =if(expenses!=0f) ((food*290)/expenses).dp else 0.dp
 
 
-    val shoppingPercentage = animateFloatAsState(targetValue =if(shopping==0) 0f else (shopping.toFloat()/expenses.toFloat()) ,
+    val shoppingPercentage = animateFloatAsState(targetValue =if(shopping==0f) 0f else (shopping.toFloat()/expenses.toFloat()) ,
         animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing)
     )
 
@@ -188,7 +190,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
 
     val shoppingIndicatorWidth =if(expenses!=0f) ((shopping*290)/expenses).dp else 0.dp
 
-    val rentPercentage = animateFloatAsState(targetValue =if(rent==0) 0f else (rent.toFloat()/expenses.toFloat()) ,
+    val rentPercentage = animateFloatAsState(targetValue =if(rent==0f) 0f else (rent.toFloat()/expenses.toFloat()) ,
         animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing)
     )
 
@@ -262,11 +264,13 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .background(color=travelIndicatorColor.value , shape = RoundedCornerShape(5.dp))
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
+                        Spacer(modifier=Modifier.width(2.dp))
                         Text(
                             text = "${(travelPercentage.value*100).toLong()} %",
-                            fontSize = 20.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Red
+                            color = Red,
+
                         )
                     }
                 }
@@ -297,7 +301,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         }
                         Text(
                             text = "${(foodPercentage.value*100).toLong()} %",
-                            fontSize = 20.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Darkblue
                         )
@@ -332,7 +336,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         }
                         Text(
                             text = "${(shoppingPercentage.value*100).toLong()} %",
-                            fontSize = 20.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = orange
                         )
@@ -368,7 +372,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         }
                         Text(
                             text = "${(rentPercentage.value*100).toLong()} %",
-                            fontSize = 20.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = violet
                         )
