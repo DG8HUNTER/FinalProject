@@ -29,9 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
+import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.Darkblue
 import com.example.expensetrackerproject.ui.theme.lightBlue
 import com.example.expensetrackerproject.ui.theme.pink
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
@@ -41,6 +43,17 @@ import java.time.LocalDate
 @Composable
 fun FoodElements(FirstName:String, LastName:String){
     val db = Firebase.firestore
+
+    var foodExpenses:MutableList<HashMap<String,Any>> by remember{
+        mutableStateOf(
+            mutableListOf(
+                hashMapOf()
+            )
+        )
+    }
+
+
+
     val focusManager = LocalFocusManager.current
     var name :String?by remember{
         mutableStateOf(null)
@@ -344,24 +357,99 @@ fun FoodElements(FirstName:String, LastName:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-                    val data = hashMapOf(
-                        "id" to "${FirstName}_${LastName}",
-                        "categorie" to "Food" ,
-                        "name" to name,
-                        "quantity" to quantity,
-                        "price" to price,
-                        "date"  to "$day/$month/$year",
+                    if(name!=null && price!=null && day!=null && month!=null && year!=null){
+
+                        val data = hashMapOf(
+                            "id" to "${FirstName}_${LastName}",
+                            "categorie" to "Food" ,
+                            "country" to name,
+                            "price" to price,
+                            "date"  to "$day/$month/$year",
 
 
-                        )
-                    db.collection("expenses")
-                        .add(data)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("expenses", "Error adding document", e)
-                        }
+                            )
+                        db.collection("expenses")
+                            .add(data)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("expenses", "Error adding document", e)
+                            }
+
+                        db.collection("expenses")
+                            .whereEqualTo("categorie" ,"Food")
+                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                foodExpenses= mutableListOf()
+                                Log.d("documents" , documents.toString())
+                                for (document in documents) {
+                                    Log.d("user", "${document.id} => ${document.data}")
+                                    Log.d("data" , document.data.toString())
+                                    foodExpenses=addTo(foodExpenses , document.data as HashMap<String,Any>)
+                                }
+                                Log.d("travelExpenses" , foodExpenses.toString())
+                                Log.d("Size" , foodExpenses.size.toString())
+                                if(foodExpenses.size>0){
+                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    docRef.get()
+                                        .addOnSuccessListener { document ->
+                                            if (document != null) {
+                                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                docRef
+                                                    .update("expenses", FieldValue.increment(-(document.data?.get("food").toString().toLong())))
+                                                    .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            } else {
+                                                Log.d("TAG", "No such document")
+                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.d("TAG", "get failed with ", exception)
+                                        }
+                                    docRef
+                                        .update("food", FieldValue.delete())
+                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                        .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                    foodExpenses.forEachIndexed { index,  foodExpense ->
+
+                                        docRef
+                                            .update("food", FieldValue.increment(foodExpense["price"].toString().toFloat().toLong()))
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                        if(index==foodExpenses.size-1)
+
+                                            docRef.get()
+                                                .addOnSuccessListener { document ->
+                                                    if (document != null) {
+                                                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                        docRef
+                                                            .update("expenses", FieldValue.increment(document.data?.get("food").toString().toLong()))
+                                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                    } else {
+                                                        Log.d("TAG", "No such document")
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    Log.d("TAG", "get failed with ", exception)
+                                                }
+                                    }
+
+                                }
+
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w("user", "Error getting documents: ", exception)
+                            }
+
+
+
+
+                    }
                     name=null
                     price=null
                     quantity=null
@@ -386,6 +474,9 @@ fun FoodElements(FirstName:String, LastName:String){
 
                 }
                 Button(onClick = {
+
+
+
                     name=null
                     price=null
                     day=null

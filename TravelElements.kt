@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
+import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.pink
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -46,9 +47,7 @@ fun TravelElement(FirstName:String , LastName:String){
             )
         )
     }
-    var totalTravelSpending  by remember {
-        mutableStateOf(0f)
-    }
+
 
     val focusManager = LocalFocusManager.current
     var country :String?by remember{
@@ -325,25 +324,57 @@ fun TravelElement(FirstName:String , LastName:String){
                                     Log.d("travelExpenses" , travelExpenses.toString())
                                     Log.d("Size" , travelExpenses.size.toString())
                                     if(travelExpenses.size>0){
-                                        totalTravelSpending=0.0f
-                                        travelExpenses.forEach{
-                                                travelExpense ->
-                                            totalTravelSpending+= travelExpense["price"].toString().toFloat()
+
+                                        val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                        docRef.get()
+                                            .addOnSuccessListener { document ->
+                                                if (document != null) {
+                                                    Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                    docRef
+                                                        .update("expenses", FieldValue.increment(-(document.data?.get("travel").toString().toLong())))
+                                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                } else {
+                                                    Log.d("TAG", "No such document")
+                                                }
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                Log.d("TAG", "get failed with ", exception)
+                                            }
+                                        docRef
+                                            .update("travel", FieldValue.delete())
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                        travelExpenses.forEachIndexed { index,  travelExpense ->
+
+                                            docRef
+                                                .update("travel", FieldValue.increment(travelExpense["price"].toString().toFloat().toLong()))
+                                                .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                            if(index==travelExpenses.size-1)
+
+                                            docRef.get()
+                                                .addOnSuccessListener { document ->
+                                                    if (document != null) {
+                                                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                        docRef
+                                                            .update("expenses", FieldValue.increment(document.data?.get("travel").toString().toLong()))
+                                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                    } else {
+                                                        Log.d("TAG", "No such document")
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    Log.d("TAG", "get failed with ", exception)
+                                                }
+
+
+
                                         }
-                                        Log.d("total" , totalTravelSpending.toString())
-                                        val docRef= db.collection("Users").document("${FirstName}_${LastName}")
-                                        docRef
-                                            .update("travel", totalTravelSpending)
-                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
-                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
-                                        docRef
-                                            .update("expenses", FieldValue.delete())
-                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
-                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
-                                        docRef
-                                            .update("expenses", FieldValue.increment(totalTravelSpending.toLong()))
-                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
-                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
                                     }
 
                                 }
@@ -404,12 +435,5 @@ fun TravelElement(FirstName:String , LastName:String){
     }
 }
 
-fun addTo(array:MutableList<HashMap<String,Any>> , document:HashMap<String,Any>):MutableList<HashMap<String,Any>>{
-    val newArray:MutableList<HashMap<String,Any>> =array
-//   newArray[newArray.size]=document
-    newArray.add(element=document)
-    Log.d("newArray" , newArray.toString())
-    return newArray
-}
 
 

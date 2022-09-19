@@ -27,16 +27,31 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
+import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.*
+import com.google.common.math.DoubleMath.roundToInt
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.lang.reflect.Field
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 @Composable
 
 fun ShoppingElements(FirstName:String, LastName:String){
  val db = Firebase.firestore
     val focusManager = LocalFocusManager.current
+
+    var shoppingExpenses:MutableList<HashMap<String,Any>> by remember{
+        mutableStateOf(
+            mutableListOf(
+                hashMapOf()
+            )
+        )
+    }
+
+
     var name :String?by remember{
         mutableStateOf(null)
     }
@@ -317,8 +332,6 @@ fun ShoppingElements(FirstName:String, LastName:String){
                 }
 
 
-
-
             }
 
 
@@ -327,24 +340,102 @@ fun ShoppingElements(FirstName:String, LastName:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-                    val data = hashMapOf(
-                    "id" to "${FirstName}_${LastName}",
-                    "categorie" to "Shopping" ,
-                    "name" to name,
-                    "price" to price,
-                        "quantity" to quantity,
-                    "date"  to "$day/$month/$year",
+                    if(name!=null && price!=null && day!=null && month!=null && year!=null){
+
+                        val data = hashMapOf(
+                            "id" to "${FirstName}_${LastName}",
+                            "categorie" to "Shopping" ,
+                            "name" to name,
+                            "price" to price,
+                            "date"  to "$day/$month/$year",
 
 
-                    )
-                    db.collection("expenses")
-                        .add(data)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("expenses", "Error adding document", e)
-                        }
+                            )
+                        db.collection("expenses")
+                            .add(data)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("expenses", "Error adding document", e)
+                            }
+
+
+                        db.collection("expenses")
+                            .whereEqualTo("categorie" ,"Shopping")
+                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                shoppingExpenses= mutableListOf()
+                                Log.d("documents" , documents.toString())
+                                for (document in documents) {
+                                    Log.d("user", "${document.id} => ${document.data}")
+                                    Log.d("data" , document.data.toString())
+                                    shoppingExpenses= addTo(shoppingExpenses,document.data as HashMap<String ,Any>)
+                                }
+                                Log.d("shoppingExpenses" ,   shoppingExpenses.toString())
+                                Log.d("SSize" ,   shoppingExpenses.size.toString())
+                                if(shoppingExpenses.size>0){
+                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    docRef.get()
+                                        .addOnSuccessListener { document ->
+                                            if (document != null) {
+                                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                docRef
+                                                    .update("expenses", FieldValue.increment(-(document.data?.get("shopping").toString().toLong())))
+                                                    .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            } else {
+                                                Log.d("TAG", "No such document")
+                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.d("TAG", "get failed with ", exception)
+                                        }
+                                    docRef
+                                        .update("shopping", FieldValue.delete())
+                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                        .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+
+                                    shoppingExpenses.forEachIndexed { index,  shoppingExpense ->
+
+
+                                        docRef
+                                            .update("shopping", FieldValue.increment(shoppingExpense["price"].toString().toFloat().toLong()))
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                        if(index==shoppingExpenses.size-1)
+
+                                            docRef.get()
+                                                .addOnSuccessListener { document ->
+                                                    if (document != null) {
+                                                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                        docRef
+                                                            .update("expenses", FieldValue.increment(document.data?.get("shopping").toString().toLong()))
+                                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                    } else {
+                                                        Log.d("TAG", "No such document")
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    Log.d("TAG", "get failed with ", exception)
+                                                }
+                                    }
+
+
+                                }
+
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w("user", "Error getting documents: ", exception)
+                            }
+
+                    }
+
+
                     name=null
                     price=null
                     quantity=null
@@ -365,6 +456,7 @@ fun ShoppingElements(FirstName:String, LastName:String){
 
                 }
                 Button(onClick = {
+
                     name=null
                     price=null
                     day=null
@@ -388,5 +480,5 @@ fun ShoppingElements(FirstName:String, LastName:String){
 
     }
 
-
 }
+

@@ -29,10 +29,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
+import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.darkYellow
 import com.example.expensetrackerproject.ui.theme.lightViolet
 import com.example.expensetrackerproject.ui.theme.violet
 import com.example.expensetrackerproject.ui.theme.yellow
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
@@ -44,6 +46,18 @@ import java.time.LocalDate
 fun RentElements(FirstName:String, LastName:String){
  val db =Firebase.firestore
     val focusManager = LocalFocusManager.current
+
+    var rentExpenses:MutableList<HashMap<String,Any>> by remember{
+        mutableStateOf(
+            mutableListOf(
+                hashMapOf()
+            )
+        )
+    }
+
+
+
+
     var name :String?by remember{
         mutableStateOf(null)
     }
@@ -338,25 +352,102 @@ fun RentElements(FirstName:String, LastName:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-                    val data = hashMapOf(
-                        "id" to "${FirstName}_${LastName}",
-                        "categorie" to "Rent" ,
-                        "name" to name,
-                        "price" to price,
-                        "date"  to "$day/$month/$year",
+                    if(name!=null && price!=null && day!=null && month!=null && year!=null){
+
+                        val data = hashMapOf(
+                            "id" to "${FirstName}_${LastName}",
+                            "categorie" to "Rent" ,
+                            "name" to name,
+                            "price" to price,
+                            "date"  to "$day/$month/$year",
 
 
-                        )
-                    db.collection("expenses").document("${FirstName}_${LastName}")
-                        .set(data)
-                        .addOnSuccessListener {
-                            Log.d(
-                                "user",
-                                "DocumentSnapshot successfully written!"
                             )
-                        }
-                        .addOnFailureListener { e -> Log.w("User", "Error writing document", e)
-                           }
+                        db.collection("expenses")
+                            .add(data)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("expenses", "Error adding document", e)
+                            }
+
+
+                        db.collection("expenses")
+                            .whereEqualTo("categorie" ,"Rent")
+                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                rentExpenses= mutableListOf()
+                                Log.d("documents" , documents.toString())
+                                for (document in documents) {
+                                    Log.d("user", "${document.id} => ${document.data}")
+                                    Log.d("data" , document.data.toString())
+                                    rentExpenses=addTo(rentExpenses , document.data as HashMap<String,Any>)
+                                }
+                                Log.d("travelExpenses" , rentExpenses.toString())
+                                Log.d("Size" , rentExpenses.size.toString())
+                                if(rentExpenses.size>0){
+                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    docRef.get()
+                                        .addOnSuccessListener { document ->
+                                            if (document != null) {
+                                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                docRef
+                                                    .update("expenses", FieldValue.increment(-(document.data?.get("rent").toString().toLong())))
+                                                    .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            } else {
+                                                Log.d("TAG", "No such document")
+                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.d("TAG", "get failed with ", exception)
+                                        }
+                                    docRef
+                                        .update("rent", FieldValue.delete())
+                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                        .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+                                    rentExpenses.forEachIndexed { index,  rentExpense ->
+
+
+                                        docRef
+                                            .update("rent", FieldValue.increment(rentExpense["price"].toString().toFloat().toLong()))
+                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                        if(index==rentExpenses.size-1)
+
+                                            docRef.get()
+                                                .addOnSuccessListener { document ->
+                                                    if (document != null) {
+                                                        Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+
+                                                        docRef
+                                                            .update("expenses", FieldValue.increment(document.data?.get("rent").toString().toLong()))
+                                                            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                                    } else {
+                                                        Log.d("TAG", "No such document")
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    Log.d("TAG", "get failed with ", exception)
+                                                }
+                                    }
+
+
+                                }
+
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w("user", "Error getting documents: ", exception)
+                            }
+
+
+
+
+                    }
+
                     name=null
                     price=null
                     day=null
@@ -378,6 +469,10 @@ fun RentElements(FirstName:String, LastName:String){
 
                 }
                 Button(onClick = {
+
+
+
+
                     name=null
                     price=null
                     day=null

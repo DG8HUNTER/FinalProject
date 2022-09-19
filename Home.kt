@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.math.roundToInt
 import kotlin.reflect.KProperty
 
 
@@ -211,14 +213,16 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
         modifier = Modifier
             .fillMaxSize()
             .padding(15.dp),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Text(
             text = "Welcome  ${firstName.capitalize()}   ",
             fontSize = 25.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Black
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
         )
 
         LazyColumn(
@@ -237,7 +241,9 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                     text = "Categories",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
             }
             item {
@@ -266,7 +272,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         }
                         Spacer(modifier=Modifier.width(2.dp))
                         Text(
-                            text = "${(travelPercentage.value*100).toLong()} %",
+                            text = "${String.format("%.2f",(travelPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Red,
@@ -300,7 +306,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${(foodPercentage.value*100).toLong()} %",
+                            text = "${String.format("%.2f",(foodPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Darkblue
@@ -309,7 +315,6 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                 }
 
             }
-
             item {
                 Surface(
                     modifier = Modifier
@@ -327,7 +332,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         Row(Modifier.weight(9f) , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(10.dp)){
                             Icon(
                                 painter = painterResource(id = R.drawable.shopping),
-                                contentDescription = "food icon",
+                                contentDescription = "shopping icon",
                                 tint = orange
                             )
                             Spacer(modifier = Modifier.width(shoppingIndicatorWidth).height(15.dp)
@@ -335,7 +340,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${(shoppingPercentage.value*100).toLong()} %",
+                            text = "${String.format("%.2f",(shoppingPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = orange
@@ -371,7 +376,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${(rentPercentage.value*100).toLong()} %",
+                            text = "${String.format("%.2f",(rentPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = violet
