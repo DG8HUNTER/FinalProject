@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 
-fun Categories(FirstName:String , LastName:String){
+fun Categories(userUi:String){
 
     var categories :List<Categorie> = listOf(Categorie.Travel,Categorie.Food, Categorie.Shopping,Categorie.Rent)
     var clickedBox:String  by remember{
@@ -102,10 +102,10 @@ fun Categories(FirstName:String , LastName:String){
         Text(text = clickedBox , fontSize = 20.sp , fontWeight = FontWeight.Bold, color=Color.Black )
 
        when(clickedBox){
-           "Travel"-> TravelElement(FirstName=FirstName,LastName=LastName)
-           "Food"-> FoodElements(FirstName=FirstName,LastName=LastName)
-           "Shopping"-> ShoppingElements(FirstName=FirstName,LastName=LastName)
-           else ->RentElements(FirstName=FirstName,LastName=LastName)
+           "Travel"-> TravelElement(userUi=userUi)
+           "Food"-> FoodElements(userUi=userUi)
+           "Shopping"-> ShoppingElements(userUi=userUi)
+           else ->RentElements(userUi=userUi)
        }
             }
         }

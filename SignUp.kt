@@ -1,3 +1,6 @@
+import android.graphics.drawable.Icon
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -10,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
@@ -33,9 +37,16 @@ import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.blueLink
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Text
 
 @Composable
 fun SignUp(navController: NavController) {
+     lateinit var auth: FirebaseAuth
+
+    auth = Firebase.auth
     var email: String? by remember {
         mutableStateOf(null)
     }
@@ -52,15 +63,18 @@ fun SignUp(navController: NavController) {
         mutableStateOf(true)
 
     }
-    var passwordVerification:String? by remember{
+    var passwordVerification: String? by remember {
         mutableStateOf(null)
     }
-    var isPasswordVerificationEmpty :Boolean by remember{
+    var isPasswordVerificationEmpty: Boolean by remember {
         mutableStateOf(true)
     }
-    var passwordVerificationVisibility:Boolean by remember{
+    var passwordVerificationVisibility: Boolean by remember {
         mutableStateOf(false)
     }
+//    var userUi :String? by remember{
+//        mutableStateOf(null)
+//    }
 
     val focusManager = LocalFocusManager.current
 
@@ -79,7 +93,8 @@ fun SignUp(navController: NavController) {
         mutableStateOf(false)
     }
 
-    val passwordVerificationIconColor = animateColorAsState(targetValue =if(passwordVerification!=null) Color.LightGray else Color.Transparent)
+    val passwordVerificationIconColor =
+        animateColorAsState(targetValue = if (passwordVerification != null) Color.LightGray else Color.Transparent)
     Column(
 
         modifier = Modifier
@@ -192,7 +207,7 @@ fun SignUp(navController: NavController) {
                             text = "Enter Password",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
-                            color= Color.LightGray
+                            color = Color.LightGray
 
                         )
                     },
@@ -243,15 +258,15 @@ fun SignUp(navController: NavController) {
 
                 )
             }
-            item{
+            item {
                 OutlinedTextField(value = if (passwordVerification != null) passwordVerification.toString() else "",
                     onValueChange = {
                         if (it.isNotEmpty()) {
                             passwordVerification = it
-                            isPasswordVerificationEmpty=false
+                            isPasswordVerificationEmpty = false
                         } else {
                             passwordVerification = null
-                            isPasswordVerificationEmpty=true
+                            isPasswordVerificationEmpty = true
                         }
                     },
                     label = {
@@ -285,7 +300,7 @@ fun SignUp(navController: NavController) {
                             Icon(
                                 painter = painterResource(id = if (passwordVerificationVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
                                 contentDescription = if (passwordVerificationVisibility) "ic_visibility" else "ic_visibility_off",
-                                tint =passwordVerificationIconColor.value
+                                tint = passwordVerificationIconColor.value
                             )
 
 
@@ -322,7 +337,41 @@ fun SignUp(navController: NavController) {
             }
             item {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+
+                        if (email != null && password != null && passwordVerification != null) {
+                            if (password == passwordVerification) {
+                                auth.createUserWithEmailAndPassword(email!!, password!!)
+                                    .addOnCompleteListener {
+                                        if (it.isSuccessful) {
+                                            // Sign in success, update UI with the signed-in user's information
+                                            Log.d("TAG", "createUserWithEmail:success")
+                                           val userUi = auth.currentUser?.uid.toString()
+                                            Log.d("User", userUi.toString())
+                                            navController.navigate(route = "PersonalInfo/$userUi") {
+                                                popUpTo("SignUpScreen")
+                                            }
+
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Log.w(
+                                                "TAG",
+                                                "createUserWithEmail:failure",
+                                                it.exception
+                                            )
+
+                                        }
+                                    }
+                            }
+
+
+                        }
+
+
+
+
+
+                    },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent
                     ),
@@ -354,40 +403,69 @@ fun SignUp(navController: NavController) {
 
             }
             item {
-                Row(modifier= Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.Transparent) , horizontalArrangement = Arrangement.End , verticalAlignment = Alignment.CenterVertically){
-                    Text(text ="Already have an account ?" , fontSize=14.sp , fontWeight = FontWeight.Normal, color= Color.Black)
-                    Text(text = " Sign In " , fontSize = 14.sp , fontWeight = FontWeight.Normal, color= blueLink , modifier = Modifier.clickable {
-                        navController.navigate(route="SignInScreen")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color.Transparent),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Already have an account ?",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = " Sign In ",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = blueLink,
+                        modifier = Modifier.clickable {
+                            navController.navigate(route = "SignInScreen") {
+                                popUpTo("SignUpScreen")
+                            }
 
-                    })
+                        })
                 }
             }
-            item{
+            item {
                 Spacer(modifier = Modifier.size(20.dp))
-                Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically){
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth(0.47f)
-                        .height(1.dp)
-                        .background(color = Color.LightGray)
-                        .clip(shape = RoundedCornerShape(20.dp)))
-                    Text(text = " OR " , fontSize=14.sp , fontWeight = FontWeight.Medium , color= Color.LightGray)
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .height(1.dp)
-                        .background(color = Color.LightGray)
-                        .clip(shape = RoundedCornerShape(20.dp)))
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(0.47f)
+                            .height(1.dp)
+                            .background(color = Color.LightGray)
+                            .clip(shape = RoundedCornerShape(20.dp))
+                    )
+                    Text(
+                        text = " OR ",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.LightGray
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .height(1.dp)
+                            .background(color = Color.LightGray)
+                            .clip(shape = RoundedCornerShape(20.dp))
+                    )
 
 
                 }
 
             }
-            item{
+            item {
 
                 Spacer(modifier = Modifier.size(20.dp))
-                Button(onClick = { googleButtonClicked=!googleButtonClicked },
+                Button(
+                    onClick = { googleButtonClicked = !googleButtonClicked },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(10.dp))
@@ -424,11 +502,11 @@ fun SignUp(navController: NavController) {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text =  "Sign in with Google",
+                                text = "Sign in with Google",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray,
-                                modifier= Modifier.height(24.dp)
+                                modifier = Modifier.height(24.dp)
                             )
                             if (googleButtonClicked) {
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -447,7 +525,6 @@ fun SignUp(navController: NavController) {
 
                 }
             }
-
 
 
         }

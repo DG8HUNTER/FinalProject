@@ -39,7 +39,7 @@ import kotlin.math.roundToInt
 
 @Composable
 
-fun ShoppingElements(FirstName:String, LastName:String){
+fun ShoppingElements(userUi:String){
  val db = Firebase.firestore
     val focusManager = LocalFocusManager.current
 
@@ -343,7 +343,7 @@ fun ShoppingElements(FirstName:String, LastName:String){
                     if(name!=null && price!=null && day!=null && month!=null && year!=null){
 
                         val data = hashMapOf(
-                            "id" to "${FirstName}_${LastName}",
+                            "id" to userUi,
                             "categorie" to "Shopping" ,
                             "name" to name,
                             "price" to price,
@@ -363,7 +363,7 @@ fun ShoppingElements(FirstName:String, LastName:String){
 
                         db.collection("expenses")
                             .whereEqualTo("categorie" ,"Shopping")
-                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .whereEqualTo("id" , userUi)
                             .get()
                             .addOnSuccessListener { documents ->
                                 shoppingExpenses= mutableListOf()
@@ -376,7 +376,7 @@ fun ShoppingElements(FirstName:String, LastName:String){
                                 Log.d("shoppingExpenses" ,   shoppingExpenses.toString())
                                 Log.d("SSize" ,   shoppingExpenses.size.toString())
                                 if(shoppingExpenses.size>0){
-                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    val docRef = db.collection("Users").document(userUi)
                                     docRef.get()
                                         .addOnSuccessListener { document ->
                                             if (document != null) {

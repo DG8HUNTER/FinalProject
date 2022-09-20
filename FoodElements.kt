@@ -41,7 +41,7 @@ import java.time.LocalDate
 
 
 @Composable
-fun FoodElements(FirstName:String, LastName:String){
+fun FoodElements(userUi:String){
     val db = Firebase.firestore
 
     var foodExpenses:MutableList<HashMap<String,Any>> by remember{
@@ -360,7 +360,7 @@ fun FoodElements(FirstName:String, LastName:String){
                     if(name!=null && price!=null && day!=null && month!=null && year!=null){
 
                         val data = hashMapOf(
-                            "id" to "${FirstName}_${LastName}",
+                            "id" to userUi,
                             "categorie" to "Food" ,
                             "country" to name,
                             "price" to price,
@@ -379,7 +379,7 @@ fun FoodElements(FirstName:String, LastName:String){
 
                         db.collection("expenses")
                             .whereEqualTo("categorie" ,"Food")
-                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .whereEqualTo("id" , userUi)
                             .get()
                             .addOnSuccessListener { documents ->
                                 foodExpenses= mutableListOf()
@@ -392,7 +392,7 @@ fun FoodElements(FirstName:String, LastName:String){
                                 Log.d("travelExpenses" , foodExpenses.toString())
                                 Log.d("Size" , foodExpenses.size.toString())
                                 if(foodExpenses.size>0){
-                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    val docRef = db.collection("Users").document(userUi)
                                     docRef.get()
                                         .addOnSuccessListener { document ->
                                             if (document != null) {

@@ -20,7 +20,7 @@ import com.example.expensetrackerproject.ui.theme.lightGreen
 
 
 @Composable
-fun MainPage(navController:NavController , FirstName:String , LastName :String) {
+fun MainPage(navController:NavController , userUi:String) {
         val items: List<BottomNavigationItemInfo> = listOf(
             BottomNavigationItemInfo.Home,
             BottomNavigationItemInfo.Categorie,
@@ -64,10 +64,10 @@ fun MainPage(navController:NavController , FirstName:String , LastName :String) 
         {
             Column(modifier=Modifier.fillMaxSize()) {
                 when (selectedButton) {
-                    "Home" ->{ Home(FirstName=FirstName , LastName = LastName)
+                    "Home" ->{ Home(userUi = userUi)
                     }
-                    "Categorie" -> Categories(FirstName=FirstName , LastName = LastName)
-                    "Settings" -> Settings(navController =navController)
+                    "Categorie" -> Categories(userUi=userUi)
+                    "Settings" -> Settings(navController =navController , userUi=userUi)
                 }
 
             }

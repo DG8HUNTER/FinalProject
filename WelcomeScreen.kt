@@ -31,11 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.time.temporal.TemporalAdjusters.next
 
 
 @Composable
 fun WelcomeScreen(navController: NavController){
+
     Column(modifier= Modifier
         .fillMaxSize()
         .padding(20.dp) , horizontalAlignment = Alignment.Start, verticalArrangement =Arrangement.Top){
@@ -60,7 +63,9 @@ Spacer(modifier = Modifier.height(40.dp))
 
         Spacer(modifier =Modifier.height(40.dp))
     Row(modifier=Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.End) {
-        Button(onClick = { navController.navigate(route="SignUpScreen") } , colors = ButtonDefaults.buttonColors(
+        Button(onClick = { navController.navigate(route="SignUpScreen"){
+            popUpTo("WelcomeScreen")
+        } } , colors = ButtonDefaults.buttonColors(
          backgroundColor = Color.Transparent
         ), contentPadding = PaddingValues(0.dp), modifier = Modifier
             .width(120.dp)

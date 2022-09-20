@@ -339,7 +339,9 @@ fun SignIn(navController: NavController) {
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(
                     onClick = { googleButtonClicked = !googleButtonClicked
-                             navController.navigate(route="MainPage")
+                             navController.navigate(route="MainPage"){
+                               popUpTo(route="MainPage"){inclusive=true}
+                             }
 
                               },
                     modifier = Modifier

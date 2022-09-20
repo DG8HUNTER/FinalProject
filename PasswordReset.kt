@@ -29,13 +29,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 
-
-@Preview(showBackground = true)
 @Composable
-fun PasswordReset() {
+fun PasswordReset(navController: NavController) {
     val focusManager = LocalFocusManager.current
     var newPassword: String? by remember {
         mutableStateOf(null)
@@ -43,8 +43,10 @@ fun PasswordReset() {
     var newPasswordVisibility: Boolean by remember {
         mutableStateOf(false)
     }
-    val newPasswordClearIcon by animateColorAsState(targetValue = if (newPassword != null) Color.Gray else Color.Transparent ,
-        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing) )
+    val newPasswordClearIcon by animateColorAsState(
+        targetValue = if (newPassword != null) Color.Gray else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+    )
 
     var passwordVerification: String? by remember {
         mutableStateOf(null)
@@ -53,8 +55,9 @@ fun PasswordReset() {
         mutableStateOf(false)
 
     }
-    val passwordVerificationClearIcon by animateColorAsState(targetValue = if (passwordVerification != null) Color.Gray else Color.Transparent ,
-    animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+    val passwordVerificationClearIcon by animateColorAsState(
+        targetValue = if (passwordVerification != null) Color.Gray else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
 
 
@@ -67,15 +70,23 @@ fun PasswordReset() {
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(1.dp)) {
 
-        Text(
-            text = "Password Reset",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
-        )
+IconButton(onClick = {
+    navController.navigate(route="SignInScreen")
+}) {
+    Icon(painter = painterResource(id =R.drawable.arrow_left), contentDescription ="arrow left icon", tint =Color.Black, modifier=Modifier.size(25.dp))
+
+}
+            Text(
+                text = "Password Reset",
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+        }
 
         OutlinedTextField(value = if (newPassword != null) newPassword.toString() else "",
             onValueChange = {
@@ -87,7 +98,7 @@ fun PasswordReset() {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
 
-                )
+                    )
             },
             placeholder = {
                 Text(
@@ -103,11 +114,15 @@ fun PasswordReset() {
                     contentDescription = "Lock icon",
                     tint = Color.LightGray,
 
-                )
+                    )
             },
             trailingIcon = {
-                IconButton(onClick = {newPasswordVisibility=!newPasswordVisibility  }) {
-                 Icon(painter = painterResource(id = if(newPasswordVisibility ) R.drawable.ic_visibility else R.drawable.ic_visibility_off), contentDescription =if(newPasswordVisibility)"visibility icon" else "visibility off icon" , tint =newPasswordClearIcon )
+                IconButton(onClick = { newPasswordVisibility = !newPasswordVisibility }) {
+                    Icon(
+                        painter = painterResource(id = if (newPasswordVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                        contentDescription = if (newPasswordVisibility) "visibility icon" else "visibility off icon",
+                        tint = newPasswordClearIcon
+                    )
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -120,7 +135,7 @@ fun PasswordReset() {
                     focusManager.clearFocus()
                 }
             ),
-            visualTransformation = if (newPasswordVisibility ) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (newPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(5.dp))
@@ -147,7 +162,7 @@ fun PasswordReset() {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
 
-                )
+                    )
             },
             placeholder = {
                 Text(
@@ -163,11 +178,17 @@ fun PasswordReset() {
                     contentDescription = "Lock icon",
                     tint = Color.LightGray,
 
-                )
+                    )
             },
             trailingIcon = {
-                IconButton(onClick = { passwordVerificationVisibility=!passwordVerificationVisibility }) {
-                  Icon(painter = painterResource(id = if(passwordVerificationVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off), contentDescription =if(passwordVerificationVisibility)"visibility icon" else "visibility off icon"  , tint = passwordVerificationClearIcon)
+                IconButton(onClick = {
+                    passwordVerificationVisibility = !passwordVerificationVisibility
+                }) {
+                    Icon(
+                        painter = painterResource(id = if (passwordVerificationVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                        contentDescription = if (passwordVerificationVisibility) "visibility icon" else "visibility off icon",
+                        tint = passwordVerificationClearIcon
+                    )
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -211,7 +232,10 @@ fun PasswordReset() {
                     .fillMaxWidth()
                     .height(55.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = com.example.expensetrackerproject.ui.theme.Green, shape = RoundedCornerShape(10.dp)),
+                    .background(
+                        color = com.example.expensetrackerproject.ui.theme.Green,
+                        shape = RoundedCornerShape(10.dp)
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
 
@@ -229,4 +253,12 @@ fun PasswordReset() {
 
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewResetPassword(){
+    PasswordReset(navController = rememberNavController( ))
+}
+
 

@@ -36,7 +36,7 @@ import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 
 @Composable
-fun TravelElement(FirstName:String , LastName:String){
+fun TravelElement(userUi:String){
 
     val db = Firebase.firestore
 
@@ -291,7 +291,7 @@ fun TravelElement(FirstName:String , LastName:String){
                if(country!=null && price!=null && day!=null && month!=null && year!=null){
 
                     val data = hashMapOf(
-                        "id" to "${FirstName}_${LastName}",
+                        "id" to userUi,
                         "categorie" to "Travel" ,
                         "country" to country,
                         "price" to price,
@@ -311,7 +311,7 @@ fun TravelElement(FirstName:String , LastName:String){
 
                             db.collection("expenses")
                                 .whereEqualTo("categorie" ,"Travel")
-                                .whereEqualTo("id" , "${FirstName}_${LastName}")
+                                .whereEqualTo("id" , userUi)
                                 .get()
                                 .addOnSuccessListener { documents ->
                                    travelExpenses= mutableListOf()
@@ -325,7 +325,7 @@ fun TravelElement(FirstName:String , LastName:String){
                                     Log.d("Size" , travelExpenses.size.toString())
                                     if(travelExpenses.size>0){
 
-                                        val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                        val docRef = db.collection("Users").document(userUi)
                                         docRef.get()
                                             .addOnSuccessListener { document ->
                                                 if (document != null) {

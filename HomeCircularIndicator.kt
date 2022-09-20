@@ -63,15 +63,15 @@ val percentage = animateFloatAsState(targetValue =if(budget==0f && expenses==0f)
         } ,verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
         Row(verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.Center){
             Text(
-                text ="${(spending.value).toLong()}",
+                text = "${Math.round(expenses)}",
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
-                color = Green.copy(alpha=0.5f)
+                fontSize = 25.sp,
+                color = Green.copy(alpha = 0.5f)
             )
             Text(
                 text =" / $budget",
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
+                fontSize = 25.sp,
                 color = Green
             )
         }

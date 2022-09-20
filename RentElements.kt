@@ -43,7 +43,7 @@ import java.time.LocalDate
 @Composable
 
 
-fun RentElements(FirstName:String, LastName:String){
+fun RentElements(userUi:String){
  val db =Firebase.firestore
     val focusManager = LocalFocusManager.current
 
@@ -355,7 +355,7 @@ fun RentElements(FirstName:String, LastName:String){
                     if(name!=null && price!=null && day!=null && month!=null && year!=null){
 
                         val data = hashMapOf(
-                            "id" to "${FirstName}_${LastName}",
+                            "id" to userUi,
                             "categorie" to "Rent" ,
                             "name" to name,
                             "price" to price,
@@ -375,7 +375,7 @@ fun RentElements(FirstName:String, LastName:String){
 
                         db.collection("expenses")
                             .whereEqualTo("categorie" ,"Rent")
-                            .whereEqualTo("id" , "${FirstName}_${LastName}")
+                            .whereEqualTo("id" , userUi)
                             .get()
                             .addOnSuccessListener { documents ->
                                 rentExpenses= mutableListOf()
@@ -388,7 +388,7 @@ fun RentElements(FirstName:String, LastName:String){
                                 Log.d("travelExpenses" , rentExpenses.toString())
                                 Log.d("Size" , rentExpenses.size.toString())
                                 if(rentExpenses.size>0){
-                                    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+                                    val docRef = db.collection("Users").document(userUi)
                                     docRef.get()
                                         .addOnSuccessListener { document ->
                                             if (document != null) {

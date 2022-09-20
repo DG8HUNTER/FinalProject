@@ -1,5 +1,4 @@
 package com.example.expensetrackerproject.Home
-
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
@@ -9,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
@@ -23,25 +21,14 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.expensetrackerproject.Categories.Categorie
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.User
 import com.example.expensetrackerproject.ui.theme.*
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.math.roundToInt
-import kotlin.reflect.KProperty
-
-
 @Composable
-fun Home(FirstName:String, LastName: String) {
+fun Home(userUi:String) {
     var user: MutableMap<String, Any> by remember {
         mutableStateOf(
             hashMapOf(
@@ -85,7 +72,7 @@ fun Home(FirstName:String, LastName: String) {
 
     val db = Firebase.firestore
 
-    val docRef = db.collection("Users").document("${FirstName}_${LastName}")
+    val docRef = db.collection("Users").document(userUi)
     docRef.get()
         .addOnSuccessListener { document ->
             if (document != null) {
@@ -200,15 +187,6 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
 
     val rentIndicatorWidth =if(expenses!=0f) ((rent*290)/expenses).dp else 0.dp
 
-
-
-
-
-
-
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -233,7 +211,6 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
             item {
 
        HomeCircularIndicator(budget =budget, expenses = expenses)
-
 
             }
             item {
@@ -272,7 +249,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         }
                         Spacer(modifier=Modifier.width(2.dp))
                         Text(
-                            text = "${String.format("%.2f",(travelPercentage.value * 100))} %",
+                            text = "${String.format("%.1f",(travelPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Red,
@@ -306,7 +283,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${String.format("%.2f",(foodPercentage.value * 100))} %",
+                            text = "${String.format("%.1f",(foodPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Darkblue
@@ -340,15 +317,13 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${String.format("%.2f",(shoppingPercentage.value * 100))} %",
+                            text = "${String.format("%.1f",(shoppingPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = orange
                         )
                     }
                 }
-
-
             }
 
             item {
@@ -376,7 +351,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                                 .clip(shape = RoundedCornerShape(5.dp)))
                         }
                         Text(
-                            text = "${String.format("%.2f",(rentPercentage.value * 100))} %",
+                            text = "${String.format("%.1f",(rentPercentage.value * 100))} %",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = violet
@@ -390,7 +365,3 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
 
     }
 }
-
-
-
-

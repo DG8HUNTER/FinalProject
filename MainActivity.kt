@@ -20,15 +20,19 @@ import com.example.expensetrackerproject.Categories.Categories
 import com.example.expensetrackerproject.Categories.Categories
 import com.example.expensetrackerproject.ui.theme.ExpenseTrackerProjectTheme
 import com.example.expensetrackerproject.ui.theme.lightGreen
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
             ExpenseTrackerProjectTheme {
-                // A surface container using the 'background' color from the theme
                val navController:NavController= rememberNavController()
-                Navigation(navController = navController)
+                Navigation(navController = navController )
 
             }
         }

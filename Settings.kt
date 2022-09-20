@@ -21,9 +21,8 @@ import com.example.expensetrackerproject.ui.theme.darkGray
 import com.example.expensetrackerproject.ui.theme.lightGreen
 
 
-
 @Composable
-fun Settings(navController: NavController) {
+fun Settings(navController: NavController , userUi:String) {
     var sendNotification by remember {
         mutableStateOf(false)
     }
@@ -54,8 +53,8 @@ fun Settings(navController: NavController) {
                 .clip(shape = RoundedCornerShape(5.dp))
         )
 
-        Text(text = "Name :", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
-        Text(text = "Email :", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
+        Text(text = "Name : $userUi", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
+        Text(text = "Email : ", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
         Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
