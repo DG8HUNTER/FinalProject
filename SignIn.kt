@@ -1,3 +1,5 @@
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -10,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
@@ -34,12 +37,14 @@ import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.blueLink
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 
 @Composable
 fun SignIn(navController: NavController) {
-
+    val auth = Firebase.auth
     var email: String? by remember {
         mutableStateOf(null)
     }
@@ -59,6 +64,26 @@ fun SignIn(navController: NavController) {
     var isPasswordEmpty by remember {
         mutableStateOf(true)
     }
+    var emailRequirementError by remember {
+        mutableStateOf(false)
+    }
+    var passwordRequirementError by remember {
+        mutableStateOf(false)
+    }
+    var signInButtonClicked by remember {
+        mutableStateOf(false)
+    }
+    var isSigningIn by remember {
+        mutableStateOf(false)
+    }
+    var signInError by remember {
+        mutableStateOf(false)
+    }
+    var errorMessage: String? by remember {
+        mutableStateOf(null)
+    }
+
+
     val passTrailingIconColor = animateColorAsState(
         targetValue = if (isPasswordEmpty) Color.Transparent else Color.LightGray,
         animationSpec = tween(
@@ -85,148 +110,229 @@ fun SignIn(navController: NavController) {
             textAlign = TextAlign.Start
         )
 
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally , verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
 
 
             item {
-                OutlinedTextField(value = if (email != null) email.toString() else "",
-                    onValueChange = {
-                        if (it.isNotEmpty()) {
-                            email = it
-                            isEmailEmpty = !isEmailEmpty
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    OutlinedTextField(value = if (email != null) email.toString() else "",
+                        onValueChange = {
+                            if (it.isNotEmpty()) {
+                                email = it
+                                isEmailEmpty = !isEmailEmpty
 
-                        } else {
-                            email = null
-                            isEmailEmpty = !isEmailEmpty
-                        }
-                    },
-                    label = {
-                        Text(text = "Email", fontSize = 15.sp, fontWeight = FontWeight.Medium)
-                    },
-                    placeholder = {
-                        Text(
-                            text = "Create Email",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.LightGray
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Email,
-                            contentDescription = "Email icon",
-                            tint = Color.LightGray
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { email = null }) {
-                            Icon(
-                                imageVector = Icons.Filled.Clear,
-                                contentDescription = "Clear Icon",
-                                tint = clearIconColor.value
+                            } else {
+                                email = null
+                                isEmailEmpty = !isEmailEmpty
+                            }
+                        },
+                        label = {
+                            Text(text = "Email", fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                        },
+                        placeholder = {
+                            Text(
+                                text = "Create Email",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.LightGray
                             )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Email,
+                                contentDescription = "Email icon",
+                                tint = Color.LightGray
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { email = null }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Clear,
+                                    contentDescription = "Clear Icon",
+                                    tint = clearIconColor.value
+                                )
 
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(5.dp))
-                        .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.LightGray,
-                        focusedIndicatorColor = Color.Gray,
-                        cursorColor = Color.LightGray,
-                        focusedLabelColor = Color.Gray,
-                        unfocusedLabelColor = Color.LightGray,
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(5.dp))
+                            .background(
+                                color = Color.Transparent,
+                                shape = RoundedCornerShape(5.dp)
+                            ),
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.LightGray,
+                            focusedIndicatorColor = Color.Gray,
+                            cursorColor = Color.LightGray,
+                            focusedLabelColor = Color.Gray,
+                            unfocusedLabelColor = Color.LightGray,
 
 
+                            ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Done
                         ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        isError = emailRequirementError
                     )
-                )
+
+                    if (signInButtonClicked && email == null) {
+                        emailRequirementError = true
+                        Text(
+                            text = "Required Field",
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                        )
+                    }
+                    if (signInButtonClicked && email != null) {
+                        emailRequirementError = false
+                    }
+                    if (signInError && email!=null) {
+                        if (errorMessage == "The email address is badly formatted.") {
+                            emailRequirementError = true
+                            Text(
+                                text = "Email does not exist",
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+
+                            )
+                        } else {
+                            emailRequirementError = false
+                        }
+                    }
+
+
+                }
             }
             item {
-                OutlinedTextField(value = if (password != null) password.toString() else "",
-                    onValueChange = {
-                        if (it.isNotEmpty()) {
-                            password = it
-                            isPasswordEmpty = false
-                        } else {
-                            password = null
-                            isPasswordEmpty = true
-                        }
-                    },
-                    label = {
-                        Text(
-                            text = "Password",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+
+
+                    OutlinedTextField(value = if (password != null) password.toString() else "",
+                        onValueChange = {
+                            if (it.isNotEmpty()) {
+                                password = it
+                                isPasswordEmpty = false
+                            } else {
+                                password = null
+                                isPasswordEmpty = true
+                            }
+                        },
+                        label = {
+                            Text(
+                                text = "Password",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+
+                                )
+                        },
+                        placeholder = {
+                            Text(
+                                text = "Enter Password",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.LightGray
 
                             )
-                    },
-                    placeholder = {
-                        Text(
-                            text = "Enter Password",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.LightGray
-
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_lock),
-                            contentDescription = "lock icon",
-                            tint = Color.LightGray
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = {
-
-                            passVisibility = !passVisibility
-                        }) {
+                        },
+                        leadingIcon = {
                             Icon(
-                                painter = painterResource(id = if (passVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                                contentDescription = if (passVisibility) "ic_visibility" else "ic_visibility_off",
-                                tint = passTrailingIconColor.value
+                                painter = painterResource(id = R.drawable.ic_lock),
+                                contentDescription = "lock icon",
+                                tint = Color.LightGray
                             )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = {
+
+                                passVisibility = !passVisibility
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = if (passVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                                    contentDescription = if (passVisibility) "ic_visibility" else "ic_visibility_off",
+                                    tint = passTrailingIconColor.value
+                                )
 
 
-                        }
-                    },
-                    visualTransformation = if (!passVisibility) PasswordVisualTransformation() else VisualTransformation.None,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(5.dp))
-                        .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.LightGray,
-                        focusedIndicatorColor = Color.Gray,
-                        cursorColor = Color.LightGray,
-                        focusedLabelColor = Color.Gray,
-                        unfocusedLabelColor = Color.LightGray
+                            }
+                        },
+                        visualTransformation = if (!passVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(5.dp))
+                            .background(
+                                color = Color.Transparent,
+                                shape = RoundedCornerShape(5.dp)
+                            ),
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.LightGray,
+                            focusedIndicatorColor = Color.Gray,
+                            cursorColor = Color.LightGray,
+                            focusedLabelColor = Color.Gray,
+                            unfocusedLabelColor = Color.LightGray
 
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ), isError = passwordRequirementError
+
                     )
+                    if (signInButtonClicked && password == null) {
+                        passwordRequirementError = true
+                        Text(
+                            text = "Required Field",
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                        )
+                    }
+                    if (signInButtonClicked && password != null) {
+                        passwordRequirementError = false
+                    }
+                    if (signInError) {
+                        if (errorMessage =="The password is invalid or the user does not have a password." ) {//"The password is invalid or the user does not have a password."
+                            passwordRequirementError = true
+                            Text(
+                                text = "Wrong password",
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
 
-                )
+                            )
+                        } else {
+                            passwordRequirementError = false
+                        }
+                    }
+
+
+                }
             }
 
             item {
@@ -237,8 +343,8 @@ fun SignIn(navController: NavController) {
                     color = blueLink,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable{
-                            navController.navigate(route="ResetPassword")
+                        .clickable {
+                            navController.navigate(route = "ResetPassword")
                         },
                     textAlign = TextAlign.End
                 )
@@ -246,7 +352,32 @@ fun SignIn(navController: NavController) {
             item {
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        signInButtonClicked = true
+                        focusManager.clearFocus()
+                        if (email != null && password != null) {
+                            isSigningIn = true
+                            auth.signInWithEmailAndPassword(email!!, password!!)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d("TAG", "signInWithEmail:success")
+                                        val userUi = auth.currentUser?.uid
+                                        navController.navigate(route = "MainPage/$userUi")
+
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w("TAG", "signInWithEmail:failure", task.exception)
+                                        isSigningIn = false
+                                        signInButtonClicked = false
+                                        signInError = true
+                                        errorMessage = task.exception?.message.toString()
+
+                                    }
+                                }
+                        }
+
+                    },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent
                     ),
@@ -255,6 +386,7 @@ fun SignIn(navController: NavController) {
                         .clip(shape = RoundedCornerShape(10.dp)),
                     contentPadding = PaddingValues()
                 ) {
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -263,18 +395,40 @@ fun SignIn(navController: NavController) {
                             .background(color = Green, shape = RoundedCornerShape(10.dp)),
                         contentAlignment = Alignment.Center,
                     ) {
+                        if (isSigningIn) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Signing In",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CircularProgressIndicator(
+                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White
+                                )
+                            }
+                        } else {
 
-                        Text(
-                            text = "Sign In",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White
-                        )
+                            Text(
+                                text = "Sign In",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
 
+                        }
                     }
 
 
                 }
+
             }
             item {
                 Spacer(modifier = Modifier.size(10.dp))
@@ -338,12 +492,13 @@ fun SignIn(navController: NavController) {
 
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(
-                    onClick = { googleButtonClicked = !googleButtonClicked
-                             navController.navigate(route="MainPage"){
-                               popUpTo(route="MainPage"){inclusive=true}
-                             }
+                    onClick = {
+                        googleButtonClicked = !googleButtonClicked
+                        navController.navigate(route = "MainPage") {
+                            popUpTo(route = "MainPage") { inclusive = true }
+                        }
 
-                              },
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(10.dp))
