@@ -16,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.platform.LocalFocusManager
@@ -59,6 +61,20 @@ fun PasswordReset(navController: NavController) {
         targetValue = if (passwordVerification != null) Color.Gray else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
+    var newPasswordError by remember{
+        mutableStateOf(false)
+    }
+    var passwordVError by remember {
+        mutableStateOf(false)
+
+    }
+    var newPasswordErrorMessage :String? by remember{
+        mutableStateOf(null)
+    }
+    var passwordVErrorMessage:String?  by remember{
+        mutableStateOf(null)
+    }
+
 
 
 
@@ -87,135 +103,171 @@ IconButton(onClick = {
                 textAlign = TextAlign.Start
             )
         }
+Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start , verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    OutlinedTextField(value = if (newPassword != null) newPassword.toString() else "",
+        onValueChange = {
+            newPassword = if (it.isNotEmpty()) it else null
+        },
+        label = {
+            Text(
+                text = "New Password",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
 
-        OutlinedTextField(value = if (newPassword != null) newPassword.toString() else "",
-            onValueChange = {
-                newPassword = if (it.isNotEmpty()) it else null
-            },
-            label = {
-                Text(
-                    text = "New Password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-
-                    )
-            },
-            placeholder = {
-                Text(
-                    text = " Enter new password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.LightGray
                 )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_lock),
-                    contentDescription = "Lock icon",
-                    tint = Color.LightGray,
-
-                    )
-            },
-            trailingIcon = {
-                IconButton(onClick = { newPasswordVisibility = !newPasswordVisibility }) {
-                    Icon(
-                        painter = painterResource(id = if (newPasswordVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                        contentDescription = if (newPasswordVisibility) "visibility icon" else "visibility off icon",
-                        tint = newPasswordClearIcon
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            visualTransformation = if (newPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(5.dp))
-                .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = Color.Gray,
-                cursorColor = Color.LightGray,
-                focusedLabelColor = Color.Gray,
-                unfocusedLabelColor = Color.LightGray
-
+        },
+        placeholder = {
+            Text(
+                text = " Enter new password",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.LightGray
             )
+        },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_lock),
+                contentDescription = "Lock icon",
+                tint = Color.LightGray,
 
-        )
-        OutlinedTextField(
-            value = if (passwordVerification != null) passwordVerification.toString() else "",
-            onValueChange = {
-                passwordVerification = if (it.isNotEmpty()) it else null
-            },
-            label = {
-                Text(
-                    text = "Verify Password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-
-                    )
-            },
-            placeholder = {
-                Text(
-                    text = "Retype Password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.LightGray
                 )
-            },
-            leadingIcon = {
+        },
+        trailingIcon = {
+            IconButton(onClick = { newPasswordVisibility = !newPasswordVisibility }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_lock),
-                    contentDescription = "Lock icon",
-                    tint = Color.LightGray,
+                    painter = painterResource(id = if (newPasswordVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                    contentDescription = if (newPasswordVisibility) "visibility icon" else "visibility off icon",
+                    tint = newPasswordClearIcon
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
 
-                    )
-            },
-            trailingIcon = {
-                IconButton(onClick = {
-                    passwordVerificationVisibility = !passwordVerificationVisibility
-                }) {
-                    Icon(
-                        painter = painterResource(id = if (passwordVerificationVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                        contentDescription = if (passwordVerificationVisibility) "visibility icon" else "visibility off icon",
-                        tint = passwordVerificationClearIcon
-                    )
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+            }
+        ),
+        visualTransformation = if (newPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        modifier = Modifier
+            .onFocusChanged {
+                focusState ->
+                if(!focusState.isFocused){
+                    if(newPassword!=null && newPassword!!.length<6){
+                        newPasswordError=true
+                        newPasswordErrorMessage="Password must be at least 6 characters"
+                    }
+                    else{
+                        newPasswordError=false
+                        newPasswordErrorMessage=null
+                    }
                 }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
                 }
-            ),
-            visualTransformation = if (passwordVerificationVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(5.dp))
-                .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = Color.Gray,
-                cursorColor = Color.LightGray,
-                focusedLabelColor = Color.Gray,
-                unfocusedLabelColor = Color.LightGray
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(5.dp))
+            .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.LightGray,
+            focusedIndicatorColor = Color.Gray,
+            cursorColor = Color.LightGray,
+            focusedLabelColor = Color.Gray,
+            unfocusedLabelColor = Color.LightGray
 
-            )
+        ) , isError = newPasswordError
+
+    )
+ 
+    if(newPasswordErrorMessage!=null){
+        Text(text ="$newPasswordErrorMessage" ,
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
         )
+    }
+}
+        Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start , verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            OutlinedTextField(
+                value = if (passwordVerification != null) passwordVerification.toString() else "",
+                onValueChange = {
+                    passwordVerification = if (it.isNotEmpty()) it else null
+                },
+                label = {
+                    Text(
+                        text = "Verify Password",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+
+                        )
+                },
+                placeholder = {
+                    Text(
+                        text = "Retype Password",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.LightGray
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_lock),
+                        contentDescription = "Lock icon",
+                        tint = Color.LightGray,
+
+                        )
+                },
+                trailingIcon = {
+                    IconButton(onClick = {
+                        passwordVerificationVisibility = !passwordVerificationVisibility
+                    }) {
+                        Icon(
+                            painter = painterResource(id = if (passwordVerificationVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                            contentDescription = if (passwordVerificationVisibility) "visibility icon" else "visibility off icon",
+                            tint = passwordVerificationClearIcon
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                visualTransformation = if (passwordVerificationVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(5.dp))
+                    .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.LightGray,
+                    focusedLabelColor = Color.Gray,
+                    unfocusedLabelColor = Color.LightGray
+
+                ) , isError = passwordVError
+            )
+            if(passwordVerification!=null && passwordVerification!=newPassword){
+                passwordVError=true
+                passwordVErrorMessage="Passwords do not match"
+                Text(
+                    text = "Passwords do not match",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp, top = 0.dp))
+            }
+            else{
+                passwordVError=false
+            }
+        }
         Spacer(modifier = Modifier.height(15.dp))
         Button(
             onClick = { /*TODO*/ },
@@ -252,7 +304,8 @@ IconButton(onClick = {
         }
 
     }
-}
+    }
+
 
 
 @Preview(showBackground = true)
