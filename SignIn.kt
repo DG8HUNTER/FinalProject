@@ -83,7 +83,6 @@ fun SignIn(navController: NavController) {
         mutableStateOf(null)
     }
 
-
     val passTrailingIconColor = animateColorAsState(
         targetValue = if (isPasswordEmpty) Color.Transparent else Color.LightGray,
         animationSpec = tween(
@@ -126,11 +125,11 @@ fun SignIn(navController: NavController) {
                         onValueChange = {
                             if (it.isNotEmpty()) {
                                 email = it
-                                isEmailEmpty = !isEmailEmpty
+                                isEmailEmpty = false
 
                             } else {
                                 email = null
-                                isEmailEmpty = !isEmailEmpty
+                                isEmailEmpty = true
                             }
                         },
                         label = {
@@ -152,7 +151,8 @@ fun SignIn(navController: NavController) {
                             )
                         },
                         trailingIcon = {
-                            IconButton(onClick = { email = null }) {
+                            IconButton(onClick = { email = null
+                            isEmailEmpty=true}) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
                                     contentDescription = "Clear Icon",
@@ -203,7 +203,7 @@ fun SignIn(navController: NavController) {
                         emailRequirementError = false
                     }
                     if (signInError && email!=null) {
-                        if (errorMessage == "The email address is badly formatted.") {
+                        if (errorMessage == "The email address is badly formatted." || errorMessage=="There is no user record corresponding to this identifier. The user may have been deleted.") {
                             emailRequirementError = true
                             Text(
                                 text = "Email does not exist",
@@ -320,7 +320,7 @@ fun SignIn(navController: NavController) {
                         if (errorMessage =="The password is invalid or the user does not have a password." ) {//"The password is invalid or the user does not have a password."
                             passwordRequirementError = true
                             Text(
-                                text = "Wrong password",
+                                text = "$errorMessage",
                                 color = MaterialTheme.colors.error,
                                 style = MaterialTheme.typography.caption,
                                 modifier = Modifier.padding(start = 16.dp, top = 0.dp)

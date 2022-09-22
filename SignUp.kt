@@ -1,6 +1,6 @@
-import android.graphics.drawable.Icon
+import android.text.TextUtils
 import android.util.Log
-import android.widget.Toast
+import android.util.Patterns
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -22,6 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -40,7 +43,7 @@ import com.example.expensetrackerproject.ui.theme.blueLink
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
+
 
 @Composable
 fun SignUp(navController: NavController) {
@@ -95,6 +98,10 @@ fun SignUp(navController: NavController) {
     var compatibility by remember {
         mutableStateOf(false)
     }
+    var emailErrorMessage:String? by remember {
+        mutableStateOf("Required Field")
+    }
+
 
 
 
@@ -157,11 +164,13 @@ fun SignUp(navController: NavController) {
                                 isEmailEmpty = false
                                 emailRequirementError=false
 
+
                             } else {
                                 email = null
                                 isEmailEmpty = true
                                 if(createButtonClicked){
                                     emailRequirementError=true
+                                    emailErrorMessage="Required Email"
                                 }
                             }
                         },
@@ -197,7 +206,18 @@ fun SignUp(navController: NavController) {
 
                             }
                         },
-                        modifier = Modifier
+                        modifier = Modifier.onFocusChanged {
+                            focusState ->
+                               if(!focusState.isFocused){
+                                   if(email!=null && !isValidEmail(email)){
+                                       emailRequirementError=true
+                                       emailErrorMessage="Invalid Email"
+                                   }
+                               }else{
+                                   emailRequirementError=false
+                               }
+
+                        }
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -221,13 +241,17 @@ fun SignUp(navController: NavController) {
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 focusManager.clearFocus()
+                                if(!isValidEmail(email)){
+                                    emailRequirementError=true
+                                    emailErrorMessage="Invalid Email"
+                                }
                             }
                         ),
                         isError = emailRequirementError
                     )
                     if (emailRequirementError) {
                         Text(
-                            text = "Required Field",
+                            text = "$emailErrorMessage",
                             color = MaterialTheme.colors.error,
                             style = MaterialTheme.typography.caption,
                             modifier = Modifier.padding(start = 16.dp, top = 0.dp)
@@ -468,7 +492,7 @@ fun SignUp(navController: NavController) {
                     }
                 }
 
-
+Log.d("email",email.toString())
 
             }
             item {
@@ -482,7 +506,7 @@ fun SignUp(navController: NavController) {
                          focusManager.clearFocus()
                         if (email != null && password != null && passwordVerification != null) {
                                 createAccount=true
-                            if (compatibility) {
+                            if (password==passwordVerification) {
                                 auth.createUserWithEmailAndPassword(email!!, password!!)
                                     .addOnCompleteListener {
                                         if (it.isSuccessful) {
@@ -495,12 +519,9 @@ fun SignUp(navController: NavController) {
                                             }
 
                                         } else {
-                                            // If sign in fails, display a message to the user.
-                                            Log.w(
-                                                "TAG",
-                                                "createUserWithEmail:failure",
-                                                it.exception
-                                            )
+                                            emailRequirementError=true
+                                          emailErrorMessage=it.exception?.message.toString()
+                                            createAccount=false
 
                                         }
                                     }
@@ -641,7 +662,6 @@ fun SignUp(navController: NavController) {
 
             }
             item {
-
                 Spacer(modifier = Modifier.size(20.dp))
                 Button(
                     onClick = { googleButtonClicked = !googleButtonClicked },
@@ -710,3 +730,10 @@ fun SignUp(navController: NavController) {
     }
 }
 
+fun isValidEmail(target: CharSequence?): Boolean {
+    return if (TextUtils.isEmpty(target)) {
+        false
+    } else {
+        Patterns.EMAIL_ADDRESS.matcher(target).matches()
+    }
+}
