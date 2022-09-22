@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.platform.LocalFocusManager
@@ -152,7 +153,12 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
             }
         ),
         visualTransformation = if (newPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-        modifier = Modifier
+        modifier = Modifier.onFocusEvent {
+            if (newPassword != null && newPassword!!.length >= 6) {
+                newPasswordError = false
+                newPasswordErrorMessage = null
+            }
+        }
             .onFocusChanged {
                 focusState ->
                 if(!focusState.isFocused){
@@ -161,6 +167,11 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
                         newPasswordErrorMessage="Password must be at least 6 characters"
                     }
                     else{
+                        newPasswordError=false
+                        newPasswordErrorMessage=null
+                    }
+                } else{
+                    if(newPassword!=null && newPassword!!.length>=6){
                         newPasswordError=false
                         newPasswordErrorMessage=null
                     }
@@ -180,7 +191,7 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
         ) , isError = newPasswordError
 
     )
- 
+
     if(newPasswordErrorMessage!=null){
         Text(text ="$newPasswordErrorMessage" ,
             color = MaterialTheme.colors.error,
