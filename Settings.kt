@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject.Settings
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,15 +20,45 @@ import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.darkGray
 import com.example.expensetrackerproject.ui.theme.lightGreen
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 @Composable
 fun Settings(navController: NavController , userUi:String) {
+    val db = Firebase.firestore
+    val auth = Firebase.auth
     var sendNotification by remember {
         mutableStateOf(false)
     }
 
-    Column(
+    var  firstName:String? by remember{
+        mutableStateOf(null)
+    }
+    var lastName:String? by remember {
+        mutableStateOf(null)
+
+    }
+
+    val docRef = db.collection("Users").document(userUi)
+    docRef.get()
+        .addOnSuccessListener { document ->
+            if (document != null) {
+                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+                firstName= document.data?.get("firstName") as String?
+                lastName= document.data?.get("lastName") as String?
+                Log.d("TAG", "No such document")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("TAG", "get failed with ", exception)
+        }
+
+
+
+
+            Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(15.dp),
@@ -53,7 +84,7 @@ fun Settings(navController: NavController , userUi:String) {
                 .clip(shape = RoundedCornerShape(5.dp))
         )
 
-        Text(text = "Name : $userUi", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
+        Text(text = "Name : $firstName  $lastName", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
         Text(text = "Email : ", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = darkGray)
         Spacer(modifier = Modifier.height(15.dp))
         Row(
@@ -88,7 +119,7 @@ fun Settings(navController: NavController , userUi:String) {
             }
 
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -121,6 +152,32 @@ fun Settings(navController: NavController , userUi:String) {
             }
 
         }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(modifier=Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceBetween) {
+
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                       Icon(painter = painterResource(id = R.drawable.exit), contentDescription ="exit icon" , tint=Color.Black )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(text ="Sign Out" , fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = darkGray )
+                    }
+                    IconButton(onClick = {
+                        Firebase.auth.signOut()
+
+                        navController.navigate(route = "SignInScreen") }) {
+
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.arrow),
+                            contentDescription = "Arrow icon",
+                            tint = Color.Black
+                        )
+                    }
+
+
+                }
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
