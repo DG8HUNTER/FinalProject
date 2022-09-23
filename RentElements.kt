@@ -356,7 +356,7 @@ fun RentElements(userUi:String){
 
                         val data = hashMapOf(
                             "id" to userUi,
-                            "categorie" to "Rent" ,
+                            "category" to "Rent" ,
                             "name" to name,
                             "price" to price,
                             "date"  to "$day/$month/$year",
@@ -374,7 +374,7 @@ fun RentElements(userUi:String){
 
 
                         db.collection("expenses")
-                            .whereEqualTo("categorie" ,"Rent")
+                            .whereEqualTo("category" ,"Rent")
                             .whereEqualTo("id" , userUi)
                             .get()
                             .addOnSuccessListener { documents ->

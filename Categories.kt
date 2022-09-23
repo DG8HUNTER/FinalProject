@@ -50,22 +50,22 @@ fun Categories(userUi:String){
             horizontalArrangement = Arrangement.spacedBy(15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            items(items = categories) { Categorie ->
+            items(items = categories) { Category ->
 
 
                 Box(modifier = Modifier
                     .size(95.dp)
                     .graphicsLayer {
                         translationY =
-                            if (clickedBox == Categorie.name) 1f * direction else 0f * direction
+                            if (clickedBox == Category.name) 1f * direction else 0f * direction
                     }
                     .clickable {
-                        clickedBox = Categorie.name
+                        clickedBox = Category.name
                         Log.d("Box", clickedBox)
                     }
                     .clip(shape = RoundedCornerShape(15.dp))
                     .background(
-                        color = Categorie.boxBackgroundColor,
+                        color = Category.boxBackgroundColor,
                         shape = RoundedCornerShape(15.dp)
                     ), contentAlignment = Alignment.Center) {
 
@@ -78,16 +78,16 @@ fun Categories(userUi:String){
                     ) {
 
                         Icon(
-                            painter = painterResource(id = Categorie.icon),
-                            contentDescription = "${Categorie.name} icon",
-                            tint = Categorie.boxContentColor
+                            painter = painterResource(id = Category.icon),
+                            contentDescription = "${Category.name} icon",
+                            tint = Category.boxContentColor
                         )
 
                         Text(
-                            text = Categorie.name,
+                            text = Category.name,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Categorie.boxContentColor
+                            color = Category.boxContentColor
                         )
 
                     }

@@ -357,12 +357,13 @@ fun FoodElements(userUi:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-                    if(name!=null && price!=null && day!=null && month!=null && year!=null){
+                    if(name!=null && price!=null && day!=null && month!=null && year!=null && quantity!=null){
 
                         val data = hashMapOf(
                             "id" to userUi,
-                            "categorie" to "Food" ,
-                            "country" to name,
+                            "category" to "Food" ,
+                            "name" to name,
+                            "quantity" to quantity,
                             "price" to price,
                             "date"  to "$day/$month/$year",
 
@@ -378,7 +379,7 @@ fun FoodElements(userUi:String){
                             }
 
                         db.collection("expenses")
-                            .whereEqualTo("categorie" ,"Food")
+                            .whereEqualTo("category" ,"Food")
                             .whereEqualTo("id" , userUi)
                             .get()
                             .addOnSuccessListener { documents ->

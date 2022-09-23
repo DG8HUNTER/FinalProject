@@ -1,5 +1,4 @@
 package com.example.expensetrackerproject.Categories
-
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -34,12 +33,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
-
 @Composable
 fun TravelElement(userUi:String){
-
     val db = Firebase.firestore
-
     var travelExpenses:MutableList<HashMap<String,Any>> by remember{
         mutableStateOf(
             mutableListOf(
@@ -47,8 +43,6 @@ fun TravelElement(userUi:String){
             )
         )
     }
-
-
     val focusManager = LocalFocusManager.current
     var country :String?by remember{
         mutableStateOf(null)
@@ -64,14 +58,12 @@ fun TravelElement(userUi:String){
     )
     var day:Int? by remember {
         mutableStateOf(null)
-
     }
     var month:Int?by remember{
         mutableStateOf(null)
     }
     var year: Int? by remember {
         mutableStateOf(null)
-
     }
     LazyColumn(modifier= Modifier
         .fillMaxSize()
@@ -85,7 +77,6 @@ fun TravelElement(userUi:String){
                 },
                 label = {
                     Text(text = "Country", fontSize = 18.sp, fontWeight = FontWeight.Medium)
-
                 },
                 placeholder = {
                     Text(
@@ -102,9 +93,7 @@ fun TravelElement(userUi:String){
                 trailingIcon = {
                     IconButton(onClick = { country=null }) {
                         Icon(imageVector = Icons.Filled.Clear, contentDescription ="Clear Icon", tint=locationClearIcon.value )
-
                     }
-
                 } ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -125,12 +114,8 @@ fun TravelElement(userUi:String){
                     focusedIndicatorColor = Color.Red,
                     cursorColor = Color.LightGray,
                     focusedLabelColor = Color.Red
-
                 )
-
             )
-
-
         }
         item{
             OutlinedTextField(value =if(price!=null)  price.toString() else "", onValueChange = {
@@ -147,7 +132,6 @@ fun TravelElement(userUi:String){
                 trailingIcon = {
                     IconButton(onClick = { price=null }) {
                         Icon(imageVector = Icons.Filled.Clear, contentDescription ="Clear icon" , tint=priceClearIcon.value )
-
                     }
                 }  ,
                 keyboardOptions = KeyboardOptions(
@@ -187,7 +171,6 @@ fun TravelElement(userUi:String){
                 }  ,
                     placeholder = {
                         Text(text = "DD" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
-
                     } ,
                     modifier = Modifier
                         .width(60.dp)
@@ -215,7 +198,6 @@ fun TravelElement(userUi:String){
                 }  ,
                     placeholder = {
                         Text(text = "MM" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
-
                     } ,
                     modifier = Modifier
                         .width(70.dp)
@@ -236,7 +218,6 @@ fun TravelElement(userUi:String){
                             focusManager.clearFocus()
                         }
                     )
-
                 )
                 TextField(value =if(year!=null)year.toString() else "", onValueChange ={
                     year = if(it.isNotEmpty())it.toInt() else null
@@ -266,22 +247,14 @@ fun TravelElement(userUi:String){
                         }
                     )
                 )
-
                 IconButton(onClick = {day= LocalDate.now().dayOfMonth
                     month= LocalDate.now().monthValue
                     year= LocalDate.now().year
 
                 }) {
                     Icon(painter = painterResource(id = R.drawable.ic_today), contentDescription ="today icon", tint =pink )
-
-
                 }
-
-
-
-
             }
-
         }
         item{
             Spacer(modifier = Modifier.height(20.dp))
@@ -292,7 +265,7 @@ fun TravelElement(userUi:String){
 
                     val data = hashMapOf(
                         "id" to userUi,
-                        "categorie" to "Travel" ,
+                        "category" to "Travel" ,
                         "country" to country,
                         "price" to price,
                         "date"  to "$day/$month/$year",
@@ -308,9 +281,8 @@ fun TravelElement(userUi:String){
                             Log.w("expenses", "Error adding document", e)
                         }
 
-
                             db.collection("expenses")
-                                .whereEqualTo("categorie" ,"Travel")
+                                .whereEqualTo("category" ,"Travel")
                                 .whereEqualTo("id" , userUi)
                                 .get()
                                 .addOnSuccessListener { documents ->
@@ -324,7 +296,6 @@ fun TravelElement(userUi:String){
                                     Log.d("travelExpenses" , travelExpenses.toString())
                                     Log.d("Size" , travelExpenses.size.toString())
                                     if(travelExpenses.size>0){
-
                                         val docRef = db.collection("Users").document(userUi)
                                         docRef.get()
                                             .addOnSuccessListener { document ->
@@ -370,29 +341,18 @@ fun TravelElement(userUi:String){
                                                 .addOnFailureListener { exception ->
                                                     Log.d("TAG", "get failed with ", exception)
                                                 }
-
-
-
                                         }
-
                                     }
-
                                 }
                                 .addOnFailureListener { exception ->
                                     Log.w("user", "Error getting documents: ", exception)
                                 }
-
-
-
-
                         }
                     country=null
                     price=null
                     day=null
                     month=null
                     year=null
-
-
                 } , colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent
                 ) , contentPadding = PaddingValues(), modifier = Modifier.clip(shape = RoundedCornerShape(20.dp)) ) {
@@ -420,20 +380,9 @@ fun TravelElement(userUi:String){
                         .border(width = 2.dp, shape = RoundedCornerShape(20.dp), color = Color.Red)
                         .height(50.dp) , contentAlignment = Alignment.Center){
                         Text(text = "Reset" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.Red )
-
-
                     }
-
-
-
-
                 }
-
             }
         }
-
     }
 }
-
-
-
