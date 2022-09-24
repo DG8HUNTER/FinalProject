@@ -1,4 +1,5 @@
 package com.example.expensetrackerproject.Categories
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -32,7 +33,9 @@ import com.example.expensetrackerproject.ui.theme.pink
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun TravelElement(userUi:String){
     val db = Firebase.firestore
@@ -167,7 +170,9 @@ fun TravelElement(userUi:String){
                 Text(text ="Date" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color= Color.LightGray)
 
                 TextField(value =if(day!=null)day.toString() else "", onValueChange ={
-                    day = if(it.isNotEmpty())it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=2) {
+                        day=it.toInt()
+                    }
                 }  ,
                     placeholder = {
                         Text(text = "DD" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
@@ -194,7 +199,10 @@ fun TravelElement(userUi:String){
                     )
                 )
                 TextField(value =if(month!=null)month.toString() else "", onValueChange ={
-                    month = if(it.isNotEmpty())it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=2) {
+                        month=it.toInt()
+                    }
+
                 }  ,
                     placeholder = {
                         Text(text = "MM" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
@@ -220,7 +228,9 @@ fun TravelElement(userUi:String){
                     )
                 )
                 TextField(value =if(year!=null)year.toString() else "", onValueChange ={
-                    year = if(it.isNotEmpty())it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=4) {
+                        year=it.toInt()
+                    }
                 }  ,
                     placeholder = {
                         Text(text = "YYYY" , fontSize = 18.sp , fontWeight = FontWeight.Medium , color = Color.LightGray)
@@ -260,17 +270,14 @@ fun TravelElement(userUi:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-
                if(country!=null && price!=null && day!=null && month!=null && year!=null){
-
                     val data = hashMapOf(
                         "id" to userUi,
                         "category" to "Travel" ,
                         "country" to country,
                         "price" to price,
                         "date"  to "$day/$month/$year",
-
-
+                        "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
                     )
                     db.collection("expenses")
                         .add(data)

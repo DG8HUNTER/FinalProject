@@ -37,6 +37,7 @@ import com.example.expensetrackerproject.ui.theme.yellow
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 
@@ -239,7 +240,9 @@ fun RentElements(userUi:String){
                     )
 
                     TextField(value = if (day != null) day.toString() else "", onValueChange = {
-                        day = if (it.isNotEmpty()) it.toInt() else null
+                        if(it.isNotEmpty()&&it.length<=2) {
+                            day = it.toInt()
+                        }
                     },
                         placeholder = {
                             Text(
@@ -271,7 +274,9 @@ fun RentElements(userUi:String){
                         )
                     )
                     TextField(value = if (month != null) month.toString() else "", onValueChange = {
-                        month = if (it.isNotEmpty()) it.toInt() else null
+                        if(it.isNotEmpty()&&it.length<=2) {
+                            month=it.toInt()
+                        }
                     },
                         placeholder = {
                             Text(
@@ -303,7 +308,9 @@ fun RentElements(userUi:String){
                         )
                     )
                     TextField(value = if (year != null) year.toString() else "", onValueChange = {
-                        year = if (it.isNotEmpty()) it.toInt() else null
+                        if(it.isNotEmpty()&&it.length<=4) {
+                            year=it.toInt()
+                        }
                     },
                         placeholder = {
                             Text(
@@ -360,6 +367,7 @@ fun RentElements(userUi:String){
                             "name" to name,
                             "price" to price,
                             "date"  to "$day/$month/$year",
+                            "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
 
 
                             )

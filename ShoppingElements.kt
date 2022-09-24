@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.lang.reflect.Field
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
@@ -299,7 +301,9 @@ fun ShoppingElements(userUi: String) {
                 )
 
                 TextField(value = if (day != null) day.toString() else "", onValueChange = {
-                    day = if (it.isNotEmpty()) it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=2) {
+                        day = it.toInt()
+                    }
                 },
                     placeholder = {
                         Text(
@@ -332,7 +336,9 @@ fun ShoppingElements(userUi: String) {
                     )
                 )
                 TextField(value = if (month != null) month.toString() else "", onValueChange = {
-                    month = if (it.isNotEmpty()) it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=2) {
+                        month=it.toInt()
+                    }
                 },
                     placeholder = {
                         Text(
@@ -366,7 +372,9 @@ fun ShoppingElements(userUi: String) {
                     )
                 )
                 TextField(value = if (year != null) year.toString() else "", onValueChange = {
-                    year = if (it.isNotEmpty()) it.toInt() else null
+                    if(it.isNotEmpty()&&it.length<=4) {
+                        year=it.toInt()
+                    }
                 },
                     placeholder = {
                         Text(
@@ -437,6 +445,7 @@ fun ShoppingElements(userUi: String) {
                                 "quantity" to quantity,
                                 "price" to price,
                                 "date" to "$day/$month/$year",
+                                "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
 
 
                                 )

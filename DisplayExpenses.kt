@@ -1,5 +1,7 @@
 package com.example.expensetrackerproject.Home
 
+import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.system.Os.remove
 import android.util.Log
 import androidx.compose.foundation.background
@@ -25,11 +27,15 @@ import androidx.navigation.NavController
 import com.example.expensetrackerproject.Categories.Categorie
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.addTo
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import java.util.*
+import kotlin.collections.HashMap
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 
 fun DisplayExpenses(navController: NavController,category:String , userUi:String){
@@ -38,7 +44,7 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
     var expenses:MutableList<HashMap<String,Any>> by remember{
         mutableStateOf(
             mutableListOf(
-                hashMapOf()
+
             )
         )
     }
@@ -50,31 +56,44 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
             Icon(
                 painter = painterResource(id = R.drawable.delete),
                 contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.padding(8.dp)
+                tint = Color.Black,
+                modifier = Modifier.padding(start=15.dp)
             )
 
         },
         background = Color.Red,
-
-
         )
 
-    db.collection("expenses")
-        .whereEqualTo("category", category)
-        .whereEqualTo("id",userUi)
-        .get()
+      db.collection("expenses").orderBy("tempStamp",Query.Direction.DESCENDING).get()
         .addOnSuccessListener { documents ->
             expenses= mutableListOf()
             for (document in documents) {
-                Log.d("TAG", "${document.id} => ${document.data}")
-                expenses= addTo(expenses,document.data as HashMap<String,Any>)
+                if(document["category"]==category && document["id"]==userUi ) {
+                    Log.d("TAG", "${document.id} => ${document.data}")
+                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
+                }
             }
         }
-        .addOnFailureListener { exception ->
-            Log.w("TAG", "Error getting documents: ", exception)
-        }
-    Column(modifier= Modifier
+
+//   db.collection("expenses")
+//         .whereEqualTo("category", category)
+//         .whereEqualTo("id",userUi)
+//         .get()
+//         .addOnSuccessListener { documents ->
+//            expenses= mutableListOf()
+//            for (document in documents) {
+//                Log.d("TAG", "${document.id} => ${document.data}")
+//                expenses= addTo(expenses,document.data as HashMap<String,Any>)
+//            }
+//        }
+//        .addOnFailureListener { exception ->
+//            Log.w("TAG", "Error getting documents: ", exception)
+//        }
+
+
+
+
+    Column(modifier= Modifier.background(color=Color.White)
         .fillMaxSize()
         .padding(20.dp) , horizontalAlignment = Alignment.CenterHorizontally , verticalArrangement = Arrangement.spacedBy(20.dp)){
         Row(modifier=Modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.Start){
@@ -106,71 +125,84 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
     }
 }
 
+
+
 @Composable
 fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:SwipeAction) {
 
     SwipeableActionsBox(
         modifier = Modifier.fillMaxWidth(),
         swipeThreshold = 100.dp,
-        endActions = listOf(delete),
-        backgroundUntilSwipeThreshold = Color.Transparent
+        endActions = listOf(delete)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.Start
-        ) {
+        Column(modifier=Modifier.fillMaxWidth().background(color=Color.White) , verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                modifier = Modifier.fillMaxWidth(9f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (category == "Travel") {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        if (category == "Travel") {
+                            Text(
+                                text = expense["country"].toString().capitalize(Locale.ROOT),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black
+                            )
+                        } else {
+                            Text(
+                                text = expense["name"].toString().capitalize(Locale.ROOT),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black
+                            )
+                        }
+                        Text(
+                            text = expense["date"].toString(),
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Gray
+                        )
+                    }
+                    if (category != "Travel" && category != "Rent") {
+                        Text(
+                            text = "Quantity: ${expense["quantity"].toString()}",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Gray
+                        )
+                    }
                     Text(
-                        text = expense["country"].toString(),
+                        text = "Price: ${expense["price"].toString()}",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black
+                        color = Color.Gray
                     )
-                } else {
-                    Text(
-                        text = expense["name"].toString(),
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
+
                 }
-                Text(
-                    text = expense["date"].toString(),
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
+
+                Icon(
+                    painter = painterResource(id = R.drawable.swipeabledelete),
+                    contentDescription = " swipe delete icon",
+                    tint = Color.Black
                 )
             }
-            if (category != "Travel" && category != "Rent") {
-                Text(
-                    text = "Quantity: ${expense["quantity"].toString()}",
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
-            }
-            Text(
-                text = "Price: ${expense["price"].toString()}",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Gray
-            )
-
-
             Spacer(
                 modifier = Modifier
-                    .fillMaxWidth(0.95f)
+                    .fillMaxWidth()
                     .height(1.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
                     .clip(shape = RoundedCornerShape(5.dp))
             )
-        }
 
+        }
     }
 }
-
 
