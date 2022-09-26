@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -43,12 +44,9 @@ import com.example.expensetrackerproject.ui.theme.blueLink
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
-
 @Composable
 fun SignUp(navController: NavController) {
     lateinit var auth: FirebaseAuth
-
     auth = Firebase.auth
     var email: String? by remember {
         mutableStateOf(null)
@@ -85,23 +83,26 @@ fun SignUp(navController: NavController) {
     var passwordVRequirementError: Boolean by remember {
         mutableStateOf(false)
     }
-    var createAccount by remember{
+    var createAccount by remember {
         mutableStateOf(false)
     }
     var createButtonClicked by remember {
         mutableStateOf(false)
     }
 
-    var passwordLengthError by remember{
-        mutableStateOf(false)
-    }
+
     var compatibility by remember {
         mutableStateOf(false)
     }
-    var emailErrorMessage:String? by remember {
+    var emailErrorMessage: String? by remember {
         mutableStateOf("Required Field")
     }
-
+    var passwordErrorMessage :String ? by remember {
+        mutableStateOf("Required Field")
+    }
+    var passwordVErrorMessage :String ? by remember {
+        mutableStateOf("Required Field")
+    }
 
 
 
@@ -110,8 +111,6 @@ fun SignUp(navController: NavController) {
 //    }
 
     val focusManager = LocalFocusManager.current
-
-
     val clearIconColor = animateColorAsState(
         targetValue = if (!isEmailEmpty) Color.LightGray else Color.Transparent,
         animationSpec = tween(1000, easing = FastOutSlowInEasing)
@@ -144,8 +143,6 @@ fun SignUp(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start
         )
-
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,15 +159,14 @@ fun SignUp(navController: NavController) {
                             if (it.isNotEmpty()) {
                                 email = it
                                 isEmailEmpty = false
-                                emailRequirementError=false
-
+                                emailRequirementError = false
 
                             } else {
                                 email = null
                                 isEmailEmpty = true
-                                if(createButtonClicked){
-                                    emailRequirementError=true
-                                    emailErrorMessage="Required Email"
+                                if (createButtonClicked) {
+                                    emailRequirementError = true
+                                    emailErrorMessage = "Required Field"
                                 }
                             }
                         },
@@ -193,11 +189,13 @@ fun SignUp(navController: NavController) {
                             )
                         },
                         trailingIcon = {
-                            IconButton(onClick = { email = null
-                                isEmailEmpty=true
-                            if(createButtonClicked){
-                                emailRequirementError=true
-                            }}) {
+                            IconButton(onClick = {
+                                email = null
+                                isEmailEmpty = true
+                                if (createButtonClicked) {
+                                    emailRequirementError = true
+                                }
+                            }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
                                     contentDescription = "Clear Icon",
@@ -206,18 +204,20 @@ fun SignUp(navController: NavController) {
 
                             }
                         },
-                        modifier = Modifier.onFocusChanged {
-                            focusState ->
-                               if(!focusState.isFocused){
-                                   if(email!=null && !isValidEmail(email)){
-                                       emailRequirementError=true
-                                       emailErrorMessage="Invalid Email"
-                                   }
-                               }else{
-                                   emailRequirementError=false
-                               }
+                        modifier = Modifier
+                            .onFocusEvent { focusState ->
+                                if (!focusState.isFocused) {
+                                    if (email != null && !isValidEmail(email)) {
+                                        emailRequirementError = true
+                                        emailErrorMessage = "Invalid Email"
+                                    }
+                                } else {
+                                    if(email==null){
+                                        emailRequirementError=false
+                                    }
+                                }
+                            }
 
-                        }
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -241,9 +241,9 @@ fun SignUp(navController: NavController) {
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 focusManager.clearFocus()
-                                if(!isValidEmail(email)){
-                                    emailRequirementError=true
-                                    emailErrorMessage="Invalid Email"
+                                if (!isValidEmail(email)) {
+                                    emailRequirementError = true
+                                    emailErrorMessage = "Invalid Email"
                                 }
                             }
                         ),
@@ -270,13 +270,11 @@ fun SignUp(navController: NavController) {
                             if (it.isNotEmpty()) {
                                 password = it
                                 isPasswordEmpty = false
-                                passwordRequirementError=false
+
                             } else {
                                 password = null
                                 isPasswordEmpty = true
-                                if(createButtonClicked){
-                                    passwordRequirementError=true
-                                }
+
                             }
                         },
                         label = {
@@ -305,7 +303,6 @@ fun SignUp(navController: NavController) {
                         },
                         trailingIcon = {
                             IconButton(onClick = {
-
                                 passVisibility = !passVisibility
                             }) {
                                 Icon(
@@ -313,12 +310,25 @@ fun SignUp(navController: NavController) {
                                     contentDescription = if (passVisibility) "ic_visibility" else "ic_visibility_off",
                                     tint = passTrailingIconColor.value
                                 )
-
-
                             }
                         },
                         visualTransformation = if (!passVisibility) PasswordVisualTransformation() else VisualTransformation.None,
                         modifier = Modifier
+                            .onFocusEvent { focusState ->
+                                if (focusState.isFocused) {
+                                    if (email == null) {
+                                        emailRequirementError = true
+                                        emailErrorMessage = "Required Field"
+                                    }
+
+                                    if (password != null && password!!.length >= 6) {
+                                        passwordRequirementError = false
+                                    }
+
+                                }
+
+                            }
+
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -332,7 +342,6 @@ fun SignUp(navController: NavController) {
                             cursorColor = Color.LightGray,
                             focusedLabelColor = Color.Gray,
                             unfocusedLabelColor = Color.LightGray
-
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -344,36 +353,40 @@ fun SignUp(navController: NavController) {
                             }
                         ),
                         isError = passwordRequirementError
-
                     )
-                        if(createButtonClicked && password!=null){
-                            if(password!!.length<6){
-                                passwordRequirementError=true
-                                passwordLengthError=true
-                                Text(text = " Password should be at least 6 characters",
-                                    color = MaterialTheme.colors.error,
-                                    style = MaterialTheme.typography.caption,
-                                    modifier = Modifier.padding(start = 16.dp, top = 0.dp))
-                            }
-                            else{
-                                passwordRequirementError=false
-                                passwordLengthError=false
-                            }
-
-                        }
-                    if(createButtonClicked && password==null){
+                    if(passwordRequirementError){
                         Text(
-                            text = "Required Field",
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-                        )
-
-
+                                text =" $passwordErrorMessage",
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                            )
                     }
-                    }
-
-
+//                    if (createButtonClicked && password != null) {
+//                        if (password!!.length < 6) {
+//                            passwordRequirementError = true
+//                            passwordLengthError = true
+//                            Text(
+//                                text = " Password should be at least 6 characters",
+//                                color = MaterialTheme.colors.error,
+//                                style = MaterialTheme.typography.caption,
+//                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+//                            )
+//                        } else {
+//                            passwordRequirementError = false
+//                            passwordLengthError = false
+//                        }
+//
+//                    }
+//                    if (createButtonClicked && password == null) {
+//                        Text(
+//                            text = "Required Field",
+//                            color = MaterialTheme.colors.error,
+//                            style = MaterialTheme.typography.caption,
+//                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+//                        )
+//                    }
+            }
             }
             item {
                 Column(
@@ -387,13 +400,11 @@ fun SignUp(navController: NavController) {
                             if (it.isNotEmpty()) {
                                 passwordVerification = it
                                 isPasswordVerificationEmpty = false
-                                passwordVRequirementError = false
+
                             } else {
                                 passwordVerification = null
                                 isPasswordVerificationEmpty = true
-                                if (createButtonClicked) {
-                                    passwordVRequirementError = true
-                                }
+
                             }
                         },
                         label = {
@@ -429,12 +440,38 @@ fun SignUp(navController: NavController) {
                                     contentDescription = if (passwordVerificationVisibility) "ic_visibility" else "ic_visibility_off",
                                     tint = passwordVerificationIconColor.value
                                 )
-
-
                             }
                         },
                         visualTransformation = if (passwordVerificationVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                         modifier = Modifier
+                            .onFocusEvent { focusState ->
+                                if (focusState.isFocused) {
+                                    if (passwordVerification != null && password != passwordVerification) {
+                                        passwordVRequirementError = true
+                                        passwordVErrorMessage = "Passwords do not match"
+                                    } else if (passwordVerification != null && password == passwordVerification) {
+                                        passwordVRequirementError = false
+                                    } else{
+                                        passwordVRequirementError = false
+                                    }
+                                    if (password == null) {
+                                        passwordRequirementError = true
+                                        passwordErrorMessage = "Required Field"
+                                    } else if ( password!=null && password!!.length < 6) {
+                                        passwordRequirementError=true
+                                        passwordErrorMessage="Password should be at least 6 characters"
+
+                                    }
+                                    else{
+                                        passwordRequirementError=false
+                                    }
+
+                                    if (email == null) {
+                                        emailRequirementError = true
+                                        emailErrorMessage = "Required Field"
+                                    }
+                                }
+                            }
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -460,81 +497,81 @@ fun SignUp(navController: NavController) {
                             }
                         ),
                         isError = passwordVRequirementError
-
                     )
-//
-                    if (createButtonClicked) {
-                        if (passwordVerification == null) {
-                            passwordVRequirementError = true
-
-                        Text(
-                            text = "Required Field",
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-                        )}
-                        else{
-                            if (password == passwordVerification) {
-                                passwordVRequirementError = false
-                                compatibility = true
-
-                            } else {
-                                passwordVRequirementError = true
-                                compatibility = false
-                                Text(
-                                    text = "Passwords do not match",
-                                    color = MaterialTheme.colors.error,
-                                    style = MaterialTheme.typography.caption,
-                                    modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-                                )
-                            }
-                        }
+                    if(passwordVRequirementError){
+                               Text( text = "$passwordVErrorMessage",
+                                color = MaterialTheme.colors.error,
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                            )
                     }
+
+//                    if (createButtonClicked) {
+//                        if (passwordVerification == null) {
+//                            passwordVRequirementError = true
+//
+//                            Text(
+//                                text = "Required Field",
+//                                color = MaterialTheme.colors.error,
+//                                style = MaterialTheme.typography.caption,
+//                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+//                            )
+//                        } else {
+//                            if (password == passwordVerification) {
+//                                passwordVRequirementError = false
+//                                compatibility = true
+//
+//                            } else {
+//                                passwordVRequirementError = true
+//                                compatibility = false
+//                                Text(
+//                                    text = "Passwords do not match",
+//                                    color = MaterialTheme.colors.error,
+//                                    style = MaterialTheme.typography.caption,
+//                                    modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
                 }
-
-Log.d("email",email.toString())
-
             }
             item {
+                Log.d("email", email.toString())
                 Spacer(modifier = Modifier.size(10.dp))
             }
             item {
-
                 Button(
                     onClick = {
-                        createButtonClicked=true
-                         focusManager.clearFocus()
+                        createButtonClicked = true
+                        focusManager.clearFocus()
                         if (email != null && password != null && passwordVerification != null) {
+                            if (!emailRequirementError && !passwordRequirementError && !passwordVRequirementError) {
                                 createAccount=true
-                            if (password==passwordVerification) {
-                                auth.createUserWithEmailAndPassword(email!!, password!!)
-                                    .addOnCompleteListener {
-                                        if (it.isSuccessful) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            Log.d("TAG", "createUserWithEmail:success")
-                                            val userUi = auth.currentUser?.uid.toString()
-                                            Log.d("User", userUi.toString())
-                                            navController.navigate(route = "PersonalInfo/$userUi") {
-                                                popUpTo("SignUpScreen")
+                                    auth.createUserWithEmailAndPassword(email!!, password!!)
+                                        .addOnCompleteListener {
+                                            if (it.isSuccessful) {
+                                                // Sign in success, update UI with the signed-in user's information
+                                                Log.d("TAG", "createUserWithEmail:success")
+                                                val userUi = auth.currentUser?.uid.toString()
+                                                Log.d("User", userUi.toString())
+                                                navController.navigate(route = "PersonalInfo/$userUi") {
+                                                    popUpTo("SignUpScreen")
+                                                }
+                                            } else {
+                                                emailRequirementError = true
+                                                emailErrorMessage = it.exception?.message.toString()
+                                                createAccount = false
                                             }
-
-                                        } else {
-                                            emailRequirementError=true
-                                          emailErrorMessage=it.exception?.message.toString()
-                                            createAccount=false
-
                                         }
-                                    }
+
                             }
-
-
-                        } else {
+                        }
+                        else {
                             emailRequirementError = email == null
                             passwordRequirementError = password == null
                             passwordVRequirementError = passwordVerification == null
                         }
-
-
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent
@@ -545,7 +582,6 @@ Log.d("email",email.toString())
                     contentPadding = PaddingValues()
                 ) {
                     if (createAccount) {
-
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -576,8 +612,6 @@ Log.d("email",email.toString())
                             }
                         }
                     } else {
-
-
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -593,14 +627,9 @@ Log.d("email",email.toString())
                                 fontWeight = FontWeight.Medium,
                                 color = Color.White
                             )
-
                         }
-
                     }
-
                 }
-
-
             }
             item {
                 Row(
@@ -625,7 +654,6 @@ Log.d("email",email.toString())
                             navController.navigate(route = "SignInScreen") {
                                 popUpTo("SignUpScreen")
                             }
-
                         })
                 }
             }
@@ -635,7 +663,6 @@ Log.d("email",email.toString())
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth(0.47f)
@@ -656,10 +683,7 @@ Log.d("email",email.toString())
                             .background(color = Color.LightGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
-
-
                 }
-
             }
             item {
                 Spacer(modifier = Modifier.size(20.dp))
@@ -715,21 +739,13 @@ Log.d("email",email.toString())
                                     color = Green
                                 )
                             }
-
                         }
-
-
                     }
-
-
                 }
             }
-
-
         }
     }
 }
-
 fun isValidEmail(target: CharSequence?): Boolean {
     return if (TextUtils.isEmpty(target)) {
         false
@@ -737,3 +753,4 @@ fun isValidEmail(target: CharSequence?): Boolean {
         Patterns.EMAIL_ADDRESS.matcher(target).matches()
     }
 }
+
