@@ -6,6 +6,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 @Composable
-fun Home(userUi:String) {
+fun Home(navController: NavController , userUi:String) {
     var user: MutableMap<String, Any> by remember {
         mutableStateOf(
             hashMapOf(
@@ -148,13 +150,13 @@ fun Home(userUi:String) {
 
 
 
-    CreateHome(firstName = firstName, lastName =lastName , budget =budget  , expenses =expenses , travel =travel , food=food , shopping=shopping , rent = rent)
+    CreateHome(navController=navController, userUi = userUi ,firstName = firstName, lastName =lastName , budget =budget  , expenses =expenses , travel =travel , food=food , shopping=shopping , rent = rent)
 }
 
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float , travel:Float , food:Float  ,shopping:Float , rent:Float ) {
+fun CreateHome(navController: NavController,userUi:String,firstName:String, lastName:String ,budget:Float , expenses:Float , travel:Float , food:Float  ,shopping:Float , rent:Float ) {
  val travelPercentage = animateFloatAsState(targetValue =if(travel==0f) 0f else (travel.toFloat()/expenses.toFloat()) ,
  animationSpec = tween(durationMillis = 300 , easing = FastOutSlowInEasing)
  )
@@ -225,10 +227,11 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
             }
             item {
                 Surface(
-                    modifier = Modifier
+                    modifier = Modifier.clickable(enabled = true , onClick = {navController.navigate(route="DisplayExpenses/travel/$userUi")})
                         .fillMaxWidth()
                         .height(45.dp)
                         .clip(shape = RoundedCornerShape(25.dp)), color = pink
+
                 ) {
                     Row(
                         modifier = Modifier
@@ -260,7 +263,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
             }
             item {
                 Surface(
-                    modifier = Modifier
+                    modifier = Modifier.clickable(enabled = true , onClick = {navController.navigate(route="DisplayExpenses/food/$userUi")})
                         .fillMaxWidth()
                         .height(45.dp)
                         .clip(shape = RoundedCornerShape(25.dp)), color = lightBlue
@@ -300,7 +303,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
                         .clip(shape = RoundedCornerShape(25.dp)), color = lightOrange
                 ) {
                     Row(
-                        modifier = Modifier
+                        modifier = Modifier.clickable(enabled = true , onClick = {navController.navigate(route="DisplayExpenses/shopping/$userUi")})
                             .fillMaxWidth()
                             .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -328,7 +331,7 @@ fun CreateHome(firstName:String, lastName:String ,budget:Float , expenses:Float 
 
             item {
                 Surface(
-                    modifier = Modifier
+                    modifier = Modifier.clickable(enabled = true , onClick = {navController.navigate(route="DisplayExpenses/rent/$userUi")})
                         .fillMaxWidth()
                         .height(45.dp)
                         .clip(shape = RoundedCornerShape(25.dp)), color = lightViolet
