@@ -127,7 +127,7 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
                     text = "No $category expenses yet.",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold, color = Color.Black,
-                   
+
                 )
             }
         } else {
@@ -140,8 +140,7 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
                 items(items = expenses) { expense ->
                     val delete = SwipeAction(
                         onSwipe = {
-                            expenses = remove(expenses, expense)
-                            Log.d("ex", expense.toString())
+
                             if (category.capitalize(Locale.ROOT) == "Travel") {
                                 Log.d("ex", expense.toString())
                                 db.collection("expenses")
@@ -320,17 +319,6 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
 
         }
     }
-}
-fun remove(expenses:MutableList<HashMap<String,Any>> ,expense:HashMap<String,Any>):MutableList<HashMap<String,Any>>{
-    val newArray:MutableList<HashMap<String,Any>> = mutableListOf()
-    expenses.forEach {
-        exp ->
-          if(exp!= expense){
-              newArray.add( index=newArray.size , element = exp)
-          }
-    }
-    Log.d("newArray" , newArray.toString())
-    return newArray
 }
 
 
