@@ -28,7 +28,7 @@ import com.example.expensetrackerproject.ui.theme.Green
 
 @Composable
 fun FirstScreen(navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp)) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
                 modifier = Modifier.fillMaxHeight(),
