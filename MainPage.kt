@@ -1,6 +1,7 @@
 package com.example.expensetrackerproject
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,9 +33,10 @@ fun MainPage(navController:NavController , userUi:String) {
 
         Scaffold(bottomBar = {
             BottomNavigation(
-                backgroundColor = lightGreen,
+                backgroundColor = Color.White,
+
                 contentColor = Color.Black,
-                elevation = 30.dp,
+               
                 modifier = Modifier.height(60.dp)
             ) {
 
@@ -62,11 +64,11 @@ fun MainPage(navController:NavController , userUi:String) {
 
         })
         {
-            Column(modifier=Modifier.fillMaxSize()) {
+            Column(modifier=Modifier.fillMaxSize().background(color=Color.White)) {
                 when (selectedButton) {
-                    "Home" ->{ Home(userUi = userUi)
+                    "Home" ->{ Home(userUi = userUi, navController = navController)
                     }
-                    "Categorie" -> Categories(userUi=userUi)
+                    "Category" -> Categories(userUi=userUi)
                     "Settings" -> Settings(navController =navController , userUi=userUi)
                 }
 
