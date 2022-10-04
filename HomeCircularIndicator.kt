@@ -41,7 +41,7 @@ fun HomeCircularIndicator(budget:Float , expenses:Float) {
             targetValue = if (budget == 0f && expenses == 0f) 0f else if (budget>=expenses)(expenses / budget) else 1f,
             animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
         )
-        val indicatorBackgroundColor: Color = Color.LightGray
+        val indicatorBackgroundColor: Color = Color.LightGray.copy(alpha=0.3f)
         val indicatorForegroundColor = animateColorAsState(targetValue =if(expenses>budget)Color.Red else Green ,
             animationSpec = tween(durationMillis = 200 , easing = FastOutSlowInEasing)
         )
@@ -112,49 +112,52 @@ fun HomeCircularIndicator(budget:Float , expenses:Float) {
 
 
 
-    fun DrawScope.drawBackgroundCircularIndicator(
-        componentSize: Size,
-        indicatorBackgroundColor: Color,
-        indicatorBackgroundStrokeWidth: Float
-    ) {
-        drawArc(
-            color = indicatorBackgroundColor,
-            size = componentSize,
-            startAngle = 150f,
-            sweepAngle = 240f,
-            useCenter = false,
-            style = Stroke(
-                width = indicatorBackgroundStrokeWidth,
-                cap = StrokeCap.Round
-            ),
-            topLeft = Offset(
-                x = (size.width - componentSize.width) / 2f,
-                y = (size.height - componentSize.height) / 2f
-            )
-        )
 
-    }
 
-    fun DrawScope.drawForegroundCircularIndicator(
-        componentSize: Size,
-        indicatorForegroundColor:Color,
-        indicatorForegroundStrokeWidth: Float,
-        sweepAngle: Float
-    ) {
-        drawArc(
-            color = indicatorForegroundColor,
-            size = componentSize,
-            style = Stroke(
-                width = indicatorForegroundStrokeWidth,
-                cap = StrokeCap.Round
-            ),
-            useCenter = false,
-            startAngle = 150f,
-            sweepAngle = sweepAngle,
-            topLeft = Offset(
-                x = (size.width - componentSize.width) / 2f,
-                y = (size.height - componentSize.height) / 2f
-            )
+fun DrawScope.drawBackgroundCircularIndicator(
+    componentSize: Size,
+    indicatorBackgroundColor: Color,
+    indicatorBackgroundStrokeWidth: Float
+) {
+    drawArc(
+        color = indicatorBackgroundColor,
+        size = componentSize,
+        startAngle = 150f,
+        sweepAngle = 240f,
+        useCenter = false,
+        style = Stroke(
+            width = indicatorBackgroundStrokeWidth,
+            cap = StrokeCap.Round
+        ),
+        topLeft = Offset(
+            x = (size.width - componentSize.width) / 2f,
+            y = (size.height - componentSize.height) / 2f
         )
-    }
+    )
+
+}
+
+fun DrawScope.drawForegroundCircularIndicator(
+    componentSize: Size,
+    indicatorForegroundColor:Color,
+    indicatorForegroundStrokeWidth: Float,
+    sweepAngle: Float
+) {
+    drawArc(
+        color = indicatorForegroundColor,
+        size = componentSize,
+        style = Stroke(
+            width = indicatorForegroundStrokeWidth,
+            cap = StrokeCap.Round
+        ),
+        useCenter = false,
+        startAngle = 150f,
+        sweepAngle = sweepAngle,
+        topLeft = Offset(
+            x = (size.width - componentSize.width) / 2f,
+            y = (size.height - componentSize.height) / 2f
+        )
+    )
+}
+
 

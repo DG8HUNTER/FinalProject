@@ -44,8 +44,16 @@ fun Navigation(navController: NavController) {
         ) { backStackEntry ->
             Home(navController=navController,userUi = backStackEntry.arguments?.get("userUi").toString())
         }
-        composable(route = "ResetPassword") {
-            PasswordReset(navController = navController)
+        composable(route = "ResetPassword?userUi={userUi}/{page}", arguments = listOf(
+            navArgument(name="page"){
+                type= NavType.StringType
+                nullable=false
+            }, navArgument(name="userUi"){
+                type= NavType.StringType
+            }
+        )) {
+            backStackEntry->
+            PasswordReset(navController = navController, page=backStackEntry.arguments?.get("page").toString(), userUi = backStackEntry.arguments?.get("userUi").toString())
         }
         composable(route = "Categories") {
 

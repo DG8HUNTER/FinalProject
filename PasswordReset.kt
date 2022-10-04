@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -16,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.onFocusEvent
@@ -38,7 +40,7 @@ import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 
 @Composable
-fun PasswordReset(navController: NavController) {
+fun PasswordReset(navController: NavController, page:String,userUi:String?) {
     val focusManager = LocalFocusManager.current
     var newPassword: String? by remember {
         mutableStateOf(null)
@@ -90,7 +92,11 @@ fun PasswordReset(navController: NavController) {
         Row(verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(1.dp)) {
 
 IconButton(onClick = {
-    navController.navigate(route="SignInScreen")
+    if(page=="MainPage"){
+    navController.navigate(route="$page/$userUi")}
+    else{
+        navController.navigate(route=page)
+    }
 }) {
     Icon(painter = painterResource(id =R.drawable.arrow_left), contentDescription ="arrow left icon", tint =Color.Black, modifier=Modifier.size(25.dp))
 
@@ -243,12 +249,12 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
 
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 visualTransformation = if (passwordVerificationVisibility) VisualTransformation.None else PasswordVisualTransformation(),
@@ -281,7 +287,10 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
         }
         Spacer(modifier = Modifier.height(15.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+
+
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             ),
@@ -315,14 +324,8 @@ Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start ,
         }
 
     }
-    }
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewResetPassword(){
-    PasswordReset(navController = rememberNavController( ))
 }
+
+
 
 

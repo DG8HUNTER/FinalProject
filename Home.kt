@@ -289,7 +289,6 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
 
             }
 
-
 //            item {
 //                Surface(
 //                    modifier = Modifier
@@ -459,8 +458,6 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
 //                    }
 //                }
 //                Spacer(modifier = Modifier.height(50.dp))
-
-
             items(items = expenseInfo) { expense ->
                 Row(
                     modifier = Modifier.fillMaxWidth(9f).height(50.dp).drawBehind {
