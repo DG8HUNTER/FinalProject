@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +43,7 @@ import com.google.firebase.ktx.Firebase
 import java.util.*
 
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun Home(navController: NavController , userUi:String) {
     var user: MutableMap<String, Any> by remember {
@@ -87,12 +89,13 @@ fun Home(navController: NavController , userUi:String) {
 
     val db = Firebase.firestore
 
+    Log.d("userUIMain", userUi.toString())
     val docRef = db.collection("Users").document(userUi)
     docRef.get()
         .addOnSuccessListener { document ->
             if (document != null) {
              user = document.data as MutableMap<String, Any>
-          Log.d("user" , user.toString())
+          Log.d("userdoc" , user.toString())
 
             } else {
                 Log.d("User", "No such document")
@@ -116,32 +119,6 @@ fun Home(navController: NavController , userUi:String) {
         }
     }
 
-
-//    val u = hashMapOf(
-//        "first" to "Ada",
-//        "last" to "Lovelace",
-//        "born" to 1815
-//    )
-//
-//// Add a new document with a generated ID
-//    db.collection("User")
-//        .add(u)
-//        .addOnSuccessListener { documentReference ->
-//            Log.d("u", "DocumentSnapshot added with ID: ${documentReference.id}")
-//        }
-//        .addOnFailureListener { e ->
-//            Log.w("u", "Error adding document", e)
-//        }
-//    db.collection("User")
-//        .get()
-//        .addOnSuccessListener { result ->
-//            for (document in result) {
-//                Log.d("u", "${document.id} => ${document.data}")
-//            }
-//        }
-//        .addOnFailureListener { exception ->
-//            Log.w("u", "Error getting documents.", exception)
-//        }
 
     Log.d("user" ,user.toString() )
     firstName=user["firstName"].toString()
@@ -209,6 +186,7 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
         animateColorAsState(targetValue = if (rentPercentage.value == 0f) Color.Transparent else violet)
 
     val rentIndicatorWidth = if (expenses != 0f) ((rent * 290) / expenses).dp else 0.dp
+    val interactionSource = remember { MutableInteractionSource() }
 
     val expenseInfo: List<ExpenseInfo> = listOf(
         ExpenseInfo(
@@ -289,175 +267,6 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
 
             }
 
-//            item {
-//                Surface(
-//                    modifier = Modifier
-//                        .clickable(
-//                            enabled = true,
-//                            onClick = { navController.navigate(route = "DisplayExpenses/travel/$userUi") })
-//                        .fillMaxWidth()
-//                        .height(45.dp)
-//                        .clip(shape = RoundedCornerShape(25.dp)), color = pink
-//
-//                ) {
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(10.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Row(Modifier.weight(9f) , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(10.dp)){
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.travel),
-//                                contentDescription = "travel icon",
-//                                tint = Color.Red
-//                            )
-//                            Spacer(modifier = Modifier
-//                                .width(travelIndicatorWidth)
-//                                .height(15.dp)
-//                                .background(
-//                                    color = travelIndicatorColor.value,
-//                                    shape = RoundedCornerShape(5.dp)
-//                                )
-//                                .clip(shape = RoundedCornerShape(5.dp)))
-//                        }
-//                        Spacer(modifier=Modifier.width(2.dp))
-//                        Text(
-//                            text = "${String.format("%.1f",(travelPercentage.value * 100))} %",
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Medium,
-//                            color = Red,
-//
-//                        )
-//                    }
-//                }
-//            }
-//            item {
-//                Surface(
-//                    modifier = Modifier
-//                        .clickable(
-//                            enabled = true,
-//                            onClick = { navController.navigate(route = "DisplayExpenses/food/$userUi") })
-//                        .fillMaxWidth()
-//                        .height(45.dp)
-//                        .clip(shape = RoundedCornerShape(25.dp)), color = lightBlue
-//                ) {
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(10.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Row(Modifier.weight(9f) , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(10.dp)){
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.restaurant),
-//                                contentDescription = "food icon",
-//                                tint = Darkblue
-//                            )
-//                            Spacer(modifier = Modifier
-//                                .width(foodIndicatorWidth)
-//                                .height(15.dp)
-//                                .background(
-//                                    color = foodIndicatorColor.value,
-//                                    shape = RoundedCornerShape(5.dp)
-//                                )
-//                                .clip(shape = RoundedCornerShape(5.dp)))
-//                        }
-//                        Text(
-//                            text = "${String.format("%.1f",(foodPercentage.value * 100))} %",
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Medium,
-//                            color = Darkblue
-//                        )
-//                    }
-//                }
-//
-//            }
-//            item {
-//                Surface(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(45.dp)
-//                        .clip(shape = RoundedCornerShape(25.dp)), color = lightOrange
-//                ) {
-//                    Row(
-//                        modifier = Modifier
-//                            .clickable(
-//                                enabled = true,
-//                                onClick = { navController.navigate(route = "DisplayExpenses/shopping/$userUi") })
-//                            .fillMaxWidth()
-//                            .padding(10.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Row(Modifier.weight(9f).height(60.dp) , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(10.dp)){
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.shopping),
-//                                contentDescription = "shopping icon",
-//                                tint = orange
-//                            )
-//                            Spacer(modifier = Modifier
-//                                .width(shoppingIndicatorWidth)
-//                                .height(15.dp)
-//                                .background(
-//                                    color = shoppingIndicatorColor.value,
-//                                    shape = RoundedCornerShape(5.dp)
-//                                )
-//                                .clip(shape = RoundedCornerShape(5.dp)))
-//                        }
-//                        Text(
-//                            text = "${String.format("%.1f",(shoppingPercentage.value * 100))} %",
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Medium,
-//                            color = orange
-//                        )
-//                    }
-//                }
-//            }
-//
-//            item {
-//                Surface(
-//                    modifier = Modifier
-//                        .clickable(
-//                            enabled = true,
-//                            onClick = { navController.navigate(route = "DisplayExpenses/rent/$userUi") })
-//                        .fillMaxWidth()
-//                        .height(45.dp)
-//                        .clip(shape = RoundedCornerShape(25.dp)), color = lightViolet
-//                ) {
-//                    Row(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(10.dp),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Row(Modifier.weight(9f) , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.spacedBy(10.dp)){
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.deal),
-//                                contentDescription = "deal icon",
-//                                tint = violet
-//                            )
-//                            Spacer(modifier = Modifier
-//                                .width(rentIndicatorWidth)
-//                                .height(15.dp)
-//                                .background(
-//                                    color = rentIndicatorColor.value,
-//                                    shape = RoundedCornerShape(5.dp)
-//                                )
-//                                .clip(shape = RoundedCornerShape(5.dp)))
-//                        }
-//                        Text(
-//                            text = "${String.format("%.1f",(rentPercentage.value * 100))} %",
-//                            fontSize = 15.sp,
-//                            fontWeight = FontWeight.Medium,
-//                            color = violet
-//                        )
-//                    }
-//                }
-//                Spacer(modifier = Modifier.height(50.dp))
             items(items = expenseInfo) { expense ->
                 Row(
                     modifier = Modifier.fillMaxWidth(9f).height(50.dp).drawBehind {
@@ -473,7 +282,7 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
                             percentage = expense.percentage
                         )
 
-                    }.clickable {
+                    }.clickable(interactionSource=interactionSource, indication = null ) {
                         navController.navigate(route = "DisplayExpenses/${expense.name}/$userUi")
                     },
                     horizontalArrangement = Arrangement.spacedBy(30.dp),
