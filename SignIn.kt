@@ -1,4 +1,6 @@
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -6,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -37,14 +43,15 @@ import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.blueLink
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun SignIn(navController: NavController) {
     val auth = Firebase.auth
+    val interactionSource = remember { MutableInteractionSource() }
     var email: String? by remember {
         mutableStateOf(null)
     }
@@ -82,7 +89,12 @@ fun SignIn(navController: NavController) {
     var errorMessage: String? by remember {
         mutableStateOf(null)
     }
-
+    var emailErrorMessage: String? by remember {
+        mutableStateOf(null)
+    }
+    var passwordErrorMessage: String? by remember {
+        mutableStateOf(null)
+    }
     val passTrailingIconColor = animateColorAsState(
         targetValue = if (isPasswordEmpty) Color.Transparent else Color.LightGray,
         animationSpec = tween(
@@ -108,13 +120,10 @@ fun SignIn(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start
         )
-
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-
-
             item {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -151,17 +160,24 @@ fun SignIn(navController: NavController) {
                             )
                         },
                         trailingIcon = {
-                            IconButton(onClick = { email = null
-                            isEmailEmpty=true}) {
+                            IconButton(onClick = {
+                                email = null
+                                isEmailEmpty = true
+                            }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
                                     contentDescription = "Clear Icon",
                                     tint = clearIconColor.value
                                 )
-
                             }
                         },
                         modifier = Modifier
+                            .onFocusEvent { focusState ->
+                                if (focusState.isFocused) {
+                                    emailRequirementError = false
+                                    errorMessage = null
+                                }
+                            }
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -175,49 +191,33 @@ fun SignIn(navController: NavController) {
                             cursorColor = Color.LightGray,
                             focusedLabelColor = Color.Gray,
                             unfocusedLabelColor = Color.LightGray,
-
-
-                            ),
+                        ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                focusManager.clearFocus()
+                                focusManager.moveFocus(FocusDirection.Next)
                             }
                         ),
                         isError = emailRequirementError
                     )
 
-                    if (signInButtonClicked && email == null) {
-                        emailRequirementError = true
+                    if (emailRequirementError) {
                         Text(
-                            text = "Required Field",
+                            text = "$emailErrorMessage",
                             color = MaterialTheme.colors.error,
                             style = MaterialTheme.typography.caption,
                             modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+
                         )
                     }
-                    if (signInButtonClicked && email != null) {
-                        emailRequirementError = false
+
+                    if (errorMessage == "The email address is badly formatted." || errorMessage == "There is no user record corresponding to this identifier. The user may have been deleted.") {
+                        emailRequirementError = true
+                        emailErrorMessage = "Email does not exist."
                     }
-                    if (signInError && email!=null) {
-                        if (errorMessage == "The email address is badly formatted." || errorMessage=="There is no user record corresponding to this identifier. The user may have been deleted.") {
-                            emailRequirementError = true
-                            Text(
-                                text = "Email does not exist",
-                                color = MaterialTheme.colors.error,
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-
-                            )
-                        } else {
-                            emailRequirementError = false
-                        }
-                    }
-
-
                 }
             }
             item {
@@ -226,8 +226,6 @@ fun SignIn(navController: NavController) {
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-
-
                     OutlinedTextField(value = if (password != null) password.toString() else "",
                         onValueChange = {
                             if (it.isNotEmpty()) {
@@ -243,8 +241,7 @@ fun SignIn(navController: NavController) {
                                 text = "Password",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
-
-                                )
+                            )
                         },
                         placeholder = {
                             Text(
@@ -252,7 +249,6 @@ fun SignIn(navController: NavController) {
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.LightGray
-
                             )
                         },
                         leadingIcon = {
@@ -264,7 +260,6 @@ fun SignIn(navController: NavController) {
                         },
                         trailingIcon = {
                             IconButton(onClick = {
-
                                 passVisibility = !passVisibility
                             }) {
                                 Icon(
@@ -272,12 +267,27 @@ fun SignIn(navController: NavController) {
                                     contentDescription = if (passVisibility) "ic_visibility" else "ic_visibility_off",
                                     tint = passTrailingIconColor.value
                                 )
-
-
                             }
                         },
                         visualTransformation = if (!passVisibility) PasswordVisualTransformation() else VisualTransformation.None,
                         modifier = Modifier
+                            .onFocusEvent { focusState ->
+                                if (focusState.isFocused) {
+                                    passwordRequirementError = false
+                                    errorMessage = null
+                                    if (email == null) {
+                                        emailRequirementError = true
+                                        emailErrorMessage = "Required Field"
+                                    } else {
+                                        if (email != null && !isValidEmail(email)) {
+                                            emailRequirementError = true
+                                            emailErrorMessage = "Invalid Email"
+                                        } else {
+                                            emailRequirementError = false
+                                        }
+                                    }
+                                }
+                            }
                             .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(
@@ -291,7 +301,6 @@ fun SignIn(navController: NavController) {
                             cursorColor = Color.LightGray,
                             focusedLabelColor = Color.Gray,
                             unfocusedLabelColor = Color.LightGray
-
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -304,55 +313,66 @@ fun SignIn(navController: NavController) {
                         ), isError = passwordRequirementError
 
                     )
-                    if (signInButtonClicked && password == null) {
-                        passwordRequirementError = true
+                    if (passwordRequirementError) {
                         Text(
-                            text = "Required Field",
+                            text = "$passwordErrorMessage",
                             color = MaterialTheme.colors.error,
                             style = MaterialTheme.typography.caption,
                             modifier = Modifier.padding(start = 16.dp, top = 0.dp)
                         )
                     }
-                    if (signInButtonClicked && password != null) {
-                        passwordRequirementError = false
+                    if (errorMessage == "The password is invalid or the user does not have a password.") {
+//                            //"The password is invalid or the user does not have a password."
+                        passwordRequirementError = true
+                        passwordErrorMessage = "Wrong message !"
                     }
-                    if (signInError) {
-                        if (errorMessage =="The password is invalid or the user does not have a password." ) {//"The password is invalid or the user does not have a password."
-                            passwordRequirementError = true
-                            Text(
-                                text = "$errorMessage",
-                                color = MaterialTheme.colors.error,
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-
-                            )
-                        } else {
-                            passwordRequirementError = false
-                        }
-                    }
-
-
                 }
             }
-
             item {
-                Text(
-                    text = "Forgot Password ?",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = blueLink,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(route = "ResetPassword")
-                        },
-                    textAlign = TextAlign.End
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = "Forgot Password ?",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = blueLink,
+                        modifier = Modifier.clickable {
+                            navController.navigate(route="ResetPassword?userUi=&oldPassword=/SignInScreen")
+                        }
+
+//                            .clickable(interactionSource=interactionSource, indication = null){
+//                                focusManager.clearFocus()
+//                                if (email == null) {
+//                                    emailRequirementError = true
+//                                    emailErrorMessage = "Required Field"
+//                                } else {
+//                                    if (email != null && !isValidEmail(email)) {
+//                                        emailRequirementError = true
+//                                        emailErrorMessage = "Invalid Email"
+//                                    } else {
+//
+//                                    }
+                               // }
+                    //        },
+                        )
+                }
             }
             item {
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(
                     onClick = {
+                        if (email == null) {
+                            emailRequirementError = true
+                            emailErrorMessage = "Required Field"
+                        }
+                        if (password == null) {
+                            passwordRequirementError = true
+                            passwordErrorMessage = "Required Field"
+                        }
+
                         signInButtonClicked = true
                         focusManager.clearFocus()
                         if (email != null && password != null) {
@@ -364,7 +384,6 @@ fun SignIn(navController: NavController) {
                                         Log.d("TAG", "signInWithEmail:success")
                                         val userUi = auth.currentUser?.uid
                                         navController.navigate(route = "MainPage/$userUi")
-
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w("TAG", "signInWithEmail:failure", task.exception)
@@ -372,11 +391,15 @@ fun SignIn(navController: NavController) {
                                         signInButtonClicked = false
                                         signInError = true
                                         errorMessage = task.exception?.message.toString()
-
                                     }
                                 }
+                            Log.d(
+                                "currentuser", EmailAuthProvider.getCredential(
+                                    email!!,
+                                    password!!
+                                ).toString()
+                            )
                         }
-
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent
@@ -386,7 +409,6 @@ fun SignIn(navController: NavController) {
                         .clip(shape = RoundedCornerShape(10.dp)),
                     contentPadding = PaddingValues()
                 ) {
-
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -415,20 +437,15 @@ fun SignIn(navController: NavController) {
                                 )
                             }
                         } else {
-
                             Text(
                                 text = "Sign In",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.White
                             )
-
                         }
                     }
-
-
                 }
-
             }
             item {
                 Spacer(modifier = Modifier.size(10.dp))
@@ -452,10 +469,8 @@ fun SignIn(navController: NavController) {
                             navController.navigate(route = "SignUpScreen")
 
                         })
-
                 }
             }
-
             item {
                 Spacer(modifier = Modifier.size(10.dp))
                 Row(
@@ -483,13 +498,9 @@ fun SignIn(navController: NavController) {
                             .background(color = Color.LightGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
-
-
                 }
             }
             item {
-
-
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(
                     onClick = {
@@ -497,7 +508,6 @@ fun SignIn(navController: NavController) {
                         navController.navigate(route = "MainPage") {
                             popUpTo(route = "MainPage") { inclusive = true }
                         }
-
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -527,7 +537,6 @@ fun SignIn(navController: NavController) {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
                             Icon(
                                 painter = painterResource(id = R.drawable.google),
                                 contentDescription = "Google icon",
@@ -555,5 +564,6 @@ fun SignIn(navController: NavController) {
             }
         }
     }
-
 }
+
+//focusManager.moveFocus(FocusDirection.Down)

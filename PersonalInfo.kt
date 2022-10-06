@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -140,11 +141,11 @@ fun PersonalInfo(navController: NavController,userUi:String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 modifier = Modifier
@@ -206,11 +207,11 @@ fun PersonalInfo(navController: NavController,userUi:String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 modifier = Modifier
@@ -230,7 +231,7 @@ fun PersonalInfo(navController: NavController,userUi:String) {
             )
             if (lastNameError) {
                 Text(
-                    text = "Required field",
+                    text = "Required Field",
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 16.dp, top = 0.dp)
@@ -275,11 +276,11 @@ fun PersonalInfo(navController: NavController,userUi:String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext= {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 modifier = Modifier
@@ -300,7 +301,7 @@ fun PersonalInfo(navController: NavController,userUi:String) {
             )
             if (budgetError) {
                 Text(
-                    text = "Required field",
+                    text = "Required Field",
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 16.dp, top = 0.dp)
@@ -384,7 +385,7 @@ fun PersonalInfo(navController: NavController,userUi:String) {
             )
             if (currencyError) {
                 Text(
-                    text = "Required field",
+                    text = "Required Field",
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 16.dp, top = 0.dp)
@@ -420,7 +421,10 @@ fun PersonalInfo(navController: NavController,userUi:String) {
                             )
                         }
                         .addOnFailureListener { e -> Log.w("User", "Error writing document", e) }
-                    navController.navigate(route = "MainPage/$userUi")
+                    navController.navigate(route = "MainPage/$userUi"){
+                        popUpTo(route="WelcomeScreen")
+                        }
+
 
                 } else {
                     firstNameError = firstName == null
