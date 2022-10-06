@@ -3,6 +3,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.example.expensetrackerproject.*
 import com.example.expensetrackerproject.Categories.Categories
 import com.example.expensetrackerproject.Home.DisplayExpenses
@@ -44,16 +45,23 @@ fun Navigation(navController: NavController) {
         ) { backStackEntry ->
             Home(navController=navController,userUi = backStackEntry.arguments?.get("userUi").toString())
         }
-        composable(route = "ResetPassword?userUi={userUi}/{page}", arguments = listOf(
+        composable(route = "ResetPassword?userUi={userUi}&oldPassword={oldPassword}/{page}", arguments = listOf(
             navArgument(name="page"){
                 type= NavType.StringType
                 nullable=false
             }, navArgument(name="userUi"){
                 type= NavType.StringType
+            },
+            navArgument(name = "oldPassword"){
+                type= NavType.StringType
+                nullable=false
             }
         )) {
             backStackEntry->
-            PasswordReset(navController = navController, page=backStackEntry.arguments?.get("page").toString(), userUi = backStackEntry.arguments?.get("userUi").toString())
+            PasswordReset(navController = navController,
+                page=backStackEntry.arguments?.get("page").toString(),
+                userUi = backStackEntry.arguments?.get("userUi").toString(),
+                oldPassword = backStackEntry.arguments?.get("oldPassword").toString())
         }
         composable(route = "Categories") {
 
@@ -104,6 +112,15 @@ fun Navigation(navController: NavController) {
          userUi =navBackStackEntry.arguments?.get("userUi").toString() )
 
  }
+        composable(route="PasswordSecurity/{userUi}", arguments = listOf(
+            navArgument(name="userUi"){
+                type= NavType.StringType
+                nullable=false
+            }
+        )){
+            backStackEntry->
+            PasswordSecurity(navController=navController, userUi=backStackEntry.arguments?.get("userUi").toString())
+        }
 
     }
 
