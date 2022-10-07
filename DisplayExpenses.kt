@@ -1,15 +1,11 @@
 package com.example.expensetrackerproject.Home
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
-import android.system.Os.remove
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -19,22 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key.Companion.Delete
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.expensetrackerproject.Categories.Categorie
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.addTo
-import com.google.apphosting.datastore.testing.DatastoreTestTrace
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.saket.swipe.SwipeAction
@@ -49,23 +39,25 @@ import kotlin.collections.HashMap
 fun DisplayExpenses(navController: NavController,category:String , userUi:String) {
     val db = Firebase.firestore
 
-    var expenses: MutableList<HashMap<String, Any>> by remember {
-        mutableStateOf(
-
-            mutableListOf(
-
-            )
-        )
-    }
+//    var expenses: MutableList<HashMap<String, Any>> by remember {
+//        mutableStateOf(
+//
+//            mutableListOf(
+//
+//            )
+//        )
+//    }
 
     val docRef = db.collection("expenses").orderBy("tempStamp", Query.Direction.DESCENDING)
     docRef.get()
         .addOnSuccessListener { documents ->
-            expenses = mutableListOf()
+//            expenses = mutableListOf()
+            mainActivityViewModel.setValue(mutableListOf<HashMap<String,Any>>(),"expense")
             for (document in documents) {
                 if (document["category"] == category.capitalize(Locale.ROOT) && document["id"] == userUi) {
                     Log.d("TAG", "${document.id} => ${document.data}")
-                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
+//                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
+                    mainActivityViewModel.AddTo_expense(document.data as HashMap<String,Any>)
                 }
             }
         }
@@ -76,11 +68,14 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
         }
 
         if (snapshot != null && snapshot.documents.isNotEmpty()) {
-            expenses = mutableListOf()
+//            expenses = mutableListOf()
+            mainActivityViewModel.setValue(mutableListOf<HashMap<String,Any>>(),"expense")
             Log.d("user", "Current data: ${snapshot.documents}")
             for (document in snapshot.documents) {
                 if (document["category"] == category.capitalize(Locale.ROOT) && document["id"] == userUi) {
-                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
+//                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
+                    mainActivityViewModel.AddTo_expense(document.data as HashMap<String,Any>)
+
                 }
             }
         } else {
@@ -121,7 +116,7 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
 
         }
 
-        if (expenses.size == 0) {
+        if (mainActivityViewModel.expense.value.size == 0) {
             Column(modifier=Modifier.fillMaxSize() , horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "No $category expenses yet.",
@@ -137,7 +132,7 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
 
-                items(items = expenses) { expense ->
+                items(items = mainActivityViewModel.expense.value) { expense ->
                     val delete = SwipeAction(
                         onSwipe = {
 
