@@ -13,3 +13,4 @@ sealed class Categorie(var name :String, @DrawableRes var icon:Int, var boxBackg
 
 
 }
+

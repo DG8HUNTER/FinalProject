@@ -29,7 +29,6 @@ val mainActivityViewModel=MainActivityViewModel()
 @Composable
 fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int , trailingIcon:ImageVector, colorAnimation:Color,focusManager:FocusManager ){
 
-
     val data by when(name){
         "country"->mainActivityViewModel.country
         "name"->mainActivityViewModel.name
@@ -40,7 +39,7 @@ fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int ,
         value = if (data != null) data.toString() else "",
         onValueChange = {
             if (it.isNotEmpty()) {
-                mainActivityViewModel.setValue(newValue = it, name = name)
+                mainActivityViewModel.setValue(newValue = it.toString(), name = name)
                 Log.d("ho",mainActivityViewModel.country.value.toString())
             } else {
                 mainActivityViewModel.setValue(newValue = null, name = name)

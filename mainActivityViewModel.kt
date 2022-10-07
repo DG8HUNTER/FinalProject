@@ -1,9 +1,10 @@
 package com.example.expensetrackerproject.Categories
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import com.example.expensetrackerproject.addTo
 
 class MainActivityViewModel {
     private val _country : MutableState<String?> =
@@ -33,13 +34,28 @@ class MainActivityViewModel {
         when(name){
             "country" -> if(newValue!=null)_country.value=newValue.toString()else _country.value=null
             "name" ->if(newValue!=null) _name.value=newValue.toString() else  _name.value=null
-            "price" -> if(newValue!=null) _price.value=newValue.toString().toFloat()  else _price.value=null
-            "quantity"-> if(newValue!=null)_quantity.value=newValue.toString().toFloat()else _quantity.value=null
+            "price" -> if(newValue!=null&& newValue!=0.0f) _price.value=newValue.toString().toFloat()  else _price.value=null
+            "quantity"-> if(newValue!=null && newValue!=0.0f)_quantity.value=newValue.toString().toFloat()else _quantity.value=null
             "day"->if(newValue!=null)_day.value=newValue.toString().toInt() else _day.value=null
             "month"->if(newValue!=null)_month.value=newValue.toString().toInt() else _month.value=null
-            else ->if(newValue!=null) _year.value=newValue.toString().toInt() else _year.value=null
+            "year" ->if(newValue!=null) _year.value=newValue.toString().toInt() else _year.value=null
+            else -> _expense.value= newValue as MutableList<HashMap<String, Any>>
         }
     }
+    fun AddTo_expense(newValue: HashMap<String,Any>?){
+        _expense.value= addTo(_expense, document = newValue as HashMap<String,Any>)
+    }
+
+    @SuppressLint("MutableCollectionMutableState")
+    private val _expense :MutableState<MutableList<HashMap<String,Any>>> =
+        mutableStateOf(
+            mutableListOf()
+        )
+
+    val expense :State<MutableList<HashMap<String,Any>>> = _expense
+
+
+
 
 
 
