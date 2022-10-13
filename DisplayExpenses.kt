@@ -3,10 +3,12 @@ package com.example.expensetrackerproject.Home
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +50,13 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
 //            )
 //        )
 //    }
+var value:Float by remember {
+    mutableStateOf(0f)
 
+}
+    var expense:Float by remember{
+        mutableStateOf(0f)
+    }
     val docRef = db.collection("expenses").orderBy("tempStamp", Query.Direction.DESCENDING)
     docRef.get()
         .addOnSuccessListener { documents ->
@@ -78,6 +87,36 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
 
                 }
             }
+        } else {
+            Log.d("user", "Current data: null")
+        }
+    }
+
+   val doc= db.collection("Users").document(userUi)
+       doc .get()
+        .addOnSuccessListener { document ->
+            if (document != null) {
+                 value=document.data?.get(category).toString().toFloat()
+                expense= document.data?.get("expenses").toString().toFloat()
+            } else {
+                Log.d("TAG", "No such document")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("TAG", "get failed with ", exception)
+        }
+
+    doc.addSnapshotListener { snapshot, e ->
+        if (e != null) {
+            Log.w("user", "Listen failed.", e)
+            return@addSnapshotListener
+        }
+
+        if (snapshot != null && snapshot.exists()) {
+            Log.d("user", "Current data: ${snapshot.data}")
+            value=snapshot.data?.get(category).toString().toFloat()
+            expense = snapshot.data?.get("expenses").toString().toFloat()
+            Log.d("exp",expense.toString())
         } else {
             Log.d("user", "Current data: null")
         }
@@ -117,17 +156,21 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
         }
 
         if (mainActivityViewModel.expense.value.size == 0) {
-            Column(modifier=Modifier.fillMaxSize() , horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Column(modifier= Modifier.fillMaxWidth().fillMaxHeight(0.85f)
+                 , horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "No $category expenses yet.",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold, color = Color.Black,
 
                 )
+
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.80f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
@@ -229,9 +272,36 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
 
                     ExpenseViewHolder(category = category, expense = expense, delete = delete)
                 }
+            }
 
             }
-        }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = Color.Black, shape = RoundedCornerShape(5.dp))
+                    .clip(shape = RoundedCornerShape(5.dp))
+            )
+       Row(modifier=Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround){
+           Text(text = "${category.capitalize(Locale.ROOT)}: $value",
+               fontSize = 18.sp,
+               fontWeight = FontWeight.Bold
+           )
+           Text(text ="Expenses : $expense",
+               fontSize = 18.sp,
+               fontWeight = FontWeight.Bold
+           )
+       }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = Color.Black, shape = RoundedCornerShape(5.dp))
+                    .clip(shape = RoundedCornerShape(5.dp))
+            )
+
+
+
     }
 }
 

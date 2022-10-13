@@ -102,7 +102,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
                                     Log.d("TAG", "get failed with ", exception)
                                 }
                             docRef
-                                .update(category.lowercase(), FieldValue.delete())
+                                .update(category.lowercase(),0)
                                 .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
                                 .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
 
