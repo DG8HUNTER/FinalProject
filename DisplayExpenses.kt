@@ -84,7 +84,6 @@ var value:Float by remember {
                 if (document["category"] == category.capitalize(Locale.ROOT) && document["id"] == userUi) {
 //                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
                     mainActivityViewModel.AddTo_expense(document.data as HashMap<String,Any>)
-
                 }
             }
         } else {
