@@ -155,7 +155,7 @@ var value:Float by remember {
         }
 
         if (mainActivityViewModel.expense.value.size == 0) {
-            Column(modifier= Modifier.fillMaxWidth().fillMaxHeight(0.85f)
+            Column(modifier= Modifier.fillMaxWidth().fillMaxHeight(0.9f)
                  , horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "No $category expenses yet.",
@@ -169,7 +169,7 @@ var value:Float by remember {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.80f),
+                    .fillMaxHeight(0.9f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
@@ -278,26 +278,29 @@ var value:Float by remember {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(color = Color.Black, shape = RoundedCornerShape(5.dp))
+                    .background(color = Color.LightGray ,shape = RoundedCornerShape(5.dp))
                     .clip(shape = RoundedCornerShape(5.dp))
             )
        Row(modifier=Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround){
-           Text(text = "${category.capitalize(Locale.ROOT)}: $value",
+           Text(text = "${category.capitalize(Locale.ROOT)} : $value",
                fontSize = 18.sp,
-               fontWeight = FontWeight.Bold
+               fontWeight = FontWeight.Medium,
+               color = Color.Gray
+
            )
            Text(text ="Expenses : $expense",
                fontSize = 18.sp,
-               fontWeight = FontWeight.Bold
+               fontWeight = FontWeight.Medium,
+               color = Color.Gray
            )
        }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = Color.Black, shape = RoundedCornerShape(5.dp))
-                    .clip(shape = RoundedCornerShape(5.dp))
-            )
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
+//                    .clip(shape = RoundedCornerShape(5.dp))
+//            )
 
 
 
