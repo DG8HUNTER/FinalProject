@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,17 +29,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun PasswordSecurity(navController: NavController, userUi:String) {
     var oldPassword: String? by remember {
         mutableStateOf(null)
     }
+    var db = Firebase.firestore
     val focusManager = LocalFocusManager.current
 
-    var oldPasswordError: String? by remember {
-        mutableStateOf(null)
-    }
+
     var oldPasswordVisibility: Boolean by remember {
         mutableStateOf(false)
     }
@@ -64,7 +66,12 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
             horizontalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate(route ="MainPage/$userUi")
+                navController.navigate(route = "MainPage/$userUi"){
+                    popUpTo(route="FirstScreen"){
+                        inclusive=true
+                    }
+                }
+
             }
             ) {
                 Icon(
@@ -95,92 +102,119 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
         )
 
 
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            OutlinedTextField(
+                value = if (oldPassword != null) oldPassword.toString() else "",
+                onValueChange = {
+                    oldPassword = if (it.isNotEmpty()) it else null
+                },
+                label = {
+                    Text(
+                        text = "Password",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
 
-        OutlinedTextField(
-            value = if (oldPassword != null) oldPassword.toString() else "",
-            onValueChange = {
-                oldPassword = if (it.isNotEmpty()) it else null
-            },
-            label = {
-                Text(
-                    text = "Password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-
+                        )
+                },
+                placeholder = {
+                    Text(
+                        text = " Password",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.LightGray
                     )
-            },
-            placeholder = {
-                Text(
-                    text = " Password",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.LightGray
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_lock),
-                    contentDescription = "Lock icon",
-                    tint = Color.LightGray,
-
-                    )
-            },
-            trailingIcon = {
-                IconButton(onClick = {
-                    oldPasswordVisibility = !oldPasswordVisibility
-                }) {
+                },
+                leadingIcon = {
                     Icon(
-                        painter = painterResource(id = if (oldPasswordVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                        contentDescription = if (oldPasswordVisibility) "visibility icon" else "visibility off icon",
-                        tint = iconColor
-                    )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
+                        painter = painterResource(id = R.drawable.ic_lock),
+                        contentDescription = "Lock icon",
+                        tint = Color.LightGray,
 
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            visualTransformation = if (oldPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(5.dp))
-                .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = Color.Gray,
-                cursorColor = Color.LightGray,
-                focusedLabelColor = Color.Gray,
-                unfocusedLabelColor = Color.LightGray
+                        )
+                },
+                trailingIcon = {
+                    IconButton(onClick = {
+                        oldPasswordVisibility = !oldPasswordVisibility
+                    }) {
+                        Icon(
+                            painter = painterResource(id = if (oldPasswordVisibility) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
+                            contentDescription = if (oldPasswordVisibility) "visibility icon" else "visibility off icon",
+                            tint = iconColor
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
 
-            ), isError = oldPasswordRequirementError
-        )
-        if (oldPasswordRequirementError) {
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "$oldPasswordError",
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                visualTransformation = if (oldPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.onFocusEvent { focusState ->
+                    if (focusState.isFocused) {
+                        oldPasswordRequirementError = false
+                        oldPasswordErrorMessage = null
+                    }
+                }
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(5.dp))
+                    .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.LightGray,
+                    focusedIndicatorColor = Color.Gray,
+                    cursorColor = Color.LightGray,
+                    focusedLabelColor = Color.Gray,
+                    unfocusedLabelColor = Color.LightGray
+
+                ), isError = oldPasswordRequirementError
             )
-        }
-        Button(onClick = {
-            focusManager.clearFocus()
-            if (oldPassword == null) {
-                oldPasswordRequirementError = true
-                oldPasswordError = "Required Field"
+            if (oldPasswordRequirementError) {
 
+                Text(
+                    text = "$oldPasswordErrorMessage",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp, top = 0.dp)
+                )
             }
-            if (!oldPasswordRequirementError) {
-                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity")
-            }
-        },
+        }
+        Button(
+            onClick = {
+                focusManager.clearFocus()
+                if (oldPassword == null) {
+                    oldPasswordRequirementError = true
+                    oldPasswordErrorMessage = "Required Field"
+
+                }
+                db.collection("Users").document(userUi)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            if (document.data?.get("password").toString()
+                                    .toInt() != oldPassword.hashCode()
+                            ) {
+                                oldPasswordRequirementError = true
+                                oldPasswordErrorMessage = "Wrong password !"
+                            } else {
+                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+                                    popUpTo(route = "PasswordSecurity/$userUi")
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                    }
+
+
+            },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             ),

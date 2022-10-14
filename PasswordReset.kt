@@ -44,7 +44,7 @@ import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.EmailAuthProvider.getCredential
+import com.google.firebase.auth.EmailAuthProvider.*
 import com.google.firebase.auth.FacebookAuthProvider.getCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -54,8 +54,7 @@ import isValidEmail
 import kotlinx.coroutines.delay
 
 @Composable
-fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPassword:String?) {
-
+fun PasswordReset(navController: NavController, page:String,userUi:String,oldPassword:String?) {
     var email :String?  by remember{
         mutableStateOf(null)
     }
@@ -476,6 +475,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
             }
             }
             else{
+                val db = Firebase.firestore
                 val auth = Firebase.auth
                 val currentUser=auth.currentUser
                 Log.d("userCurrent",currentUser?.email.toString())
@@ -494,7 +494,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                     Log.d("provide data" , currentUser?.providerData.toString())
 
 
-                   currentUser!!.reauthenticate(credential)
+                    currentUser!!.reauthenticate(credential)
                         .addOnCompleteListener { Log.d("TAG", "User re-authenticated.") }
 
                     Log.d("Current", currentUser.email.toString().toString())
@@ -503,16 +503,30 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             if (task.isSuccessful) {
                                 Log.d("TAG", "User password updated.")
                                 Toast.makeText(context, "Password updated successfully",Toast.LENGTH_LONG).show()
+
+                                    db.collection("Users").document(userUi).update("password",newPassword.hashCode())
+                                        .addOnSuccessListener {
+                                            Log.d("Tag","user password updated !")
+                                        }
+
                                 Log.d("ui",userUi.toString())
-                                navController.navigate(route="MainPage/$userUi")
+                                navController.navigate(route="MainPage/$userUi"){
+                                    popUpTo(route="FirstScreen"){
+                                        inclusive=true
+                                    }
+                                }
+
                             }
                             else{
                                 Toast.makeText(context,"Please re-enter your old password",Toast.LENGTH_LONG).show()
-                                navController.navigate(route="PasswordSecurity/$userUi")
+                                navController.navigate(route="PasswordSecurity/$userUi"){
+                                   popUpTo(route="MainPage/$userUi")
+                                }
                             }
                         }
                 }
             }
+
         },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent
@@ -547,10 +561,6 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
 
 
     }
-
-
-
-
 
 }
 
