@@ -2,13 +2,16 @@ package com.example.expensetrackerproject.Home
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -16,16 +19,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.addTo
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -41,15 +44,14 @@ import kotlin.collections.HashMap
 
 fun DisplayExpenses(navController: NavController,category:String , userUi:String) {
     val db = Firebase.firestore
+    var launched:Boolean by remember {
+        mutableStateOf(false)
+    }
 
-//    var expenses: MutableList<HashMap<String, Any>> by remember {
-//        mutableStateOf(
-//
-//            mutableListOf(
-//
-//            )
-//        )
-//    }
+    val rotate = animateFloatAsState(targetValue =if(!launched)0f else 720f, animationSpec =tween(durationMillis = 4000, easing = FastOutSlowInEasing))
+    LaunchedEffect(key1 =true ){
+        launched=!launched
+    }
 var value:Float by remember {
     mutableStateOf(0f)
 
@@ -146,16 +148,32 @@ var value:Float by remember {
             }
             Spacer(modifier = Modifier.width(20.dp))
 
+Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+    Text(
+        text = category.capitalize(Locale.ROOT),
+        fontSize = 20.sp, fontWeight = FontWeight.Bold
+    )
+    when (category) {
+        "travel" -> Image(
+            painter = painterResource(id = R.drawable.planet_earth),
+            contentDescription = "earth icon",
+            modifier = Modifier
+                .size(42.dp)
+                .clip(shape = CircleShape)
+                .shadow(elevation = 10.dp, shape = CircleShape)
+                .rotate(rotate.value)
 
-            Text(
-                text = category.capitalize(Locale.ROOT),
-                fontSize = 20.sp, fontWeight = FontWeight.Bold
-            )
+        );
+        else -> null
+    }
+}
 
         }
 
         if (mainActivityViewModel.expense.value.size == 0) {
-            Column(modifier= Modifier.fillMaxWidth().fillMaxHeight(0.9f)
+            Column(modifier= Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.9f)
                  , horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "No $category expenses yet.",
@@ -166,6 +184,7 @@ var value:Float by remember {
 
             }
         } else {
+            Spacer(modifier=Modifier.height(10.dp))
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -173,7 +192,6 @@ var value:Float by remember {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-
                 items(items = mainActivityViewModel.expense.value) { expense ->
                     val delete = SwipeAction(
                         onSwipe = {
@@ -274,13 +292,13 @@ var value:Float by remember {
             }
 
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = Color.LightGray ,shape = RoundedCornerShape(5.dp))
-                    .clip(shape = RoundedCornerShape(5.dp))
-            )
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
+//                    .clip(shape = RoundedCornerShape(5.dp))
+//            )
        Row(modifier=Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround){
            Text(text = "${category.capitalize(Locale.ROOT)} : $value",
                fontSize = 18.sp,
@@ -307,6 +325,7 @@ var value:Float by remember {
     }
 }
 
+
 @Composable
 fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:SwipeAction) {
 
@@ -315,14 +334,32 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
         swipeThreshold = 100.dp,
         endActions = listOf(delete)
     ) {
-        Column(modifier= Modifier
-            .fillMaxWidth()
-            .background(color = Color.White) , verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.White),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(9f),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Image(
+                    painter = painterResource(
+                        id = when (category) {
+                            "travel" -> R.drawable.map
+                            "food"-> R.drawable.foodbag
+                            "shopping" -> R.drawable.shopping_bags
+                            else ->R.drawable.coins
+                        }
+                    ),
+                    contentDescription = "map icon",
+                    modifier = Modifier.size(42.dp)
+                )
+
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.Start
@@ -387,6 +424,7 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
         }
     }
 }
+
 
 
 
