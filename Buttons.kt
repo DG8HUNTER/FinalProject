@@ -37,6 +37,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
                     "id" to userUi,
                     "category" to "Travel" ,
                     "country" to mainActivityViewModel.country.value,
+                    "location" to mainActivityViewModel.location.value,
                     "price" to mainActivityViewModel.price.value,
                     "date"  to "${mainActivityViewModel.day.value}/${mainActivityViewModel.month.value}/${mainActivityViewModel.year.value}",
                     "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${mainActivityViewModel.day.value!!}-${mainActivityViewModel.month.value!!}-${mainActivityViewModel.year.value!!}"))
@@ -55,6 +56,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
                 val  data =    hashMapOf("id" to userUi,
                 "category" to category,
                 "name" to mainActivityViewModel.name.value,
+                    "location" to mainActivityViewModel.location.value,
                     "quantity" to mainActivityViewModel.quantity.value,
                 "price" to mainActivityViewModel.price.value,
                 "date"  to "${mainActivityViewModel.day.value}/${mainActivityViewModel.month.value}/${mainActivityViewModel.year.value}",
@@ -139,6 +141,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
 
             mainActivityViewModel.setValue(null , "country")
             mainActivityViewModel.setValue(null,"name")
+            mainActivityViewModel.setValue(null,"location")
             mainActivityViewModel.setValue(null , "quantity")
             mainActivityViewModel.setValue(null , "price")
             mainActivityViewModel.setValue(null , "day")
@@ -158,6 +161,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
         Button(onClick = {
             mainActivityViewModel.setValue(null , "country")
             mainActivityViewModel.setValue(null,"name")
+            mainActivityViewModel.setValue(null,"location")
             mainActivityViewModel.setValue(null , "quantity")
             mainActivityViewModel.setValue(null , "price")
             mainActivityViewModel.setValue(null , "day")

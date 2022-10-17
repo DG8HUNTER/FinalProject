@@ -16,6 +16,10 @@ class MainActivityViewModel {
         mutableStateOf(null)
 
     val name: State<String?> =_name
+    private val _location : MutableState<String?> =
+        mutableStateOf(null)
+
+    val location: State<String?> =_location
 
     private val _price :MutableState<Float?> = mutableStateOf(null)
     val price:State<Float?> =_price
@@ -34,6 +38,7 @@ class MainActivityViewModel {
         when(name){
             "country" -> if(newValue!=null)_country.value=newValue.toString()else _country.value=null
             "name" ->if(newValue!=null) _name.value=newValue.toString() else  _name.value=null
+            "location" ->if(newValue!=null)_location.value=newValue.toString() else _location.value=null
             "price" -> if(newValue!=null&& newValue!=0.0f) _price.value=newValue.toString().toFloat()  else _price.value=null
             "quantity"-> if(newValue!=null && newValue!=0.0f)_quantity.value=newValue.toString().toFloat()else _quantity.value=null
             "day"->if(newValue!=null)_day.value=newValue.toString().toInt() else _day.value=null

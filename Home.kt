@@ -285,7 +285,7 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
                     }.clickable(interactionSource=interactionSource, indication = null ) {
                         navController.navigate(route = "DisplayExpenses/${expense.name}/$userUi")
                     },
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(
@@ -307,7 +307,7 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
                         text = "${String.format("%.1f", (expense.percentage * 100))} %",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black
+                        color = if(expense.percentage==0f)Color.Black else Color.White
                     )
 
 

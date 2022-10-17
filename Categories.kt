@@ -6,6 +6,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -37,7 +38,8 @@ import javax.annotation.meta.When
 @Composable
 
 fun Categories(userUi:String) {
-    var db = Firebase.firestore
+    val db = Firebase.firestore
+    val interactionSource = remember { MutableInteractionSource() }
     val categories: List<Categorie> =
         listOf(Categorie.Travel, Categorie.Food, Categorie.Shopping, Categorie.Rent)
     var clickedBox: String by remember {
@@ -46,6 +48,7 @@ fun Categories(userUi:String) {
     LaunchedEffect(key1 = clickedBox) {
         mainActivityViewModel.setValue(null, "country")
         mainActivityViewModel.setValue(null, "name")
+        mainActivityViewModel.setValue(null,"location")
         mainActivityViewModel.setValue(null, "price")
         mainActivityViewModel.setValue(null, "quantity")
         mainActivityViewModel.setValue(null, "day")
@@ -54,6 +57,10 @@ fun Categories(userUi:String) {
     }
 
     val locationClearIcon = animateColorAsState(
+        targetValue = if (mainActivityViewModel.location.value != null) Color.Gray else Color.Transparent,
+        animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+    )
+    val countryClearIcon = animateColorAsState(
         targetValue = if (mainActivityViewModel.country.value != null) Color.Gray else Color.Transparent,
         animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
     )
@@ -99,7 +106,7 @@ fun Categories(userUi:String) {
                         translationY =
                             if (clickedBox == Category.name) 1f * direction else 0f * direction
                     }
-                    .clickable {
+                    .clickable(interactionSource = interactionSource, indication = null) {
                         clickedBox = Category.name
                         Log.d("Box", clickedBox)
                     }
@@ -176,7 +183,27 @@ fun Categories(userUi:String) {
                         else -> Categorie.Rent.icon
                     },
                     trailingIcon = Icons.Filled.Clear,
-                    colorAnimation = nameClearIcon.value,
+                    colorAnimation = when(clickedBox){
+                        "Travel"->countryClearIcon.value
+                        else ->nameClearIcon.value
+                                                     },
+                    focusManager = focusManager
+                )
+            }
+            item{
+                OTextField(
+                    name ="location",
+                    placeHolder ="Enter the location",
+                    color =when(clickedBox){
+                        "Travel" ->Categorie.Travel.boxContentColor
+                        "Food" -> Categorie.Food.boxContentColor
+                        "Shopping" -> Categorie.Shopping.boxContentColor
+                        else -> Categorie.Rent.boxContentColor
+
+                                           } ,
+                    leadingIcon =R.drawable.ic_location ,
+                    trailingIcon = Icons.Filled.Clear,
+                    colorAnimation =locationClearIcon.value ,
                     focusManager = focusManager
                 )
             }
@@ -197,6 +224,7 @@ fun Categories(userUi:String) {
                     )
                 }
             }
+
 
             item {
                 OTextField(
@@ -230,8 +258,6 @@ fun Categories(userUi:String) {
                     }
                 )
             }
-
-
             item {
                 Buttons(
                     db = db, userUi = userUi, category = clickedBox, color = when (clickedBox) {
@@ -245,10 +271,7 @@ fun Categories(userUi:String) {
             item {
                 Spacer(modifier = Modifier.height(170.dp))
             }
-
         }
-
-
     }
 }
 

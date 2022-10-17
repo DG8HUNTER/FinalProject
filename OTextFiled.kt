@@ -32,6 +32,7 @@ fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int ,
     val data by when(name){
         "country"->mainActivityViewModel.country
         "name"->mainActivityViewModel.name
+        "location"-> mainActivityViewModel.location
         "price" -> mainActivityViewModel.price
        else->mainActivityViewModel.quantity
     }
@@ -84,6 +85,7 @@ fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int ,
             keyboardType = when (name) {
                 "country" -> KeyboardType.Text
                 "name" -> KeyboardType.Text
+                "location"->KeyboardType.Text
                 "price" -> KeyboardType.Number
                 else -> KeyboardType.Number
             },
