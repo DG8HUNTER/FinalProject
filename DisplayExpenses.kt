@@ -338,7 +338,7 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color.White),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -389,6 +389,14 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                             fontWeight = FontWeight.Medium,
                             color = Color.Gray
                         )
+                    }
+                    Row( horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
+                 Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription ="location icon",tint=Color(0xFF7180D1).copy(0.6f))
+                        Spacer(modifier =Modifier.width(3.dp))
+                        Text(text=expense["location"].toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color =Color(0xFF7180D1).copy(0.6f))
                     }
                     if (category.capitalize(Locale.ROOT) != "Travel") {
                         Text(
