@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,53 +123,98 @@ var value:Float by remember {
             Log.d("user", "Current data: null")
         }
     }
-
-
     Column(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxSize()
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            IconButton(onClick = { navController.navigate(route = "MainPage/$userUi") }) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                IconButton(onClick = { navController.navigate(route = "MainPage/$userUi") }) {
 
 
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow_left),
-                    contentDescription = "arrow left",
-                    tint = Color.Black
-                )
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_left),
+                        contentDescription = "arrow left",
+                        tint = Color.Black
+                    )
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                  if(category!="rent") {
+                      Text(
+                          text = category.capitalize(Locale.ROOT),
+                          fontSize = 20.sp, fontWeight = FontWeight.Bold
+                      )
+                  } else {
+                      Column(verticalArrangement = Arrangement.Center) {
+                          Spacer(modifier=Modifier.height(35.dp))
+                          Row( horizontalArrangement = Arrangement.Start) {
+                              Text(
+                                  text = category.capitalize(Locale.ROOT),
+                                  fontSize = 20.sp, fontWeight = FontWeight.Bold
+                              )
+                          }
+                          Row(modifier=Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start){
+                              Spacer(modifier=Modifier.width(30.dp))
+                              Icon(
+                                  painter = painterResource(id = R.drawable.for_rent),
+                                  contentDescription = "rent icon",
+                                  tint = Color.Unspecified,
+                                  modifier = Modifier.size(42.dp)
+                              )
+
+                          }
+                      }
+
+                  }
+
+
+
+                    when (category) {
+                        "travel" -> Image(
+                            painter = painterResource(id = R.drawable.planet_earth),
+                            contentDescription = "earth icon",
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(shape = CircleShape)
+                                .shadow(elevation = 10.dp, shape = CircleShape)
+                                .rotate(rotate.value)
+
+                        )
+//                        "rent" -> Column(horizontalAlignment = Alignment.Start) {
+//                            Spacer(modifier=Modifier.height(50.dp))
+//                            Icon(
+//                                painter = painterResource(id = R.drawable.for_rent),
+//                                contentDescription = "rent icon",
+//                                tint = Color.Unspecified,
+//                                modifier = Modifier.size(42.dp))
+//                        }
+                        else -> null
+                    }
+                }
             }
-            Spacer(modifier = Modifier.width(20.dp))
 
-Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-    Text(
-        text = category.capitalize(Locale.ROOT),
-        fontSize = 20.sp, fontWeight = FontWeight.Bold
-    )
-    when (category) {
-        "travel" -> Image(
-            painter = painterResource(id = R.drawable.planet_earth),
-            contentDescription = "earth icon",
-            modifier = Modifier
-                .size(42.dp)
-                .clip(shape = CircleShape)
-                .shadow(elevation = 10.dp, shape = CircleShape)
-                .rotate(rotate.value)
 
-        );
-        else -> null
-    }
-}
 
-        }
+
+
+
+
+
+
 
         if (mainActivityViewModel.expense.value.size == 0) {
             Column(modifier= Modifier
@@ -393,7 +439,7 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                     Row( horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
                  Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription ="location icon",tint=Color(0xFF7180D1).copy(0.6f))
                         Spacer(modifier =Modifier.width(3.dp))
-                        Text(text=expense["location"].toString(),
+                        Text(text=expense["location"].toString().capitalize(Locale.ROOT),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             color =Color(0xFF7180D1).copy(0.6f))
