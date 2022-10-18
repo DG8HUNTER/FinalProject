@@ -177,7 +177,7 @@ fun Categories(userUi:String) {
                         else -> Categorie.Rent.boxContentColor
                     },
                     leadingIcon = when (clickedBox) {
-                        "Travel" -> R.drawable.ic_location
+                        "Travel" -> R.drawable.flag
                         "Food" -> Categorie.Food.icon
                         "Shopping" -> Categorie.Shopping.icon
                         else -> Categorie.Rent.icon

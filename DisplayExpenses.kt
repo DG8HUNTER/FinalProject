@@ -417,21 +417,21 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                         if (category.capitalize(Locale.ROOT) == "Travel") {
                             Text(
                                 text = expense["country"].toString().capitalize(Locale.ROOT),
-                                fontSize = 17.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black
                             )
                         } else {
                             Text(
                                 text = expense["name"].toString().capitalize(Locale.ROOT),
-                                fontSize = 17.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black
                             )
                         }
                         Text(
                             text = expense["date"].toString(),
-                            fontSize = 17.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Gray
                         )
@@ -440,14 +440,14 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                  Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription ="location icon",tint=Color(0xFF7180D1).copy(0.6f))
                         Spacer(modifier =Modifier.width(3.dp))
                         Text(text=expense["location"].toString().capitalize(Locale.ROOT),
-                            fontSize = 16.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color =Color(0xFF7180D1).copy(0.6f))
                     }
                     if (category.capitalize(Locale.ROOT) != "Travel") {
                         Text(
                             text = "Quantity: ${expense["quantity"].toString()}",
-                            fontSize = 17.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Gray
                         )
@@ -455,7 +455,7 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                     Text(
                         text = "Price: ${expense["price"].toString()}",
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Bold,
                         color = Color.Gray
                     )
 
