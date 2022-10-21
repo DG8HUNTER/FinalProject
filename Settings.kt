@@ -3,6 +3,8 @@ package com.example.expensetrackerproject.Settings
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -12,12 +14,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.darkGray
 import com.example.expensetrackerproject.ui.theme.lightGreen
 import com.google.firebase.auth.ktx.auth
@@ -42,6 +42,9 @@ fun Settings(navController: NavController, userUi: String) {
     }
     val userEmail = Firebase.auth.currentUser?.email
 
+    val rows: List<SRow> =
+        listOf(SRow.UpdateUserInfo, SRow.ChangePassword, SRow.SwitchAccount, SRow.SignOut)
+
     val docRef = db.collection("Users").document(userUi)
     docRef.get()
         .addOnSuccessListener { document ->
@@ -64,153 +67,41 @@ fun Settings(navController: NavController, userUi: String) {
             .fillMaxSize()
             .padding(15.dp),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(25.dp)
     ) {
 
         Text(text = "Settings", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(10.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.account),
-                contentDescription = "Account Icon"
+                contentDescription = "Account Icon",
+                modifier = Modifier.size(20.dp)
+
             )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Account", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        }
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .height(1.dp)
-                .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
-                .clip(shape = RoundedCornerShape(5.dp))
-        )
-        Text(
-            text = "Email : $userEmail",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            color = darkGray
-        )
-        Text(
-            text = "Name : $firstName  $lastName",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            color = darkGray
-        )
-
-        Spacer(modifier = Modifier.height(15.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_lock),
-                    contentDescription = "Lock icon",
-                    tint = Color.Black
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Text(
-                    text = "Change Password",
+                    text = "Name : $firstName  $lastName",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     color = darkGray
                 )
-            }
-            IconButton(onClick = { navController.navigate(route = "PasswordSecurity/$userUi") }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Arrow icon",
-                    tint = Color.Black
-                )
-            }
-
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.tabler_switch),
-                    contentDescription = "Lock icon",
-                    tint = Color.Black
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
                 Text(
-                    text = "Switch Account",
+                    text = "Email : $userEmail",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     color = darkGray
                 )
+
+
             }
-            IconButton(onClick = { navController.navigate(route = "SignInScreen") }) {
-
-
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Arrow icon",
-                    tint = Color.Black
-                )
-            }
-
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.exit),
-                    contentDescription = "exit icon",
-                    tint = Color.Black
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "Sign Out", fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = darkGray
-                )
-            }
-            IconButton(onClick = {
-                Firebase.auth.signOut()
-
-                navController.navigate(route = "SignInScreen")
-            }) {
-
-
-                Icon(
-                    painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = "Arrow icon",
-                    tint = Color.Black
-                )
-            }
-
-
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.notification),
-                contentDescription = "notification icon",
-                tint = Color.Black
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text = "Notification", fontSize = 16.sp, fontWeight = FontWeight.Normal)
 
         }
         Spacer(
@@ -220,30 +111,13 @@ fun Settings(navController: NavController, userUi: String) {
                 .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
                 .clip(shape = RoundedCornerShape(5.dp))
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Receive Notification",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                color = darkGray
-            )
-            Switch(
-                checked = sendNotification, onCheckedChange = {
-                    sendNotification = true
-                }, colors = SwitchDefaults.colors(
-                    checkedTrackColor = lightGreen,
-                    checkedThumbColor = Green
 
 
-                )
-            )
-
+        Spacer(modifier = Modifier.height(5.dp))
+        rows.forEach {
+            row ->
+            SettingRow(navController =navController, userUi =userUi , sRow =row)
         }
-
 
     }
 }
