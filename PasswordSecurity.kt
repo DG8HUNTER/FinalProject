@@ -1,5 +1,6 @@
 package com.example.expensetrackerproject
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -29,15 +30,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
 fun PasswordSecurity(navController: NavController, userUi:String) {
+
     var oldPassword: String? by remember {
         mutableStateOf(null)
     }
-    var db = Firebase.firestore
+    val db = Firebase.firestore
     val focusManager = LocalFocusManager.current
 
 
@@ -66,9 +69,9 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
             horizontalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate(route = "MainPage/$userUi"){
-                    popUpTo(route="FirstScreen"){
-                        inclusive=true
+                navController.navigate(route = "MainPage/$userUi") {
+                    popUpTo(route = "FirstScreen") {
+                        inclusive = true
                     }
                 }
 
@@ -195,23 +198,32 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
                     oldPasswordErrorMessage = "Required Field"
 
                 }
-                db.collection("Users").document(userUi)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document != null) {
-                            if (document.data?.get("password").toString()
-                                    .toInt() != oldPassword.hashCode()
-                            ) {
-                                oldPasswordRequirementError = true
-                                oldPasswordErrorMessage = "Wrong password !"
-                            } else {
-                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
-                                    popUpTo(route = "PasswordSecurity/$userUi")
-                                    launchSingleTop = true
-                                }
-                            }
-                        }
+                if (mainActivityViewModel.password.value != oldPassword) {
+Log.d("pass", mainActivityViewModel.password.value.toString())
+                    oldPasswordRequirementError = true
+                    oldPasswordErrorMessage = "Wrong password !"
+                } else {
+                    navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+                        popUpTo(route = "PasswordSecurity/$userUi")
+                        launchSingleTop = true
                     }
+                }
+//                db.collection("Users").document(userUi)
+//                    .get()
+//                    .addOnSuccessListener { document ->
+//                        if (document != null) {
+//                            if (document.data?.get("password")!= oldPassword.hashCode()
+//                            ) {
+//                                oldPasswordRequirementError = true
+//                                oldPasswordErrorMessage = "Wrong password !"
+//                            } else {
+//                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+//                                    popUpTo(route = "PasswordSecurity/$userUi")
+//                                    launchSingleTop = true
+//                                }
+//                            }
+//                        }
+//                    }
 
 
             },
@@ -243,12 +255,11 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
 
             }
 
-
         }
-
 
     }
 }
+
 
 
 

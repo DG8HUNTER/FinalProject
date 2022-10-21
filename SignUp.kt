@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.example.expensetrackerproject.ui.theme.blueLink
@@ -359,30 +360,7 @@ fun SignUp(navController: NavController) {
                                 modifier = Modifier.padding(start = 16.dp, top = 0.dp)
                             )
                     }
-//                    if (createButtonClicked && password != null) {
-//                        if (password!!.length < 6) {
-//                            passwordRequirementError = true
-//                            passwordLengthError = true
-//                            Text(
-//                                text = " Password should be at least 6 characters",
-//                                color = MaterialTheme.colors.error,
-//                                style = MaterialTheme.typography.caption,
-//                                modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-//                            )
-//                        } else {
-//                            passwordRequirementError = false
-//                            passwordLengthError = false
-//                        }
-//
-//                    }
-//                    if (createButtonClicked && password == null) {
-//                        Text(
-//                            text = "Required Field",
-//                            color = MaterialTheme.colors.error,
-//                            style = MaterialTheme.typography.caption,
-//                            modifier = Modifier.padding(start = 16.dp, top = 0.dp)
-//                        )
-//                    }
+
             }
             }
             item {
@@ -552,7 +530,8 @@ fun SignUp(navController: NavController) {
                                                 Log.d("TAG", "createUserWithEmail:success")
                                                 val userUi = auth.currentUser?.uid.toString()
                                                 Log.d("User", userUi.toString())
-                                                navController.navigate(route = "PersonalInfo/$userUi") {
+                                                mainActivityViewModel.setValue(password,"password")
+                                                navController.navigate(route = "PersonalInfo/$userUi?password=$password") {
                                                     popUpTo("SignUpScreen")
                                                 }
                                             } else {

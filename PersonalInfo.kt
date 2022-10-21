@@ -3,6 +3,7 @@ package com.example.expensetrackerproject
 import android.graphics.drawable.Icon
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,8 +42,10 @@ import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 
 @Composable
-fun PersonalInfo(navController: NavController,userUi:String) {
+fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
+    Log.d("Password in PI",password.toString())
     val db = Firebase.firestore
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +91,7 @@ fun PersonalInfo(navController: NavController,userUi:String) {
         var isExpanded by remember {
             mutableStateOf(false)
         }
-        val currencies: List<String> = listOf("USD", "EUR", "LBP")
+        val currencies: List<String> = listOf("USD", "EUR","GBP","LBP")
 
         val focusManager = LocalFocusManager.current
         val firstNameClearIcon =
@@ -99,7 +103,19 @@ fun PersonalInfo(navController: NavController,userUi:String) {
         var currencyClearIcon =
             animateColorAsState(targetValue = if (currency != null) Color.LightGray else Color.Transparent)
 
-
+        LaunchedEffect(true ) {
+            if (password == null) {
+                db.collection("Users").document(userUi)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        firstName = document.data?.get("firstName").toString()
+                        lastName = document.data?.get("lastName").toString()
+                        budget = document.data?.get("budget").toString().toFloat()
+                        currency = document.data?.get("currency").toString()
+                        Log.d("PPPPPPPPPP", firstName.toString())
+                    }
+            }
+        }
         Text(text = "Personal Info", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -279,7 +295,7 @@ fun PersonalInfo(navController: NavController,userUi:String) {
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext= {
+                    onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
@@ -315,7 +331,9 @@ fun PersonalInfo(navController: NavController,userUi:String) {
         ) {
             OutlinedTextField(value = if (currency != null) currency.toString() else "",
                 onValueChange = {
-                    currency = if (it.isNotEmpty()) it else null
+                    if(it.length<=3){
+                        currency=it
+                    }
                 },
                 label = {
                     Text(text = "Currency", fontSize = 15.sp, fontWeight = FontWeight.Medium)
@@ -399,41 +417,81 @@ fun PersonalInfo(navController: NavController,userUi:String) {
         Button(
 
             onClick = {
+                  focusManager.clearFocus()
                 if (firstName != null && lastName != null && budget != null && currency != null) {
-                    val user = hashMapOf(
-                        "id" to userUi,
-                        "firstName" to firstName,
-                        "lastName" to lastName,
-                        "budget" to budget,
-                        "currency" to currency,
-                        "expenses" to 0,
-                        "travel" to 0,
-                        "food" to 0,
-                        "shopping" to 0,
-                        "rent" to 0
-                    )
-                    db.collection("Users").document(userUi)
-                        .set(user)
-                        .addOnSuccessListener {
-                            Log.d(
-                                "user",
-                                "DocumentSnapshot successfully written!"
-                            )
-                        }
-                        .addOnFailureListener { e -> Log.w("User", "Error writing document", e) }
-                    navController.navigate(route = "MainPage/$userUi"){
-                        popUpTo(route="WelcomeScreen")
-                        }
+                    if (password != null) {
+                        val user = hashMapOf(
+                            "id" to userUi,
+                            "firstName" to firstName,
+                            "lastName" to lastName,
+                            "budget" to budget,
+                            "currency" to currency,
+                            "expenses" to 0,
+                            "travel" to 0,
+                            "food" to 0,
+                            "shopping" to 0,
+                            "rent" to 0,
+
+                        )
+                        db.collection("Users").document(userUi)
+                            .set(user)
+                            .addOnSuccessListener {
+                                Log.d(
+                                    "user",
+                                    "DocumentSnapshot successfully written!"
+                                )
+                                navController.navigate(route = "MainPage/$userUi") {
+                                    popUpTo(route = "FirstScreen") {
+                                        inclusive = true
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                }
+
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(
+                                    "User",
+                                    "Error writing document",
+                                    e
+                                )
+                            }
 
 
-                } else {
+                    }
+                    else{
+
+
+                            val doc = db.collection("Users").document(userUi)
+                            doc.update("firstName", firstName)
+                            doc.update("lastName", lastName)
+                            doc.update("budget", budget)
+                            doc.update("currency", currency)
+                                .addOnSuccessListener {
+                                    Log.d("TAB", "Info Updated !")
+                                    navController.navigate(route = "MainPage/$userUi") {
+                                        popUpTo(route = "FirstScreen") {
+                                            inclusive = true
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                    Toast.makeText(context, "Info Updated Successfully !", Toast.LENGTH_LONG).show()
+                                }
+                                .addOnFailureListener {
+                                    Log.d("Tab", "error updating Info")
+                                }
+
+                        }
+
+                } else{
                     firstNameError = firstName == null
 
-                   lastNameError = lastName == null
+                    lastNameError = lastName == null
 
                     budgetError = budget == null
 
-                   currencyError= currency==null
+                    currencyError = currency == null
                 }
 
             },

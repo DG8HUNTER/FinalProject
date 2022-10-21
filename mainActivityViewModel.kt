@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.expensetrackerproject.addTo
 
 class MainActivityViewModel {
+
     private val _country : MutableState<String?> =
         mutableStateOf(null)
 
@@ -33,6 +34,8 @@ class MainActivityViewModel {
     val day:State<Int?> =_day
     val month:State<Int?> =_month
     val year:State<Int?> =_year
+     private  val _password:MutableState<String?> = mutableStateOf(null)
+    val password:State<String?> =_password
 
     fun setValue(newValue:Any?, name:String){
         when(name){
@@ -44,6 +47,7 @@ class MainActivityViewModel {
             "day"->if(newValue!=null)_day.value=newValue.toString().toInt() else _day.value=null
             "month"->if(newValue!=null)_month.value=newValue.toString().toInt() else _month.value=null
             "year" ->if(newValue!=null) _year.value=newValue.toString().toInt() else _year.value=null
+            "password"->if(newValue!=null) _password.value=newValue.toString() else _password.value=null
             else -> _expense.value= newValue as MutableList<HashMap<String, Any>>
         }
     }
