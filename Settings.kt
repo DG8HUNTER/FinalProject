@@ -40,6 +40,10 @@ fun Settings(navController: NavController, userUi: String) {
         mutableStateOf("")
 
     }
+    var currency: String? by remember {
+        mutableStateOf("")
+
+    }
     val userEmail = Firebase.auth.currentUser?.email
 
     val rows: List<SRow> =
@@ -52,6 +56,7 @@ fun Settings(navController: NavController, userUi: String) {
                 Log.d("TAG", "DocumentSnapshot data: ${document.data}")
                 firstName = document.data?.get("firstName") as String?
                 lastName = document.data?.get("lastName") as String?
+                currency = document.data?.get("currency") as String?
                 Log.d("TAG", "No such document")
             }
         }
@@ -67,43 +72,91 @@ fun Settings(navController: NavController, userUi: String) {
             .fillMaxSize()
             .padding(15.dp),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(25.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
         Text(text = "Settings", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+
+
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.account),
-                contentDescription = "Account Icon",
-                modifier = Modifier.size(20.dp)
-
-            )
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "Name : $firstName  $lastName",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = darkGray
-                )
-                Text(
-                    text = "Email : $userEmail",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = darkGray
-                )
+                Icon(
+                    painter = painterResource(id = R.drawable.account),
+                    contentDescription = "Account Icon",
+                    modifier = Modifier.size(20.dp)
 
+                )
+                Text(
+                    text = "Account Info",
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
             }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .height(1.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
+                    .clip(shape = RoundedCornerShape(5.dp))
+            )
+
+
+            Row {
+                Text(
+                    text = "Name : ",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = darkGray
+                )
+                Text(
+                    text = "$firstName  $lastName",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = darkGray
+                )
+            }
+            Row {
+                Text(
+                    text = "Email : ",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = darkGray
+                )
+                Text(
+                    text = "$userEmail",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = darkGray
+                )
+
+            }
+            Row {
+                Text(
+                    text = "Currency : ",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = darkGray
+                )
+                Text(
+                    text = "$currency",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = darkGray
+                )
+            }
+
 
         }
+
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
@@ -112,11 +165,9 @@ fun Settings(navController: NavController, userUi: String) {
                 .clip(shape = RoundedCornerShape(5.dp))
         )
 
-
-        Spacer(modifier = Modifier.height(5.dp))
-        rows.forEach {
-            row ->
-            SettingRow(navController =navController, userUi =userUi , sRow =row)
+        Spacer(modifier = Modifier.height(2.dp))
+        rows.forEach { row ->
+            SettingRow(navController = navController, userUi = userUi, sRow = row)
         }
 
     }
