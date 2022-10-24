@@ -155,7 +155,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
                 .width(150.dp)
                 .background(color = color)
                 .height(50.dp) , contentAlignment = Alignment.Center){
-                Text(text = "Save" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.White )
+                Text(text = "Add" , fontSize =18.sp , fontWeight = FontWeight.Bold , color= Color.White )
             }
         }
         Button(onClick = {
