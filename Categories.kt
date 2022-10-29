@@ -45,6 +45,7 @@ fun Categories(userUi:String) {
     var clickedBox: String by remember {
         mutableStateOf("Travel")
     }
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = clickedBox) {
         mainActivityViewModel.setValue(null, "country")
         mainActivityViewModel.setValue(null, "name")
@@ -54,6 +55,7 @@ fun Categories(userUi:String) {
         mainActivityViewModel.setValue(null, "day")
         mainActivityViewModel.setValue(null, "month")
         mainActivityViewModel.setValue(null, "year")
+        focusManager.clearFocus()
     }
 
     val locationClearIcon = animateColorAsState(
@@ -80,7 +82,7 @@ fun Categories(userUi:String) {
 
     val travelDistance = 25.dp
     val direction = with(LocalDensity.current) { travelDistance.toPx() }
-    val focusManager = LocalFocusManager.current
+
 
     Column(
         modifier = Modifier
@@ -156,7 +158,7 @@ fun Categories(userUi:String) {
 //       }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
@@ -269,7 +271,7 @@ fun Categories(userUi:String) {
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(170.dp))
+                Spacer(modifier = Modifier.height(165.dp))
             }
         }
     }
