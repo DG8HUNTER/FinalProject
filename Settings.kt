@@ -81,7 +81,7 @@ fun Settings(navController: NavController, userUi: String) {
 
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -153,17 +153,18 @@ fun Settings(navController: NavController, userUi: String) {
                 )
             }
 
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .height(1.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
+                    .clip(shape = RoundedCornerShape(5.dp))
+            )
 
         }
 
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .height(1.dp)
-                .background(color = Color.LightGray, shape = RoundedCornerShape(5.dp))
-                .clip(shape = RoundedCornerShape(5.dp))
-        )
+
 
         Spacer(modifier = Modifier.height(2.dp))
         rows.forEach { row ->
