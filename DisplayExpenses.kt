@@ -22,6 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +51,11 @@ fun DisplayExpenses(navController: NavController,category:String , userUi:String
     var launched:Boolean by remember {
         mutableStateOf(false)
     }
+    var deletetintColor:Color by remember{
+        mutableStateOf(Color.Black)
+    }
+    val travelDistance = 25.dp
+    val direction = with(LocalDensity.current) { travelDistance.toPx() }
 
     val rotate = animateFloatAsState(targetValue =if(!launched)0f else 720f, animationSpec =tween(durationMillis = 4000, easing = FastOutSlowInEasing))
     LaunchedEffect(key1 =true ){
@@ -137,7 +145,9 @@ var value:Float by remember {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                IconButton(onClick = { navController.navigate(route = "MainPage/$userUi") }) {
+                IconButton(onClick = { navController.navigate(route = "MainPage/$userUi"){
+                    popUpTo(0)
+                } }) {
 
 
                     Icon(
@@ -155,7 +165,11 @@ var value:Float by remember {
 
                   if(category!="rent") {
                       Text(
-                          text = category.capitalize(Locale.ROOT),
+                          text = category.replaceFirstChar {
+                              if (it.isLowerCase()) it.titlecase(
+                                  Locale.ROOT
+                              ) else it.toString()
+                          },
                           fontSize = 20.sp, fontWeight = FontWeight.Bold
                       )
                   } else {
@@ -163,7 +177,11 @@ var value:Float by remember {
                           Spacer(modifier=Modifier.height(35.dp))
                           Row( horizontalArrangement = Arrangement.Start) {
                               Text(
-                                  text = category.capitalize(Locale.ROOT),
+                                  text = category.replaceFirstChar {
+                                      if (it.isLowerCase()) it.titlecase(
+                                          Locale.ROOT
+                                      ) else it.toString()
+                                  },
                                   fontSize = 20.sp, fontWeight = FontWeight.Bold
                               )
                           }
@@ -183,27 +201,46 @@ var value:Float by remember {
 
 
 
-                    when (category) {
-                        "travel" -> Image(
-                            painter = painterResource(id = R.drawable.planet_earth),
-                            contentDescription = "earth icon",
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(shape = CircleShape)
-                                .shadow(elevation = 10.dp, shape = CircleShape)
-                                .rotate(rotate.value)
+//                    when (category) {
+//                        "travel" -> Image(
+//                            painter = painterResource(id = R.drawable.planet_earth),
+//                            contentDescription = "earth icon",
+//                            modifier = Modifier
+//                                .size(42.dp)
+//                                .clip(shape = CircleShape)
+//                                .shadow(elevation = 10.dp, shape = CircleShape)
+//                                .rotate(rotate.value)
+//
+//                        )
+////
+//
+//                    }
 
-                        )
-//                        "rent" -> Column(horizontalAlignment = Alignment.Start) {
-//                            Spacer(modifier=Modifier.height(50.dp))
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.for_rent),
-//                                contentDescription = "rent icon",
-//                                tint = Color.Unspecified,
-//                                modifier = Modifier.size(42.dp))
-//                        }
-                        else -> null
-                    }
+                    Image(
+                        painter = painterResource(id = when(category){
+                            "travel" ->R.drawable.planet_earth
+                            "food" -> R.drawable.grocery_cart
+                            "shopping"->R.drawable.shopping_cart
+                            else -> R.drawable.for_rent
+                        }),
+                        contentDescription = "earth icon",
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(shape = CircleShape)
+                            .shadow(elevation = when(category){
+                                "travel" -> 10.dp
+                                else ->0.dp
+                            } , shape = if(category=="travel") CircleShape else RectangleShape)
+                            .rotate(if(category=="travel") rotate.value else 0f)
+//                            .graphicsLayer {
+//                               translationX= when(category){
+//                                   "food" ->direction
+//                                   "shopping" ->direction
+//                                   else ->0f
+//                               }
+//                            }
+
+                    )
                 }
             }
 
@@ -241,7 +278,6 @@ var value:Float by remember {
                 items(items = mainActivityViewModel.expense.value) { expense ->
                     val delete = SwipeAction(
                         onSwipe = {
-
                             if (category.capitalize(Locale.ROOT) == "Travel") {
                                 Log.d("ex", expense.toString())
                                 db.collection("expenses")
@@ -346,7 +382,7 @@ var value:Float by remember {
 //                    .clip(shape = RoundedCornerShape(5.dp))
 //            )
        Row(modifier=Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround){
-           Text(text = "${category.capitalize(Locale.ROOT)} : $value",
+           Text(text = "${category.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} : $value",
                fontSize = 18.sp,
                fontWeight = FontWeight.Medium,
                color = Color.Gray
@@ -416,14 +452,16 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                     ) {
                         if (category.capitalize(Locale.ROOT) == "Travel") {
                             Text(
-                                text = expense["country"].toString().capitalize(Locale.ROOT),
+                                text = expense["country"].toString()
+                                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black
                             )
                         } else {
                             Text(
-                                text = expense["name"].toString().capitalize(Locale.ROOT),
+                                text = expense["name"].toString()
+                                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.Black
@@ -439,7 +477,8 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                     Row( horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically){
                  Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription ="location icon",tint=Color(0xFF7180D1).copy(0.6f))
                         Spacer(modifier =Modifier.width(3.dp))
-                        Text(text=expense["location"].toString().capitalize(Locale.ROOT),
+                        Text(text= expense["location"].toString()
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color =Color(0xFF7180D1).copy(0.6f))
@@ -464,7 +503,7 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
                 Icon(
                     painter = painterResource(id = R.drawable.swipeabledelete),
                     contentDescription = " swipe delete icon",
-                    tint = Color.Black
+                    tint = Color.Black,
                 )
             }
             Spacer(
