@@ -45,16 +45,22 @@ fun SettingRow(navController: NavController,userUi:String,sRow: SRow,){
         }
         IconButton(onClick = {
             when (sRow.text) {
-                "Update User Info" -> navController.navigate(route="PersonalInfo/$userUi")
-                "change Password" -> navController.navigate(route = "PasswordSecurity/$userUi")
+                "Update User Info" -> navController.navigate(route="PersonalInfo/$userUi"){
+
+                }
+                "change Password" -> navController.navigate(route = "PasswordSecurity/$userUi"){
+
+                }
                 "Switch Account" -> navController.navigate(route = "SignInScreen") {
                     popUpTo(route = "MainPage/$userUi")
                 }
                 else -> {Firebase.auth.signOut()
-                navController.navigate(route ="SignInScreen"){
-                    popUpTo(route="FirstScreen"){
-                     inclusive=true
-                }
+                navController.navigate(route ="FirstScreen"){
+                    popUpTo(0)
+
+
+
+
                 }}
             }
         })
