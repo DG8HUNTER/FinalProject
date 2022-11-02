@@ -70,9 +70,8 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
         ) {
             IconButton(onClick = {
                 navController.navigate(route = "MainPage/$userUi") {
-                    popUpTo(route = "FirstScreen") {
-                        inclusive = true
-                    }
+                    popUpTo(0)
+
                 }
 
             }
@@ -86,7 +85,7 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
 
             }
             Text(
-                text = "Password Reset",
+                text ="Security Phase", //"Password Reset",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -204,6 +203,7 @@ Log.d("pass", mainActivityViewModel.password.value.toString())
                     oldPasswordErrorMessage = "Wrong password !"
                 } else {
                     navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+
                         popUpTo(route = "PasswordSecurity/$userUi")
                         launchSingleTop = true
                     }

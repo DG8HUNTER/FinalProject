@@ -116,6 +116,8 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                     }
             }
         }
+        val updatingState:Boolean = password==null;
+
         Text(text = "Personal Info", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -441,11 +443,8 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                                     "DocumentSnapshot successfully written!"
                                 )
                                 navController.navigate(route = "MainPage/$userUi") {
-                                    popUpTo(route = "FirstScreen") {
-                                        inclusive = true
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
+                                    popUpTo(0)
+
                                 }
 
                             }
@@ -470,11 +469,8 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                                 .addOnSuccessListener {
                                     Log.d("TAB", "Info Updated !")
                                     navController.navigate(route = "MainPage/$userUi") {
-                                        popUpTo(route = "FirstScreen") {
-                                            inclusive = true
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
+                                        popUpTo(0)
+
                                     }
                                     Toast.makeText(context, "Info Updated Successfully !", Toast.LENGTH_LONG).show()
                                 }
@@ -512,7 +508,7 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Submit",
+                    text = if(updatingState) "Update" else "Submit",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White

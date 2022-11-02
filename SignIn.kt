@@ -324,7 +324,7 @@ fun SignIn(navController: NavController) {
                     if (errorMessage == "The password is invalid or the user does not have a password.") {
 //                            //"The password is invalid or the user does not have a password."
                         passwordRequirementError = true
-                        passwordErrorMessage = "Wrong message !"
+                        passwordErrorMessage = "Wrong Password !"
                     }
                 }
             }
@@ -383,7 +383,9 @@ fun SignIn(navController: NavController) {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d("TAG", "signInWithEmail:success")
                                         val userUi = auth.currentUser?.uid
-                                        navController.navigate(route = "MainPage/$userUi")
+                                        navController.navigate(route = "MainPage/$userUi"){
+                                            popUpTo(0)
+                                        }
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w("TAG", "signInWithEmail:failure", task.exception)
@@ -466,7 +468,13 @@ fun SignIn(navController: NavController) {
                         fontWeight = FontWeight.Normal,
                         color = blueLink,
                         modifier = Modifier.clickable {
-                            navController.navigate(route = "SignUpScreen")
+                            navController.navigate(route = "SignUpScreen"){
+
+                                popUpTo(route="SignInScreen"){
+                                    saveState=true
+                                }
+                                launchSingleTop = true
+                            }
 
                         })
                 }
@@ -505,9 +513,6 @@ fun SignIn(navController: NavController) {
                 Button(
                     onClick = {
                         googleButtonClicked = !googleButtonClicked
-                        navController.navigate(route = "MainPage") {
-                            popUpTo(route = "MainPage") { inclusive = true }
-                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
