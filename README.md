@@ -19,9 +19,10 @@ Pour commencer, Expense Tracker  possede  trois boutons importants situés dans 
 
 
 La page “Welcome Page”:
-
--Le logo de l’application : Il s'agit d'une image faisant référence à un portefeuille contenant de l'argent et une carte bancaire. Le choix de cette image comme logo renvoie à la possibilité pour l'utilisateur d'enregistrer et de suivre ses dépenses payées en espèces ou par carte bancaire.
-
+ -Le logo de l’application : Il s'agit d'une image faisant référence à un portefeuille contenant de l'argent et une carte bancaire.
+ Raisons du choix de cette image comme logo :
+Le portefeuille et la carte bancaire sont deux outils utilisés pour payer les dépenses.
+L'utilisateur peut enregistrer et suivre ses dépenses quel que soit le mode de paiement.
 
 -une brève description de l'application : Cette description permet à l'utilisateur de se faire une idée brève et rapide de l'application et des fonctionnalités que l'application lui présente.
 
