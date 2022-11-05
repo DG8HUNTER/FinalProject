@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
 import com.google.firebase.auth.EmailAuthCredential
@@ -54,7 +55,7 @@ import isValidEmail
 import kotlinx.coroutines.delay
 
 @Composable
-fun PasswordReset(navController: NavController, page:String,userUi:String,oldPassword:String?) {
+fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPassword:String?) {
     var email :String?  by remember{
         mutableStateOf(null)
     }
@@ -501,25 +502,26 @@ fun PasswordReset(navController: NavController, page:String,userUi:String,oldPas
                     currentUser.updatePassword(newPassword!!)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                mainActivityViewModel.setValue(newPassword,"password")
                                 Log.d("TAG", "User password updated.")
                                 Toast.makeText(context, "Password updated successfully",Toast.LENGTH_LONG).show()
 
-                                    db.collection("Users").document(userUi).update("password",newPassword.hashCode())
+                                    db.collection("Users").document(userUi!!).update("password",newPassword)
                                         .addOnSuccessListener {
                                             Log.d("Tag","user password updated !")
                                         }
 
                                 Log.d("ui",userUi.toString())
                                 navController.navigate(route="MainPage/$userUi"){
-                                    popUpTo(route="FirstScreen"){
-                                        inclusive=true
-                                    }
+                                    popUpTo(0)
+
                                 }
 
                             }
                             else{
                                 Toast.makeText(context,"Please re-enter your old password",Toast.LENGTH_LONG).show()
                                 navController.navigate(route="PasswordSecurity/$userUi"){
+                                    popUpTo(0)
                                    popUpTo(route="MainPage/$userUi")
                                 }
                             }

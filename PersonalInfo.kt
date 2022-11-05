@@ -426,6 +426,7 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                             "id" to userUi,
                             "firstName" to firstName,
                             "lastName" to lastName,
+                            "password" to password,
                             "budget" to budget,
                             "currency" to currency,
                             "expenses" to 0,
@@ -433,6 +434,7 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                             "food" to 0,
                             "shopping" to 0,
                             "rent" to 0,
+
 
                         )
                         db.collection("Users").document(userUi)

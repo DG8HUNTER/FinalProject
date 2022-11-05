@@ -20,7 +20,7 @@ fun Navigation(navController: NavController) {
 
     NavHost(
         navController = navController as NavHostController,
-        startDestination ="FirstScreen"
+        startDestination ="FirstScreen",
     ) {
         composable(route="FirstScreen"){
             FirstScreen(navController=navController)
@@ -29,7 +29,10 @@ fun Navigation(navController: NavController) {
         composable(route = "WelcomeScreen") {
             WelcomeScreen(navController = navController)
         }
-        composable(route = "SignUpScreen") {
+        composable(route = "SignUpScreen",
+
+        ) {
+
             SignUp(navController = navController)
         }
         composable(route = "SignInScreen") {
@@ -39,7 +42,6 @@ fun Navigation(navController: NavController) {
             navArgument(name = "userUi") {
                 type = NavType.StringType
                 nullable = false
-
             }
         )
         ) { backStackEntry ->
@@ -60,8 +62,8 @@ fun Navigation(navController: NavController) {
             backStackEntry->
             PasswordReset(navController = navController,
                 page=backStackEntry.arguments?.get("page").toString(),
-                userUi = backStackEntry.arguments?.get("userUi").toString(),
-                oldPassword = backStackEntry.arguments?.get("oldPassword").toString())
+                userUi = backStackEntry.arguments?.get("userUi") as String? ,
+                oldPassword = backStackEntry.arguments?.get("oldPassword") as String?)
         }
         composable(route = "Categories") {
 
@@ -83,17 +85,21 @@ fun Navigation(navController: NavController) {
 //        composable(route="Settings"){
 //            Settings(navController=navController)
 //        }
-        composable(route = "PersonalInfo/{userUi}", arguments = listOf(
+        composable(route = "PersonalInfo?password={password}/{userUi}", arguments = listOf(
             navArgument(name = "userUi") {
                 type = NavType.StringType
                 nullable = false
+            },
+            navArgument(name="password"){
+                type= NavType.StringType
+                nullable=true
             }
         )) {
 
                 navBackStackEntry ->
             PersonalInfo(
                 navController = navController,
-                userUi = navBackStackEntry.arguments?.get("userUi").toString()
+                userUi = navBackStackEntry.arguments?.get("userUi").toString(), password = if(navBackStackEntry.arguments?.get("password")=="") null else navBackStackEntry.arguments?.get("password")  as String?
             )
         }
 
@@ -128,73 +134,6 @@ fun Navigation(navController: NavController) {
 }
 
 
-
-//@Composable
-//fun Navigation2(navController: NavController, currentUser: FirebaseUser?) {
-//
-//    NavHost(
-//        navController = navController as NavHostController,
-//        startDestination = "MainPage/${currentUser?.uid}"
-//    ) {
-//
-//        composable(route = "WelcomeScreen") {
-//            WelcomeScreen(navController = navController)
-//        }
-//        composable(route = "SignUpScreen") {
-//            SignUp(navController = navController)
-//        }
-//        composable(route = "SignInScreen") {
-//            SignIn(navController = navController)
-//        }
-//        composable(route = "Home/{userUi}", arguments = listOf(
-//            navArgument(name = "userUi") {
-//                type = NavType.StringType
-//                nullable = false
-//
-//            }
-//        )
-//        ) { backStackEntry ->
-//            Home(userUi = backStackEntry.arguments?.get("userUi").toString())
-//        }
-//        composable(route = "ResetPassword") {
-//            PasswordReset(navController = navController)
-//        }
-//        composable(route = "Categories") {
-//
-//        }
-//
-//        composable(route = "MainPage/{userUi}", arguments = listOf(
-//
-//            navArgument(name = "userUi") {
-//                type = NavType.StringType
-//                nullable = false
-//            }
-//        )) { backStackEntry ->
-//            MainPage(
-//                navController = navController,
-//                userUi = backStackEntry.arguments?.get("userUi").toString()
-//            )
-//
-//        }
-////        composable(route="Settings"){
-////            Settings(navController=navController)
-////        }
-//        composable(route = "PersonalInfo/{userUi}", arguments = listOf(
-//            navArgument(name = "userUi") {
-//                type = NavType.StringType
-//                nullable = false
-//            }
-//        )) {
-//
-//                navBackStackEntry ->
-//            PersonalInfo(
-//                navController = navController,
-//                userUi = navBackStackEntry.arguments?.get("userUi").toString()
-//            )
-//        }
-//
-//
-//    }
 
 
 

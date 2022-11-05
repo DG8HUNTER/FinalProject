@@ -195,35 +195,34 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
                 if (oldPassword == null) {
                     oldPasswordRequirementError = true
                     oldPasswordErrorMessage = "Required Field"
-
                 }
-                if (mainActivityViewModel.password.value != oldPassword) {
-Log.d("pass", mainActivityViewModel.password.value.toString())
-                    oldPasswordRequirementError = true
-                    oldPasswordErrorMessage = "Wrong password !"
-                } else {
-                    navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
-
-                        popUpTo(route = "PasswordSecurity/$userUi")
-                        launchSingleTop = true
-                    }
-                }
-//                db.collection("Users").document(userUi)
-//                    .get()
-//                    .addOnSuccessListener { document ->
-//                        if (document != null) {
-//                            if (document.data?.get("password")!= oldPassword.hashCode()
-//                            ) {
-//                                oldPasswordRequirementError = true
-//                                oldPasswordErrorMessage = "Wrong password !"
-//                            } else {
-//                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
-//                                    popUpTo(route = "PasswordSecurity/$userUi")
-//                                    launchSingleTop = true
-//                                }
-//                            }
-//                        }
+//                if (mainActivityViewModel.password.value != oldPassword) {
+//                Log.d("pass", mainActivityViewModel.password.value.toString())
+//                oldPasswordRequirementError = true
+//                oldPasswordErrorMessage = "Wrong password !"
+//                } else {
+//                    navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+//
+//                        popUpTo(route = "PasswordSecurity/$userUi")
+//                        launchSingleTop = true
 //                    }
+//                }
+                db.collection("Users").document(userUi)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            if (document.data?.get("password")!= oldPassword
+                            ) {
+                                oldPasswordRequirementError = true
+                                oldPasswordErrorMessage = "Wrong password !"
+                            } else {
+                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+                                    popUpTo(route = "PasswordSecurity/$userUi")
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
+                    }
 
 
             },
