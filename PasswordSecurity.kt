@@ -31,12 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
 fun PasswordSecurity(navController: NavController, userUi:String) {
-
+    val auth = Firebase.auth
+    val currentUser=auth.currentUser
     var oldPassword: String? by remember {
         mutableStateOf(null)
     }
@@ -207,57 +210,75 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
 //                        launchSingleTop = true
 //                    }
 //                }
-                db.collection("Users").document(userUi)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document != null) {
-                            if (document.data?.get("password")!= oldPassword
-                            ) {
-                                oldPasswordRequirementError = true
-                                oldPasswordErrorMessage = "Wrong password !"
-                            } else {
-                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+//                db.collection("Users").document(userUi)
+//                    .get()
+//                    .addOnSuccessListener { document ->
+//                        if (document != null) {
+//                            if (document.data?.get("password")!= oldPassword
+//                            ) {
+//                                oldPasswordRequirementError = true
+//                                oldPasswordErrorMessage = "Wrong password !"
+//                            } else {
+//                                navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
+//                                    popUpTo(route = "PasswordSecurity/$userUi")
+//                                    launchSingleTop = true
+//                                }
+//                            }
+//                        }
+//                    }
+                val credential = EmailAuthProvider.getCredential(currentUser?.email.toString(), oldPassword.toString())
+
+                Log.d("provide data" , currentUser?.providerData.toString())
+
+
+                currentUser!!.reauthenticate(credential)
+                    .addOnSuccessListener {
+                        navController.navigate(route = "ResetPassword?userUi=$userUi&oldPassword=$oldPassword/PasswordSecurity") {
                                     popUpTo(route = "PasswordSecurity/$userUi")
-                                    launchSingleTop = true
-                                }
-                            }
-                        }
+                                   launchSingleTop = true }
+                    }
+                    .addOnFailureListener{
+                        oldPasswordRequirementError = true
+                        oldPasswordErrorMessage = "Wrong password !"
                     }
 
+                            Log.d("Current", currentUser.email.toString().toString())
 
-            },
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(10.dp)),
-            contentPadding = PaddingValues()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .background(
-                        color = com.example.expensetrackerproject.ui.theme.Green,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = "Submit",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
 
-            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp)),
+                        contentPadding = PaddingValues()
+                        ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(
+                                    color = com.example.expensetrackerproject.ui.theme.Green,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "Submit",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
 
-        }
+                        }
+
+                    }
+                    }
 
     }
-}
+
 
 
 

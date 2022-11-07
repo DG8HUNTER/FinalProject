@@ -56,6 +56,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPassword:String?) {
+    val db =Firebase.firestore
+    var buttonText:String by remember {
+        mutableStateOf ("Reset Password")
+    }
     var email :String?  by remember{
         mutableStateOf(null)
     }
@@ -248,7 +252,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
             }
         }
         else{
-
+            buttonText="Change Password"
 
                 Column(modifier=Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start , verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     OutlinedTextField(value = if (newPassword != null) newPassword.toString() else "",
@@ -472,11 +476,13 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                                 emailErrorMessage = "Email does not exist"
                             }
                         }
+
+
                 }
             }
             }
             else{
-                val db = Firebase.firestore
+
                 val auth = Firebase.auth
                 val currentUser=auth.currentUser
                 Log.d("userCurrent",currentUser?.email.toString())
@@ -506,10 +512,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                                 Log.d("TAG", "User password updated.")
                                 Toast.makeText(context, "Password updated successfully",Toast.LENGTH_LONG).show()
 
-                                    db.collection("Users").document(userUi!!).update("password",newPassword)
-                                        .addOnSuccessListener {
-                                            Log.d("Tag","user password updated !")
-                                        }
+
 
                                 Log.d("ui",userUi.toString())
                                 navController.navigate(route="MainPage/$userUi"){
@@ -550,7 +553,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Reset Password",
+                text = buttonText,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White

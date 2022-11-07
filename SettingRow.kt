@@ -45,7 +45,7 @@ fun SettingRow(navController: NavController,userUi:String,sRow: SRow,){
         }
         IconButton(onClick = {
             when (sRow.text) {
-                "Update User Info" -> navController.navigate(route="PersonalInfo?password=/$userUi"){
+                "Update User Info" -> navController.navigate(route="PersonalInfo/$userUi/Settings"){
 
                 }
                 "change Password" -> navController.navigate(route = "PasswordSecurity/$userUi"){

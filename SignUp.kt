@@ -531,7 +531,7 @@ fun SignUp(navController: NavController) {
                                                 val userUi = auth.currentUser?.uid.toString()
                                                 Log.d("User", userUi.toString())
                                                 mainActivityViewModel.setValue(password,"password")
-                                                navController.navigate(route = "PersonalInfo?password=$password/$userUi") {
+                                                navController.navigate(route = "PersonalInfo/$userUi/SignUp") {
                                                     popUpTo("SignUpScreen")
                                                 }
                                             } else {
@@ -598,7 +598,7 @@ fun SignUp(navController: NavController) {
                         ) {
 
                             Text(
-                                text = "Create Account",
+                                text = "Sign Up",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.White

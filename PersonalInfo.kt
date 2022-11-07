@@ -42,8 +42,7 @@ import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
 
 @Composable
-fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
-    Log.d("Password in PI",password.toString())
+fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
     val db = Firebase.firestore
     val context = LocalContext.current
     Column(
@@ -104,7 +103,7 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
             animateColorAsState(targetValue = if (currency != null) Color.LightGray else Color.Transparent)
 
         LaunchedEffect(true ) {
-            if (password == null) {
+            if (screen == "Settings") {
                 db.collection("Users").document(userUi)
                     .get()
                     .addOnSuccessListener { document ->
@@ -116,7 +115,7 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
                     }
             }
         }
-        val updatingState:Boolean = password==null;
+        val updatingState:Boolean = screen=="Settings";
 
         Text(text = "Personal Info", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Column(
@@ -421,12 +420,11 @@ fun PersonalInfo(navController: NavController,userUi:String,password:String?) {
             onClick = {
                   focusManager.clearFocus()
                 if (firstName != null && lastName != null && budget != null && currency != null) {
-                    if (password != null) {
+                    if (screen!="Settings") {
                         val user = hashMapOf(
-                            "id" to userUi,
+                            "userUID" to userUi,
                             "firstName" to firstName,
                             "lastName" to lastName,
-                            "password" to password,
                             "budget" to budget,
                             "currency" to currency,
                             "expenses" to 0,

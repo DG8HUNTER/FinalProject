@@ -85,22 +85,21 @@ fun Navigation(navController: NavController) {
 //        composable(route="Settings"){
 //            Settings(navController=navController)
 //        }
-        composable(route = "PersonalInfo?password={password}/{userUi}", arguments = listOf(
+        composable(route = "PersonalInfo/{userUi}/{screen}", arguments = listOf(
             navArgument(name = "userUi") {
                 type = NavType.StringType
                 nullable = false
             },
-            navArgument(name="password"){
-                type= NavType.StringType
-                nullable=true
+            navArgument(name = "screen") {
+                type = NavType.StringType
+                nullable = false
             }
-        )) {
 
+        )) {
                 navBackStackEntry ->
             PersonalInfo(
                 navController = navController,
-                userUi = navBackStackEntry.arguments?.get("userUi").toString(), password = if(navBackStackEntry.arguments?.get("password")=="") null else navBackStackEntry.arguments?.get("password")  as String?
-            )
+                userUi = navBackStackEntry.arguments?.get("userUi").toString(), screen = navBackStackEntry.arguments?.get("screen").toString())
         }
 
  composable(route="DisplayExpenses/{category}/{userUi}" , arguments = listOf(
