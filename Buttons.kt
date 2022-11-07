@@ -34,7 +34,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
             if(category=="Travel"){
             if(mainActivityViewModel.country.value!=null && mainActivityViewModel.price.value!=null && mainActivityViewModel.day.value!=null && mainActivityViewModel.month.value!=null && mainActivityViewModel.year.value!=null){
                 val data = hashMapOf(
-                    "id" to userUi,
+                    "userUID" to userUi,
                     "category" to "Travel" ,
                     "country" to mainActivityViewModel.country.value,
                     "location" to mainActivityViewModel.location.value,
@@ -53,7 +53,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
 
             }
             }else{
-                val  data =    hashMapOf("id" to userUi,
+                val  data =    hashMapOf("userUID" to userUi,
                 "category" to category,
                 "name" to mainActivityViewModel.name.value,
                     "location" to mainActivityViewModel.location.value,
@@ -74,7 +74,7 @@ fun Buttons(db:FirebaseFirestore,userUi:String,category:String,color:Color){
             }
                 db.collection("expenses")
                     .whereEqualTo("category" ,category)
-                    .whereEqualTo("id" , userUi)
+                    .whereEqualTo("userUID" , userUi)
                     .get()
                     .addOnSuccessListener { documents ->
                         mainActivityViewModel.setValue(
