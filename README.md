@@ -295,3 +295,40 @@ Si l'utilisateur clique sur cette fleche , le cas d'utilisation "Disconnect  cur
 
 
 
+Description UML Class diagram :
+Chaque utilisateur possède les propriétés suivantes : userUID, firstName, lastName, currency, budget, expenses, travel, food, shopping et rent.
+-userUID : il s'agit de l'ID utilisateur.
+-firstName : le nom de l'utilisateur.
+-lastName : le prénom de l'utilisateur.
+-currency : Il s'agit de la devise du compte de l'utilisateur.
+-budget : Il s'agit du salaire mensuel de l'utilisateur.
+-expenses : il s'agit de la valeur totale dépensée par l'utilisateur dans toutes les catégories de dépenses.
+-travel : Il s'agit du total dépensé par l'utilisateur en voyage  (interne ou externe)
+-food: Il s'agit du total dépensé par l'utilisateur en nourriture.
+-shopping: il s'agit du total dépensé par l'utilisateur pour ses achats.
+-rent : Il s'agit du total dépensé par l'utilisateur en loyer.
+
+La dépense est divisée en 4 catégories :
+travel , food , shopping et rent.
+Quelle que soit la catégorie de la dépense, celle-ci possède les propriétés suivantes : userUID, category, price, location, date, tempStamp.
+-userUID : C'est l'identifiant de l'utilisateur qui a effectué cette dépense.
+-categorie : Il s'agit de la catégorie de la dépense.
+-price : Il s'agit du prix ou du coût de cette dépense.
+-location : il s'agit de l'emplacement particulier ou specifique  de cette dépense. Il s'agit généralement d'un lieu à l'intérieur d'un pays (lieu particulier).
+date et tempStamp : il s'agit de la date de cette dépense.
+Si la dépense est de type « travel » : une propriété est ajouté à la dépense. Cette propriété est "country".
+-country : C'est le pays .
+Sinon deux propriétés sont ajoutées à la dépense : "Name" et "Quantity".
+-Name : il s'agit de la chose pour laquelle l'utilisateur a dépensé.
+-Quantity: C'est la quantité de cette chose.
+
+Chaque compte a les propriétés suivantes : identifier, provider, created, signedIn, userUID.
+identifier : il s'agit de l'e-mail de l'utilisateur.
+provider : qui fournit l'identifiant.
+created: il s'agit de la date à laquelle l'e-mail a été créé.
+signedIn : Il s'agit de la date d'identification de l'utilisateur à l'aide de son email.
+userUID : il s'agit de l'identifiant de l'utilisateur qui possède ce compte ou cette adresse e-mail.
+
+Chaque utilisateur peut ne pas avoir une dépense ou peut avoir plus d'une dépense.Chaque dépense appartient à un et un seul utilisateur.
+Chaque utilisateur peut avoir un ou plusieurs comptes et chaque compte appartient à un et un seul utilisateur.
+
