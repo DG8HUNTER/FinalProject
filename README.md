@@ -259,6 +259,37 @@ Sign Out : Si l'utilisateur clique sur la flèche à côté de "Sign Out", l'uti
 
 
 
+Use Case descryption :
+Deux acteurs interagissent avec l'application : Un acteur principal qui est l'utilisateur de l'application (C'est la personne qui a téléchargé l'application et s'est abonné) et un acteur secondaire qui est la base de données de l'application. 
+L'utilisateur de l'application a plusieurs cas d'utilisation et ils sont :SignUp, SignIn, Select Category, Add Expense, View Expenses, Delete Expense, Update Info, Reset Password , Change Password et SignOut.
+Le premier cas d'utilisation "S'inscrire" : représenté par le bouton "S'inscrire" a une relation d'inclusion avec un autre cas d'utilisation nommé "Créer un utilisateur/un compte". Lorsque l'utilisateur clique sur le bouton "S'inscrire" pour s'enregistrer dans l'application, ce bouton utilise automatiquement le cas d'utilisation "Créer Utilisateur/Compte" qui se charge de l'opération d'enregistrement de l'utilisateur et qui interagit avec l'acteur secondaire qui est la base de données de la demande d'inscription de l'utilisateur dans cette base de données.
+
+le cas d'utilisation "SignIn" : Ce cas d'usage est représenté par le bouton "Sign In" et est lié à deux autres cas d'utilisation :
+- une relation d'inclusion avec "Verify  Email and password".
+-une relation d'extension avec "ReSignIn".
+Lorsque l'utilisateur clique sur le bouton "Sign In", le cas d'utilisation " Verify  Email and password " est automatiquement utilisé puisque la relation avec "SignIn" est une relation d'inclusion. Ce cas d'utilisation est responsable de l'opération d'identification de l'utilisateur et interagit  avec la base de données de l'application pour réaliser cette opération. Dans le cas où l'opération d'identification de l'utilisateur n'a pas réussi, le cas d'utilisation "ReSignIn" est utilisé pour permettre à l'utilisateur de s'enregistrer à nouveau en remplissant les champs avec l'e-mail et le mot de passe corrects.
+
+Le cas d'utilisaton  "Select Category" : ce cas d'utilisation  permet à l'utilisateur de choisir une catégorie de dépenses parmi les différentes catégories de dépenses présentes dans l'application. Ce cas d'utilisation es ten relation de généralisation avec 4 cas d'utilisation :
+Select Travel, Select Food, Select Shopping, et Select Rent. Chacun de ces cas d'utilisation est représenté par une case ayant la couleur de la dépense représentée par cette case et à l'intérieur le nom de la dépense avec une icône représentant cette dépense. Le choix d'une dépense se fait en cliquant sur une case.
+
+le cas d'utilisation "Add Expense" : Ce cas d'utilisation  permet à l'utilisateur d'enregistrer une dépense. Ce cas d'utilisation est représenté par un bouton "Add". Ce bouton est responsable de l'opération d'enregistrement des dépenses de l'utilisateur. Lorsque l'utilisateur appuie sur ce bouton, et que tous les champs concernant les informations sur la dépense sont remplis, une interaction avec la base de données commence pour l'enregistrement de cette dépense dans la base de données de l'application précisément à l'intérieur de la table ou collection "dépenses".
+
+le cas d'usage "View Expenses " : Ce cas d'usage s’incarne lorsque l'utilisateur clique sur une des barres de pourcentage présentes dans la page "Home" de l'application. En cliquant sur l'un des batons, l'application interagit avec la base de données de l'application pour collecter toutes les dépenses exécutées sur la catégorie du baton  choisi puis les afficher à l'écran avec la dépense totale sur cette catégorie et la dépense totale sur toutes les catégories faite par l'utilisateur.
+
+
+le cas d'utilisation "Delete Expense" : Ce cas d'utilisation est représenté par une action de balayage vers la gauche pouvant être effectuée par l'utilisateur sur chaque dépense. Si l'utilisateur glisse vers la gauche sur une dépense, une interaction avec la base de données de l'application commencera à effacer cette dépense du tableau "dépenses" à l'intérieur de cette base de données, puis elle sera effacée dans l'application.
+
+
+le cas d'utilisation "Upadte Info" : Ce cas d'utilisation est représenté par un bouton "Update " qui se charge de modifier les informations de l'utilisateur. En cliquant sur "Update Info", la page "PersonnelInfo" apparaît à l'écran. Cette page contient des champs déjà remplis par l'utilisateur. Si l'utilisateur clique sur le bouton "Update " après avoir modifié un ou plusieurs champs, une interaction entre l'application et la base de données commence à modifier les informations de l'utilisateur précisément à l'intérieur de la table "Users" présents dans la base de données et par la suite les informations utilisateur à l'intérieur de l'application seront modifiées.
+
+Cas d'utilisation”Reset Password”: ce cas d'utilisation est illustré par le bouton”Reset Password”. Ce bouton est responsable de l'envoi d'un e-mail qui permet à l'utilisateur de réinitialiser son mot de passe s'il ne sait pas son mot de passe ancien ou actuel. Lorsque l'utilisateur clique sur le bouton après avoir entré son email dans le champ précédent, l'interaction entre l'application et la base de données commence pour permettre l'envoi de l'email à l'utilisateur.
+
+Cas d'utilisation de “Change Password” : ce cas d'utilisation est illustré par le bouton “Change Password”. Ce bouton est chargé de changer le mot de passe de l'utilisateur s'il connaît l'ancien ou le mot de passe actuel. Si l'utilisateur clique sur ce bouton après avoir rempli les champs précédents (new password et confirm password ) avec des valeurs compatibles, l'interaction entre l'application et la base de données de l'application commence pour permettre la modification du mot de passe de l'utilisateur.
+
+
+le cas d'utilisation "SignOut" : Ce cas d'utilisation est illustré par un bouton en forme de flèche à droite à côté de "Sign Out" présent dans la page "Settings". Ce bouton a une relation d'inclusion avec le cas d'utilisation "Disconnect current user from the application “ qui est responsable de la déconnexion de l'utilisateur de l'application
+Si l'utilisateur clique sur cette fleche , le cas d'utilisation "Disconnect  current user from the application" est automatiquement utilisé car il existe une relation d'inclusion entre les deux et une interaction entre l'application et la base de données démarre permettant à l'utilisateur de se connecter hors de l'application
+
 
 
 
