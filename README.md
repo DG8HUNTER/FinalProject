@@ -7,6 +7,19 @@ La chose la plus importante à retenir à propos du suivi des dépenses est qu'i
 Bien que le suivi des dépenses puisse sembler une tâche ardue, il est devenu plus facile que prévu, en particulier avec l'aide d'applications comme Expense Tracker.
 
 Expense Tracker est une application qui vous permet de surveiller et de catégoriser vos dépenses pour éliminer les habitudes de dépenses inutiles dans votre vie financière et commencer à économiser de l'argent. 
+Features :
+•	Une interface conviviale et réactive.
+•	 Préservation de la batterie.
+•	Une UX intuitive et des options de confidentialité claires.
+•	Une approche basée sur la sécurité dès la conception.
+•	Simplicité.
+•	La rapidité.
+•	Bonne résolution d'image.
+•	Souplesse
+•	Schémas de couleurs vives et audacieuses.
+•	Utilisateurs et comptes ( SignUp , SignIn , SignOut).
+•	Envoie des e-mails pour l’utilisateur.
+
 L'utilisateur pourra enregistrer chaque dépense par catégorie ce qui lui permet de revoir ses dépenses à la fin de chaque mois et de se rappeler où et combien d'argent il a dépensé pour chaque catégorie. 
 L'application permettra à l'utilisateur de voir le pourcentage ainsi que la valeur dépensée de son budget mensuel et ce par un indicateur circulaire. L'application permettra également à l'utilisateur de connaître le pourcentage dépensé sur chaque catégorie et de donner des informations plus concrètes sur les dépenses effectuées par l'utilisateur sur chaque catégorie. 
 Pour enregistrer une dépense, l'utilisateur n'a qu'à choisir une catégorie de dépense. Une fois le choix effectué, des champs apparaissent à l'écran permettant à l'utilisateur de saisir les informations relatives à la dépense. Ses champs doivent contenir le nom de la dépense, la valeur de la dépense ainsi que 
