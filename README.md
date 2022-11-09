@@ -19,6 +19,7 @@ Features :
 •	Schémas de couleurs vives et audacieuses.
 •	Utilisateurs et comptes ( SignUp , SignIn , SignOut).
 •	Envoie des e-mails pour l’utilisateur.
+•	Navigation entre les écrans
 
 L'utilisateur pourra enregistrer chaque dépense par catégorie ce qui lui permet de revoir ses dépenses à la fin de chaque mois et de se rappeler où et combien d'argent il a dépensé pour chaque catégorie. 
 L'application permettra à l'utilisateur de voir le pourcentage ainsi que la valeur dépensée de son budget mensuel et ce par un indicateur circulaire. L'application permettra également à l'utilisateur de connaître le pourcentage dépensé sur chaque catégorie et de donner des informations plus concrètes sur les dépenses effectuées par l'utilisateur sur chaque catégorie. 
