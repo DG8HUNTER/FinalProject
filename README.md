@@ -349,3 +349,19 @@ userUID : il s'agit de l'identifiant de l'utilisateur qui possède ce compte ou 
 Chaque utilisateur peut ne pas avoir une dépense ou peut avoir plus d'une dépense.Chaque dépense appartient à un et un seul utilisateur.
 Chaque utilisateur peut avoir un ou plusieurs comptes et chaque compte appartient à un et un seul utilisateur.
 
+Conclusion :
+Expense Tracker est une application qui  s'adresse aux personnes qui dépensent une grande partie de leur budget mensuel et ne savent pas où  dépensent cette grosse somme.En effet, cette application vise à sensibiliser les gens à leurs dépenses afin d'éliminer les habitudes de dépenses inutiles et amener les gens à augmenter leurs économies mensuelles et par la suite être prêts à affronter les jours sombres.
+
+
+References:
+•	Kotlin  Course :  
+•	https://developer.android.com/courses/android-basics-kotlin/course  . 
+
+•	Jetpack Compose Tutorial : https://www.jetpackcompose.net/ .
+
+•	Jetpack Compose Tutorial on youtube   : https://www.youtube.com/watch?v=ERBEWmfz6h0&list=RDCMUCYLAirIEMMXtWOECuZAtjqQ&start_radio=1&rv=ERBEWmfz6h0
+
+•	Firebase : https://firebase.google.com/
+
+
+
