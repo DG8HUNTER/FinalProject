@@ -2,7 +2,10 @@
 
  
  Qui n'a pas d'objectif pour le Nouvel An qui inclut de l'argent ? Beaucoup d'entre nous ont des objectifs qui impliquent de gagner plus d'argent ou de gérer l'argent que nous avons déjà - mais quel que soit l'objectif exact que vous pourriez avoir pour votre argent, vous aurez probablement besoin de connaissances sur le sujet. Bien qu'il soit essentiel de comprendre vos dépenses, cela constitue l'une des informations les plus importantes que vous puissiez recueillir sur la destination de votre argent. Le suivi des dépenses peut être relativement simple et peut vous donner beaucoup d'informations sur vos habitudes de dépenses.
-Il y a beaucoup de gens qui gagnent beaucoup d'argent mais dépensent aussi comme un marin donc à la fin de leur période de paie, il ne reste plus rien d'argent et ce cercle vicieux se répétera tous les mois, mais avec un suivi des dépenses quotidiennes, ils n'auront plus à s'inquiéter.
+Avec l'inflation et la hausse des prix des pompes à essence, des épiceries et tout le reste, il est plus important que jamais de suivre vos dépenses.
+La chose la plus importante à retenir à propos du suivi des dépenses est qu'il vous aide à identifier des moyens d'économiser et peut vous aider à éviter des situations financières négatives.
+Bien que le suivi des dépenses puisse sembler une tâche ardue, il est devenu plus facile que prévu, en particulier avec l'aide d'applications comme Expense Tracker.
+
 Expense Tracker est une application qui vous permet de surveiller et de catégoriser vos dépenses pour éliminer les habitudes de dépenses inutiles dans votre vie financière et commencer à économiser de l'argent. 
 L'utilisateur pourra enregistrer chaque dépense par catégorie ce qui lui permet de revoir ses dépenses à la fin de chaque mois et de se rappeler où et combien d'argent il a dépensé pour chaque catégorie. 
 L'application permettra à l'utilisateur de voir le pourcentage ainsi que la valeur dépensée de son budget mensuel et ce par un indicateur circulaire. L'application permettra également à l'utilisateur de connaître le pourcentage dépensé sur chaque catégorie et de donner des informations plus concrètes sur les dépenses effectuées par l'utilisateur sur chaque catégorie. 
