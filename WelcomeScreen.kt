@@ -56,10 +56,14 @@ Spacer(modifier = Modifier.height(40.dp))
             )
         }
         Spacer(modifier =Modifier.height(30.dp))
-        Text(text = "Expense tracker allows you to record your expenses and categorize them so you can know where you are spending, what you are spending on, your total expenses for each category and the remaining part of your salary for the month."
-        , fontSize=14.sp , fontWeight = FontWeight.Normal, color=Color.Gray , modifier = Modifier
-                .fillMaxWidth()
-                , textAlign = TextAlign.Start  )
+        Text(buildAnnotatedString {
+           withStyle(style = SpanStyle(color = Color.Gray , fontWeight = FontWeight.Bold , fontSize = 14.sp)){
+               append("You Track")
+           }
+           withStyle(style = SpanStyle(color=Color.Gray,fontWeight= FontWeight.Normal, fontSize = 14.sp)){
+               append(" allows you to record your expenses and categorize them so you can know where you are spending, what you are spending on, your total expenses for each category and the remaining part of your salary for the month.")
+           }
+        }, modifier = Modifier.fillMaxWidth() , textAlign = TextAlign.Start, lineHeight = 18.sp)
 
         Spacer(modifier =Modifier.height(40.dp))
     Row(modifier=Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.End) {
