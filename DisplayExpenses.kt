@@ -74,7 +74,7 @@ var value:Float by remember {
 //            expenses = mutableListOf()
             mainActivityViewModel.setValue(mutableListOf<HashMap<String,Any>>(),"expense")
             for (document in documents) {
-                if (document["category"] == category.capitalize(Locale.ROOT) && document["id"] == userUi) {
+                if (document["category"] == category.capitalize(Locale.ROOT) && document["userUID"] == userUi) {
                     Log.d("TAG", "${document.id} => ${document.data}")
 //                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
                     mainActivityViewModel.AddTo_expense(document.data as HashMap<String,Any>)
@@ -92,7 +92,7 @@ var value:Float by remember {
             mainActivityViewModel.setValue(mutableListOf<HashMap<String,Any>>(),"expense")
             Log.d("user", "Current data: ${snapshot.documents}")
             for (document in snapshot.documents) {
-                if (document["category"] == category.capitalize(Locale.ROOT) && document["id"] == userUi) {
+                if (document["category"] == category.capitalize(Locale.ROOT) && document["userUID"] == userUi) {
 //                    expenses = addTo(expenses, document.data as HashMap<String, Any>)
                     mainActivityViewModel.AddTo_expense(document.data as HashMap<String,Any>)
                 }
@@ -102,7 +102,7 @@ var value:Float by remember {
         }
     }
 
-   val doc= db.collection("Users").document(userUi)
+   val doc= db.collection("UsersInfo").document(userUi)
        doc .get()
         .addOnSuccessListener { document ->
             if (document != null) {
@@ -283,14 +283,14 @@ var value:Float by remember {
                                 db.collection("expenses")
                                     .whereEqualTo("category", expense["category"])
                                     .whereEqualTo("country", expense["country"])
-                                    .whereEqualTo("id", expense["id"])
+                                    .whereEqualTo("userUID", expense["userUID"])
                                     .whereEqualTo("date", expense["date"])
                                     .whereEqualTo("price", expense["price"])
                                     .get()
                                     .addOnSuccessListener { result ->
                                         for (document in result) {
                                             Log.d("dd", "${document.id} => ${document.data}")
-                                            db.collection("Users")
+                                            db.collection("UsersInfo")
                                                 .document(userUi)
                                                 .update(
                                                     "travel",
@@ -299,7 +299,7 @@ var value:Float by remember {
                                                             .toLong())
                                                     )
                                                 )
-                                            db.collection("Users")
+                                            db.collection("UsersInfo")
                                                 .document(userUi)
                                                 .update(
                                                     "expenses",
@@ -320,14 +320,14 @@ var value:Float by remember {
                                 db.collection("expenses")
                                     .whereEqualTo("category", expense["category"])
                                     .whereEqualTo("name", expense["name"])
-                                    .whereEqualTo("id", expense["id"])
+                                    .whereEqualTo("userUID", expense["userUID"])
                                     .whereEqualTo("price", expense["price"])
                                     .whereEqualTo("date", expense["date"])
                                     .whereEqualTo("quantity", expense["quantity"])
                                     .get()
-                                    .addOnSuccessListener { result ->
+                                    .addOnSuccessListener { result->
                                         for (document in result) {
-                                            db.collection("Users").document(userUi)
+                                            db.collection("UsersInfo").document(userUi)
                                                 .update(
                                                     category,
                                                     FieldValue.increment(
@@ -336,7 +336,7 @@ var value:Float by remember {
                                                     )
                                                 )
 
-                                            db.collection("Users")
+                                            db.collection("UsersInfo")
                                                 .document(userUi)
                                                 .update(
                                                     "expenses",
