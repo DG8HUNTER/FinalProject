@@ -49,15 +49,24 @@ fun Home(navController: NavController , userUi:String) {
     var user: MutableMap<String, Any> by remember {
         mutableStateOf(
             hashMapOf(
+                "userUID" to "",
                 "firstName" to "" ,
                 "lastName" to "",
-                "budget" to 0f,
+
+
+            )
+        )
+    }
+    var userInfo :MutableMap<String,Any> by remember {
+        mutableStateOf(
+            hashMapOf(
+                "userUID" to "",
+                "income" to 0f,
                 "expenses" to 0f,
                 "travel" to 0f,
                 "food" to 0f,
                 "shopping" to 0f,
                 "rent" to 0f
-
             )
         )
     }
@@ -68,23 +77,23 @@ fun Home(navController: NavController , userUi:String) {
     var lastName :String by remember{
         mutableStateOf(user["lastName"].toString())
     }
-    var budget :Float  by remember {
-        mutableStateOf(user["budget"].toString().toFloat())
+    var income :Float  by remember {
+        mutableStateOf(userInfo["income"].toString().toFloat())
     }
     var expenses :Float by remember {
-        mutableStateOf(user["expenses"].toString().toFloat())
+        mutableStateOf(userInfo["expenses"].toString().toFloat())
         }
     var travel:Float by remember {
-        mutableStateOf(user["travel"].toString().toFloat())
+        mutableStateOf(userInfo["travel"].toString().toFloat())
     }
     var food :Float by remember{
-        mutableStateOf(user["food"].toString().toFloat())
+        mutableStateOf(userInfo["food"].toString().toFloat())
     }
     var shopping :Float by remember{
-        mutableStateOf(user["shopping"].toString().toFloat())
+        mutableStateOf(userInfo["shopping"].toString().toFloat())
     }
     var rent :Float by remember{
-        mutableStateOf(user["rent"].toString().toFloat())
+        mutableStateOf(userInfo["rent"].toString().toFloat())
     }
 
     val db = Firebase.firestore
@@ -97,6 +106,19 @@ fun Home(navController: NavController , userUi:String) {
              user = document.data as MutableMap<String, Any>
           Log.d("userdoc" , user.toString())
 
+            } else {
+                Log.d("User", "No such document")
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("User", "get failed with ", exception)
+        }
+    val userInfoRef = db.collection("UsersInfo").document(userUi)
+    userInfoRef.get()
+        .addOnSuccessListener { document ->
+            if (document != null) {
+                userInfo = document.data as MutableMap<String, Any>
+                Log.d("userdoc" , user.toString())
             } else {
                 Log.d("User", "No such document")
             }
@@ -119,34 +141,48 @@ fun Home(navController: NavController , userUi:String) {
         }
     }
 
+    userInfoRef.addSnapshotListener { snapshot, e ->
+        if (e != null) {
+            Log.w("user", "Listen failed.", e)
+            return@addSnapshotListener
+        }
+
+        if (snapshot != null && snapshot.exists()) {
+            Log.d("user", "Current data: ${snapshot.data}")
+            userInfo = snapshot.data as MutableMap<String, Any>
+        } else {
+            Log.d("user", "Current data: null")
+        }
+    }
+
 
     Log.d("user" ,user.toString() )
     firstName=user["firstName"].toString()
     Log.d("FirstName" ,firstName.toString() )
     lastName=user["lastName"].toString()
     Log.d("lastName" , lastName.toString())
-   budget = user["budget"].toString().toFloat()
+    income = userInfo["income"].toString().toFloat()
     Log.d("budget" , user["budget"].toString())
-    expenses=user["expenses"].toString().toFloat()
+    expenses=userInfo["expenses"].toString().toFloat()
     Log.d("expenses", expenses.toString())
-    travel=user["travel"].toString().toFloat()
+    travel=userInfo["travel"].toString().toFloat()
     Log.d("Travel" , travel.toString())
-    food =user["food"].toString().toFloat()
+    food =userInfo["food"].toString().toFloat()
     Log.d("food" , food.toString())
-   shopping =user["shopping"].toString().toFloat()
+   shopping =userInfo["shopping"].toString().toFloat()
     Log.d("shopping" , shopping.toString())
-   rent=user["rent"].toString().toFloat()
+   rent=userInfo["rent"].toString().toFloat()
     Log.d("rent" , travel.toString())
 
 
 
-    CreateHome(navController=navController, userUi = userUi ,firstName = firstName, lastName =lastName , budget =budget  , expenses =expenses , travel =travel , food=food , shopping=shopping , rent = rent)
+    CreateHome(navController=navController, userUi = userUi ,firstName = firstName, lastName =lastName , income=income  , expenses =expenses , travel =travel , food=food , shopping=shopping , rent = rent)
 }
 
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun CreateHome(navController: NavController,userUi:String,firstName:String, lastName:String ,budget:Float , expenses:Float , travel:Float , food:Float  ,shopping:Float , rent:Float ) {
+fun CreateHome(navController: NavController,userUi:String,firstName:String, lastName:String ,income:Float , expenses:Float , travel:Float , food:Float  ,shopping:Float , rent:Float ) {
     val travelPercentage = animateFloatAsState(
         targetValue = if (travel == 0f) 0f else (travel.toFloat() / expenses.toFloat()),
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
@@ -247,12 +283,12 @@ fun CreateHome(navController: NavController,userUi:String,firstName:String, last
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
 
-                HomeCircularIndicator(budget = budget, expenses = expenses)
+                HomeCircularIndicator(income=income, expenses = expenses)
 
             }
             item {

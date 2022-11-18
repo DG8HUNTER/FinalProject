@@ -56,13 +56,25 @@ fun Settings(navController: NavController, userUi: String) {
                 Log.d("TAG", "DocumentSnapshot data: ${document.data}")
                 firstName = document.data?.get("firstName") as String?
                 lastName = document.data?.get("lastName") as String?
-                currency = document.data?.get("currency") as String?
                 Log.d("TAG", "No such document")
             }
         }
         .addOnFailureListener { exception ->
             Log.d("TAG", "get failed with ", exception)
         }
+    val userInfoRef = db.collection("UsersInfo").document(userUi)
+   userInfoRef.get()
+        .addOnSuccessListener { document ->
+            if (document != null) {
+                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+                currency=document.data?.get("currency") as String?
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("TAG", "get failed with ", exception)
+        }
+
+
 
 
 

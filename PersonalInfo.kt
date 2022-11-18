@@ -58,7 +58,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         var lastName: String? by remember {
             mutableStateOf(null)
         }
-        var budget: Float? by remember {
+        var income: Float? by remember {
             mutableStateOf(null)
         }
         var currency: String? by remember {
@@ -77,7 +77,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         var lastNameError by remember {
             mutableStateOf(false)
         }
-        var budgetError by remember {
+        var incomeError by remember {
             mutableStateOf(false)
         }
         var currencyError by remember {
@@ -90,32 +90,53 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         var isExpanded by remember {
             mutableStateOf(false)
         }
-        val currencies: List<String> = listOf("USD", "EUR","GBP","LBP")
+        val currencies: List<String> = listOf("USD", "EUR", "GBP", "LBP")
 
         val focusManager = LocalFocusManager.current
         val firstNameClearIcon =
             animateColorAsState(targetValue = if (firstName != null) Color.LightGray else Color.Transparent)
         val lastNameClearIcon =
             animateColorAsState(targetValue = if (lastName != null) Color.LightGray else Color.Transparent)
-        val budgetClearIcon =
-            animateColorAsState(targetValue = if (budget != null) Color.LightGray else Color.Transparent)
+        val incomeClearIcon =
+            animateColorAsState(targetValue = if (income != null) Color.LightGray else Color.Transparent)
         var currencyClearIcon =
             animateColorAsState(targetValue = if (currency != null) Color.LightGray else Color.Transparent)
+//        var usersUpdated :Boolean  by remember {
+//            mutableStateOf(false)
+//        }
+//        var usersInfoUpdated:Boolean by remember{
+//            mutableStateOf(false)
+//        }
+////        if(usersUpdated && usersInfoUpdated){
+//            navController.navigate(route = "MainPage/$userUi") {
+//                popUpTo(0)
+//
+//            }
+//            if(screen=="Settings"){
+//                Toast.makeText(context, "Info Updated Successfully !", Toast.LENGTH_LONG).show()
+//            }
+//
+//        }
 
-        LaunchedEffect(true ) {
+        LaunchedEffect(true) {
             if (screen == "Settings") {
                 db.collection("Users").document(userUi)
                     .get()
                     .addOnSuccessListener { document ->
                         firstName = document.data?.get("firstName").toString()
                         lastName = document.data?.get("lastName").toString()
-                        budget = document.data?.get("budget").toString().toFloat()
+                    }
+
+                db.collection("UsersInfo").document(userUi)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        income = document.data?.get("income").toString().toFloat()
                         currency = document.data?.get("currency").toString()
-                        Log.d("PPPPPPPPPP", firstName.toString())
                     }
             }
         }
-        val updatingState:Boolean = screen=="Settings";
+        val updatingState: Boolean = screen == "Settings";
+
 
         Text(text = "Personal Info", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         Column(
@@ -260,14 +281,14 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            OutlinedTextField(value = if (budget != null) budget.toString() else "",
+            OutlinedTextField(value = if (income != null) income.toString() else "",
                 onValueChange = {
-                    budget = if (it.isNotEmpty()) it.toFloat() else null
+                    income = if (it.isNotEmpty()) it.toFloat() else null
                 },
-                label = { Text(text = "Budget", fontSize = 15.sp, fontWeight = FontWeight.Medium) },
+                label = { Text(text = "Income", fontSize = 15.sp, fontWeight = FontWeight.Medium) },
                 placeholder = {
                     Text(
-                        text = "Enter your monthly budget",
+                        text = "Enter your monthly income",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -281,11 +302,11 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { budget = null }) {
+                    IconButton(onClick = { income = null }) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
                             contentDescription = "Clear icon",
-                            tint = budgetClearIcon.value
+                            tint = incomeClearIcon.value
                         )
 
                     }
@@ -312,11 +333,11 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     focusedLabelColor = Color.Gray,
                     unfocusedLabelColor = Color.LightGray,
                 ),
-                isError = budgetError
+                isError = incomeError
 
 
             )
-            if (budgetError) {
+            if (incomeError) {
                 Text(
                     text = "Required Field",
                     color = MaterialTheme.colors.error,
@@ -332,8 +353,8 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         ) {
             OutlinedTextField(value = if (currency != null) currency.toString() else "",
                 onValueChange = {
-                    if(it.length<=3){
-                        currency=it
+                    if (it.length <= 3) {
+                        currency = it
                     }
                 },
                 label = {
@@ -418,34 +439,52 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         Button(
 
             onClick = {
-                  focusManager.clearFocus()
-                if (firstName != null && lastName != null && budget != null && currency != null) {
-                    if (screen!="Settings") {
+
+                focusManager.clearFocus()
+
+                if (firstName != null && lastName != null && income != null && currency != null) {
+                    if (screen != "Settings") {
                         val user = hashMapOf(
                             "userUID" to userUi,
                             "firstName" to firstName,
                             "lastName" to lastName,
-                            "budget" to budget,
+                        )
+                        val userInfo = hashMapOf(
+                            "userUID" to userUi,
+                            "income" to income,
                             "currency" to currency,
                             "expenses" to 0,
                             "travel" to 0,
                             "food" to 0,
                             "shopping" to 0,
                             "rent" to 0,
-
-
                         )
+
                         db.collection("Users").document(userUi)
                             .set(user)
                             .addOnSuccessListener {
+
                                 Log.d(
                                     "user",
                                     "DocumentSnapshot successfully written!"
                                 )
-                                navController.navigate(route = "MainPage/$userUi") {
-                                    popUpTo(0)
+                                db.collection("UsersInfo").document(userUi)
+                                    .set(userInfo)
+                                    .addOnSuccessListener {
 
-                                }
+                                        navController.navigate(route = "MainPage/$userUi") {
+                                            popUpTo(0)
+
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w(
+                                            "User",
+                                            "Error writing document",
+                                            e
+                                        )
+                                    }
+
 
                             }
                             .addOnFailureListener { e ->
@@ -457,35 +496,52 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                             }
 
 
-                    }
-                    else{
+                    } else {
+                        val doc = db.collection("Users").document(userUi)
+                        doc.update("firstName", firstName)
+                        doc.update("lastName", lastName)
+
+                            .addOnSuccessListener {
+                                Log.d("TAB", "Info Updated !")
+                                val usersInfoDocRef = db.collection("UsersInfo").document(userUi)
+                                usersInfoDocRef.update("income", income)
+                                usersInfoDocRef.update("currency", currency)
+
+                                    .addOnSuccessListener {
+                                        navController.navigate(route = "MainPage/$userUi") {
+                                            popUpTo(0)
+
+                                        }
+                                        if (screen == "Settings") {
+                                            Toast.makeText(
+                                                context,
+                                                "Info Updated Successfully !",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
 
 
-                            val doc = db.collection("Users").document(userUi)
-                            doc.update("firstName", firstName)
-                            doc.update("lastName", lastName)
-                            doc.update("budget", budget)
-                            doc.update("currency", currency)
-                                .addOnSuccessListener {
-                                    Log.d("TAB", "Info Updated !")
-                                    navController.navigate(route = "MainPage/$userUi") {
-                                        popUpTo(0)
 
                                     }
-                                    Toast.makeText(context, "Info Updated Successfully !", Toast.LENGTH_LONG).show()
-                                }
-                                .addOnFailureListener {
-                                    Log.d("Tab", "error updating Info")
-                                }
+                                    .addOnFailureListener {
+                                        Log.d("Tab", "error updating Info")
+                                    }
 
-                        }
+                            }
+                            .addOnFailureListener {
+                                Log.d("Tab", "error updating Info")
+                            }
 
-                } else{
+
+                    }
+
+
+                } else {
                     firstNameError = firstName == null
 
                     lastNameError = lastName == null
 
-                    budgetError = budget == null
+                    incomeError = income == null
 
                     currencyError = currency == null
                 }
@@ -508,7 +564,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = if(updatingState) "Update" else "Submit",
+                    text = if (updatingState) "Update" else "Submit",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White
@@ -517,3 +573,4 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
         }
     }
 }
+// Toast.makeText(context, "Info Updated Successfully !", Toast.LENGTH_LONG).show()
