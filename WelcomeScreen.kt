@@ -20,10 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -47,7 +51,7 @@ Spacer(modifier = Modifier.height(40.dp))
         Spacer(modifier =Modifier.height(20.dp))
         Row(modifier=Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
             Image(
-                painter = painterResource(id = R.drawable.expenses),
+                painter = painterResource(id = R.drawable.wallet),
                 contentDescription = "Wallet icon ",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -56,7 +60,7 @@ Spacer(modifier = Modifier.height(40.dp))
             )
         }
         Spacer(modifier =Modifier.height(30.dp))
-        Text(buildAnnotatedString {
+       Text(buildAnnotatedString {
            withStyle(style = SpanStyle(color = Color.Gray , fontWeight = FontWeight.Bold , fontSize = 14.sp)){
                append("You Track")
            }
@@ -68,6 +72,7 @@ Spacer(modifier = Modifier.height(40.dp))
         Spacer(modifier =Modifier.height(40.dp))
     Row(modifier=Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.End) {
         Button(onClick = { navController.navigate(route="SignUpScreen"){
+            popUpTo(0)
             popUpTo("WelcomeScreen")
         } } , colors = ButtonDefaults.buttonColors(
          backgroundColor = Color.Transparent
@@ -80,7 +85,10 @@ Spacer(modifier = Modifier.height(40.dp))
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(8.dp))
-                    .background(color = com.example.expensetrackerproject.ui.theme.Green, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        color = com.example.expensetrackerproject.ui.theme.Green,
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .padding(10.dp)
                     , contentAlignment = Alignment.Center
             ) {
@@ -112,9 +120,4 @@ Spacer(modifier = Modifier.height(40.dp))
         }
 
     }
-
-
-
-
-
 }

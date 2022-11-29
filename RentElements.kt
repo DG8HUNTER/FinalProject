@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,7 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -30,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.addTo
-import com.example.expensetrackerproject.ui.theme.darkYellow
-import com.example.expensetrackerproject.ui.theme.lightViolet
-import com.example.expensetrackerproject.ui.theme.violet
-import com.example.expensetrackerproject.ui.theme.yellow
+import com.example.expensetrackerproject.ui.theme.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -62,6 +58,9 @@ fun RentElements(userUi:String){
     var name :String?by remember{
         mutableStateOf(null)
     }
+    var quantity:Int? by remember{
+        mutableStateOf(null)
+    }
     var price:Float? by remember{
         mutableStateOf(null)
     }
@@ -82,6 +81,10 @@ fun RentElements(userUi:String){
         mutableStateOf(null)
 
     }
+    val quantityClearIcon = animateColorAsState(
+        targetValue = if (quantity != null) Color.Gray else Color.Transparent,
+        animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+    )
 
 
     LazyColumn(modifier= Modifier
@@ -89,8 +92,6 @@ fun RentElements(userUi:String){
         , verticalArrangement = Arrangement.spacedBy(15.dp) , horizontalAlignment = Alignment.Start) {
 
         item {
-            Card(modifier = Modifier.fillMaxWidth().clip(shape=RoundedCornerShape(5.dp)), elevation = 90.dp ) {
-
 
                 OutlinedTextField(
                     value = if (name != null) name.toString() else "",
@@ -130,11 +131,11 @@ fun RentElements(userUi:String){
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
                     ),
                     modifier = Modifier
@@ -153,9 +154,68 @@ fun RentElements(userUi:String){
                 )
 
             }
+        item{
+            OutlinedTextField(
+                value = if (quantity != null) quantity.toString() else "",
+                onValueChange = {
+                    quantity = if (it.isNotEmpty()) it.toInt() else null
+                },
+                label = {
+                    Text(text = "Quantity", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                },
+                placeholder = {
+                    Text(
+                        text = "Enter Quantity",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.LightGray
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.basket),
+                        contentDescription = "basket icon",
+                        tint = Color.LightGray
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { quantity = null }) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = "Clear icon",
+                            tint = quantityClearIcon.value
+                        )
 
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(5.dp)),
+                colors = TextFieldDefaults.textFieldColors(
+
+                    backgroundColor = Color.LightGray.copy(0.08f),
+                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = violet,
+                    cursorColor = Color.LightGray,
+                    focusedLabelColor = violet
+
+                ),
+
+
+                )
 
         }
+
         item{
 
                 OutlinedTextField(
@@ -193,11 +253,11 @@ fun RentElements(userUi:String){
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Next)
                         }
                     ),
                     modifier = Modifier
@@ -265,11 +325,11 @@ fun RentElements(userUi:String){
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions (
-                            onDone={
-                                focusManager.clearFocus()
+                            onNext={
+                                focusManager.moveFocus(FocusDirection.Right)
                             }
                         )
                     )
@@ -299,11 +359,11 @@ fun RentElements(userUi:String){
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions (
-                            onDone={
-                                focusManager.clearFocus()
+                            onNext={
+                                focusManager.moveFocus(FocusDirection.Right)
                             }
                         )
                     )
@@ -345,6 +405,7 @@ fun RentElements(userUi:String){
                         day = LocalDate.now().dayOfMonth
                         month = LocalDate.now().monthValue
                         year = LocalDate.now().year
+                        focusManager.clearFocus()
 
                     }) {
                         Icon(
@@ -365,6 +426,7 @@ fun RentElements(userUi:String){
                             "id" to userUi,
                             "category" to "Rent" ,
                             "name" to name,
+                            "quantity" to quantity,
                             "price" to price,
                             "date"  to "$day/$month/$year",
                             "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
@@ -391,7 +453,7 @@ fun RentElements(userUi:String){
                                 for (document in documents) {
                                     Log.d("user", "${document.id} => ${document.data}")
                                     Log.d("data" , document.data.toString())
-                                    rentExpenses=addTo(rentExpenses , document.data as HashMap<String,Any>)
+//                                    rentExpenses=addTo(rentExpenses , document.data as HashMap<String,Any>)
                                 }
                                 Log.d("travelExpenses" , rentExpenses.toString())
                                 Log.d("Size" , rentExpenses.size.toString())
@@ -458,6 +520,7 @@ fun RentElements(userUi:String){
 
                     name=null
                     price=null
+                    quantity=null
                     day=null
                     month=null
                     day=null
@@ -483,6 +546,7 @@ fun RentElements(userUi:String){
 
                     name=null
                     price=null
+                    quantity=null
                     day=null
                     month=null
                     day=null
@@ -502,6 +566,9 @@ fun RentElements(userUi:String){
                 }
 
             }
+        }
+        item{
+            Spacer(modifier=Modifier.height(150.dp))
         }
 
     }

@@ -40,9 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.ui.theme.Green
-import com.example.expensetrackerproject.ui.theme.blueLink
+import com.example.expensetrackerproject.ui.theme.*
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -59,7 +59,7 @@ fun SignIn(navController: NavController) {
         mutableStateOf(true)
     }
     val clearIconColor = animateColorAsState(
-        targetValue = if (!isEmailEmpty) Color.LightGray else Color.Transparent,
+        targetValue = if (!isEmailEmpty) mediumGray else Color.Transparent,
         animationSpec = tween(1000, easing = FastOutSlowInEasing)
     )
     var password: String? by remember {
@@ -96,7 +96,7 @@ fun SignIn(navController: NavController) {
         mutableStateOf(null)
     }
     val passTrailingIconColor = animateColorAsState(
-        targetValue = if (isPasswordEmpty) Color.Transparent else Color.LightGray,
+        targetValue = if (isPasswordEmpty) Color.Transparent else mediumGray,
         animationSpec = tween(
             easing = FastOutSlowInEasing
         )
@@ -156,7 +156,7 @@ fun SignIn(navController: NavController) {
                             Icon(
                                 imageVector = Icons.Filled.Email,
                                 contentDescription = "Email icon",
-                                tint = Color.LightGray
+                                tint = mediumGray
                             )
                         },
                         trailingIcon = {
@@ -185,12 +185,13 @@ fun SignIn(navController: NavController) {
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray,
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
@@ -255,7 +256,7 @@ fun SignIn(navController: NavController) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
                                 contentDescription = "lock icon",
-                                tint = Color.LightGray
+                                tint = mediumGray
                             )
                         },
                         trailingIcon = {
@@ -295,12 +296,13 @@ fun SignIn(navController: NavController) {
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -338,7 +340,7 @@ fun SignIn(navController: NavController) {
                         text = "Forgot Password ?",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        color = blueLink,
+                        color = mint,
                         modifier = Modifier.clickable {
                             navController.navigate(route="ResetPassword?userUi=&oldPassword=/SignInScreen")
                         }
@@ -383,6 +385,7 @@ fun SignIn(navController: NavController) {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d("TAG", "signInWithEmail:success")
                                         val userUi = auth.currentUser?.uid
+                                        mainActivityViewModel.setValue("Home","_selectedButton")
                                         navController.navigate(route = "MainPage/$userUi"){
                                             popUpTo(0)
                                         }
@@ -416,7 +419,7 @@ fun SignIn(navController: NavController) {
                             .fillMaxWidth()
                             .height(55.dp)
                             .clip(shape = RoundedCornerShape(10.dp))
-                            .background(color = Green, shape = RoundedCornerShape(10.dp)),
+                            .background(color = mint, shape = RoundedCornerShape(10.dp)),
                         contentAlignment = Alignment.Center,
                     ) {
                         if (isSigningIn) {
@@ -466,7 +469,7 @@ fun SignIn(navController: NavController) {
                         text = " Sign Up ",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        color = blueLink,
+                        color = mint,
                         modifier = Modifier.clickable {
                             navController.navigate(route = "SignUpScreen"){
 
@@ -490,20 +493,20 @@ fun SignIn(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth(0.47f)
                             .height(1.dp)
-                            .background(color = Color.LightGray)
+                            .background(color = mediumGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                     Text(
                         text = " OR ",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.LightGray
+                        color = mediumGray
                     )
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth(1f)
                             .height(1.dp)
-                            .background(color = Color.LightGray)
+                            .background(color = mediumGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                 }
@@ -532,7 +535,7 @@ fun SignIn(navController: NavController) {
                             .border(
                                 width = 1.dp,
                                 shape = RoundedCornerShape(10.dp),
-                                color = Color.LightGray
+                                color = mediumGray
                             ), contentAlignment = Alignment.Center
                     ) {
                         Row(

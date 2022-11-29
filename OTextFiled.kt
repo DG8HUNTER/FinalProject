@@ -1,8 +1,11 @@
 package com.example.expensetrackerproject.Categories
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -23,11 +26,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerproject.ui.theme.mediumGray
+import com.example.expensetrackerproject.ui.theme.mint
+import com.example.expensetrackerproject.ui.theme.onSurface
 import com.example.expensetrackerproject.ui.theme.violet
 
 val mainActivityViewModel=MainActivityViewModel()
 @Composable
-fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int , trailingIcon:ImageVector, colorAnimation:Color,focusManager:FocusManager ){
+fun OTextField(name:String, placeHolder:String,  leadingIcon:Int , trailingIcon:ImageVector, colorAnimation:Color,focusManager:FocusManager ){
 
     val data by when(name){
         "country"->mainActivityViewModel.country
@@ -68,7 +74,7 @@ fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int ,
             Icon(
                 painter = painterResource(id = leadingIcon),
                 contentDescription = "$name leading icon",
-                tint=Color.LightGray
+                tint= mediumGray
 
             )
         },
@@ -103,15 +109,22 @@ fun OTextField(name:String, placeHolder:String, color: Color,  leadingIcon:Int ,
             ),
         modifier = Modifier
             .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(5.dp)),
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.LightGray.copy(0.08f),
-            unfocusedLabelColor = Color.LightGray,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = color,
-            cursorColor = Color.LightGray,
-            focusedLabelColor = color
-        ),
+            .padding(0.dp)
+            .clip(shape= RoundedCornerShape(5.dp))
+
+    , colors = TextFieldDefaults.textFieldColors(
+            textColor = onSurface,
+            unfocusedLabelColor = mediumGray,
+            focusedIndicatorColor = mint,
+            backgroundColor = Color.White,
+            focusedLabelColor = mint,
+            unfocusedIndicatorColor = mediumGray,
+            cursorColor = onSurface
+
+
+    )
+
+
     )
 
 }

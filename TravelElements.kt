@@ -12,13 +12,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -100,11 +100,11 @@ fun TravelElement(userUi:String){
                 } ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ) ,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ) ,
                 modifier= Modifier
@@ -139,11 +139,11 @@ fun TravelElement(userUi:String){
                 }  ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ) ,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
                     }
                 ) ,
                 modifier = Modifier
@@ -190,11 +190,11 @@ fun TravelElement(userUi:String){
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions (
-                        onDone={
-                            focusManager.clearFocus()
+                        onNext={
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -219,11 +219,11 @@ fun TravelElement(userUi:String){
                         focusedLabelColor = Color.Red
                     ), keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions (
-                        onDone={
-                            focusManager.clearFocus()
+                        onNext={
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -260,6 +260,7 @@ fun TravelElement(userUi:String){
                 IconButton(onClick = {day= LocalDate.now().dayOfMonth
                     month= LocalDate.now().monthValue
                     year= LocalDate.now().year
+                    focusManager.clearFocus()
 
                 }) {
                     Icon(painter = painterResource(id = R.drawable.ic_today), contentDescription ="today icon", tint =pink )
@@ -270,68 +271,68 @@ fun TravelElement(userUi:String){
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier= Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceAround){
                 Button(onClick = {
-               if(country!=null && price!=null && day!=null && month!=null && year!=null){
-                    val data = hashMapOf(
-                        "id" to userUi,
-                        "category" to "Travel" ,
-                        "country" to country,
-                        "price" to price,
-                        "date"  to "$day/$month/$year",
-                        "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
-                    )
-                    db.collection("expenses")
-                        .add(data)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("expenses", "Error adding document", e)
-                        }
+                    if(country!=null && price!=null && day!=null && month!=null && year!=null){
+                        val data = hashMapOf(
+                            "id" to userUi,
+                            "category" to "Travel" ,
+                            "country" to country,
+                            "price" to price,
+                            "date"  to "$day/$month/$year",
+                            "tempStamp" to SimpleDateFormat("dd-MM-yyyy").parse("${day!!}-${month!!}-${year!!}")
+                        )
+                        db.collection("expenses")
+                            .add(data)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d("expenses", "DocumentSnapshot written with ID: ${documentReference.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("expenses", "Error adding document", e)
+                            }
 
-                            db.collection("expenses")
-                                .whereEqualTo("category" ,"Travel")
-                                .whereEqualTo("id" , userUi)
-                                .get()
-                                .addOnSuccessListener { documents ->
-                                   travelExpenses= mutableListOf()
-                                    Log.d("documents" , documents.toString())
-                                    for (document in documents) {
-                                        Log.d("user", "${document.id} => ${document.data}")
-                                        Log.d("data" , document.data.toString())
-                                        travelExpenses=addTo(travelExpenses , document.data as HashMap<String,Any>)
-                                    }
-                                    Log.d("travelExpenses" , travelExpenses.toString())
-                                    Log.d("Size" , travelExpenses.size.toString())
-                                    if(travelExpenses.size>0){
-                                        val docRef = db.collection("Users").document(userUi)
-                                        docRef.get()
-                                            .addOnSuccessListener { document ->
-                                                if (document != null) {
-                                                    Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+                        db.collection("expenses")
+                            .whereEqualTo("category" ,"Travel")
+                            .whereEqualTo("id" , userUi)
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                travelExpenses= mutableListOf()
+                                Log.d("documents" , documents.toString())
+                                for (document in documents) {
+                                    Log.d("user", "${document.id} => ${document.data}")
+                                    Log.d("data" , document.data.toString())
+//                                    travelExpenses=addTo(travelExpenses , document.data as HashMap<String,Any>)
+                                }
+                                Log.d("travelExpenses" , travelExpenses.toString())
+                                Log.d("Size" , travelExpenses.size.toString())
+                                if(travelExpenses.size>0){
+                                    val docRef = db.collection("Users").document(userUi)
+                                    docRef.get()
+                                        .addOnSuccessListener { document ->
+                                            if (document != null) {
+                                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
 
-                                                    docRef
-                                                        .update("expenses", FieldValue.increment(-(document.data?.get("travel").toString().toLong())))
-                                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
-                                                } else {
-                                                    Log.d("TAG", "No such document")
-                                                }
+                                                docRef
+                                                    .update("expenses", FieldValue.increment(-(document.data?.get("travel").toString().toLong())))
+                                                    .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                            } else {
+                                                Log.d("TAG", "No such document")
                                             }
-                                            .addOnFailureListener { exception ->
-                                                Log.d("TAG", "get failed with ", exception)
-                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.d("TAG", "get failed with ", exception)
+                                        }
+                                    docRef
+                                        .update("travel", FieldValue.delete())
+                                        .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
+                                        .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
+
+                                    travelExpenses.forEachIndexed { index,  travelExpense ->
+
                                         docRef
-                                            .update("travel", FieldValue.delete())
+                                            .update("travel", FieldValue.increment(travelExpense["price"].toString().toFloat().toLong()))
                                             .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
                                             .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
 
-                                        travelExpenses.forEachIndexed { index,  travelExpense ->
-
-                                            docRef
-                                                .update("travel", FieldValue.increment(travelExpense["price"].toString().toFloat().toLong()))
-                                                .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully updated!") }
-                                                .addOnFailureListener { e -> Log.w("TAG", "Error updating document", e) }
-
-                                            if(index==travelExpenses.size-1)
+                                        if(index==travelExpenses.size-1)
 
                                             docRef.get()
                                                 .addOnSuccessListener { document ->
@@ -348,13 +349,13 @@ fun TravelElement(userUi:String){
                                                 .addOnFailureListener { exception ->
                                                     Log.d("TAG", "get failed with ", exception)
                                                 }
-                                        }
                                     }
                                 }
-                                .addOnFailureListener { exception ->
-                                    Log.w("user", "Error getting documents: ", exception)
-                                }
-                        }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w("user", "Error getting documents: ", exception)
+                            }
+                    }
                     country=null
                     price=null
                     day=null
@@ -390,6 +391,9 @@ fun TravelElement(userUi:String){
                     }
                 }
             }
+        }
+        item{
+            Spacer(modifier =Modifier.height(150.dp))
         }
     }
 }

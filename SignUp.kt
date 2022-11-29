@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
@@ -7,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,11 +39,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.ui.theme.Green
-import com.example.expensetrackerproject.ui.theme.blueLink
+import com.example.expensetrackerproject.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun SignUp(navController: NavController) {
     lateinit var auth: FirebaseAuth
@@ -49,6 +51,7 @@ fun SignUp(navController: NavController) {
     var email: String? by remember {
         mutableStateOf(null)
     }
+
     var isEmailEmpty: Boolean by remember {
         mutableStateOf(true)
     }
@@ -110,11 +113,11 @@ fun SignUp(navController: NavController) {
 
     val focusManager = LocalFocusManager.current
     val clearIconColor = animateColorAsState(
-        targetValue = if (!isEmailEmpty) Color.LightGray else Color.Transparent,
+        targetValue = if (!isEmailEmpty) mediumGray else Color.Transparent,
         animationSpec = tween(1000, easing = FastOutSlowInEasing)
     )
     val passTrailingIconColor = animateColorAsState(
-        targetValue = if (isPasswordEmpty) Color.Transparent else Color.LightGray,
+        targetValue = if (isPasswordEmpty) Color.Transparent else mediumGray,
         animationSpec = tween(
             easing = FastOutSlowInEasing
         )
@@ -124,7 +127,7 @@ fun SignUp(navController: NavController) {
     }
 
     val passwordVerificationIconColor =
-        animateColorAsState(targetValue = if (passwordVerification != null) Color.LightGray else Color.Transparent)
+        animateColorAsState(targetValue = if (passwordVerification != null) mediumGray else Color.Transparent)
     Column(
 
         modifier = Modifier
@@ -183,7 +186,7 @@ fun SignUp(navController: NavController) {
                             Icon(
                                 imageVector = Icons.Filled.Email,
                                 contentDescription = "Email icon",
-                                tint = Color.LightGray
+                                tint= mediumGray
                             )
                         },
                         trailingIcon = {
@@ -223,12 +226,13 @@ fun SignUp(navController: NavController) {
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray,
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
 
 
                             ),
@@ -288,7 +292,7 @@ fun SignUp(navController: NavController) {
                                 text = "Enter Password",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color.LightGray
+                                color = mediumGray
 
                             )
                         },
@@ -296,7 +300,7 @@ fun SignUp(navController: NavController) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
                                 contentDescription = "lock icon",
-                                tint = Color.LightGray
+                                tint = mediumGray
                             )
                         },
                         trailingIcon = {
@@ -334,12 +338,13 @@ fun SignUp(navController: NavController) {
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -403,7 +408,7 @@ fun SignUp(navController: NavController) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
                                 contentDescription = "lock icon",
-                                tint = Color.LightGray
+                                tint = mediumGray
                             )
                         },
                         trailingIcon = {
@@ -454,12 +459,13 @@ fun SignUp(navController: NavController) {
                                 shape = RoundedCornerShape(5.dp)
                             ),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
 
                         ),
                         keyboardOptions = KeyboardOptions(
@@ -563,7 +569,7 @@ fun SignUp(navController: NavController) {
                                 .fillMaxWidth()
                                 .height(55.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(color = Green, shape = RoundedCornerShape(10.dp)),
+                                .background(color = mint, shape = RoundedCornerShape(10.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
                             Row(
@@ -593,7 +599,7 @@ fun SignUp(navController: NavController) {
                                 .fillMaxWidth()
                                 .height(55.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
-                                .background(color = Green, shape = RoundedCornerShape(10.dp)),
+                                .background(color = mint, shape = RoundedCornerShape(10.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
 
@@ -625,7 +631,7 @@ fun SignUp(navController: NavController) {
                         text = " Sign In ",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        color = blueLink,
+                        color = mint,
                         modifier = Modifier.clickable {
                             navController.navigate(route = "SignInScreen") {
                                 popUpTo("SignUpScreen")
@@ -643,20 +649,20 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth(0.47f)
                             .height(1.dp)
-                            .background(color = Color.LightGray)
+                            .background(color = mediumGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                     Text(
                         text = " OR ",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.LightGray
+                        color = mediumGray
                     )
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth(1f)
                             .height(1.dp)
-                            .background(color = Color.LightGray)
+                            .background(color = mediumGray)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                 }
@@ -683,7 +689,7 @@ fun SignUp(navController: NavController) {
                             .border(
                                 width = 1.dp,
                                 shape = RoundedCornerShape(10.dp),
-                                color = Color.LightGray
+                                color = mediumGray
                             ), contentAlignment = Alignment.Center
                     ) {
                         Row(

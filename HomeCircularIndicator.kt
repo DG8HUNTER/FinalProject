@@ -5,6 +5,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -24,12 +25,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expensetrackerproject.ui.theme.mediumGray
+import com.example.expensetrackerproject.ui.theme.mint
+import com.example.expensetrackerproject.ui.theme.onSurface
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 
 @Composable
-fun HomeCircularIndicator(budget:Float , expenses:Float) {
+fun HomeCircularIndicator(income:Float, expenses:Float) {
 
         val spending = animateFloatAsState(
             targetValue = expenses,
@@ -38,11 +42,11 @@ fun HomeCircularIndicator(budget:Float , expenses:Float) {
 
 
         val percentage = animateFloatAsState(
-            targetValue = if (budget == 0f && expenses == 0f) 0f else if (budget>=expenses)(expenses / budget) else 1f,
+            targetValue = if (income == 0f && expenses == 0f) 0f else if (income>=expenses)(expenses / income) else 1f,
             animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
         )
-        val indicatorBackgroundColor: Color = Color.LightGray.copy(alpha=0.3f)
-        val indicatorForegroundColor = animateColorAsState(targetValue =if(expenses>budget)Color.Red else Green ,
+        val indicatorBackgroundColor: Color = Color(0xFFDBE4E6)
+        val indicatorForegroundColor = animateColorAsState(targetValue =if(expenses>income)Color.Red else onSurface ,
             animationSpec = tween(durationMillis = 200 , easing = FastOutSlowInEasing)
         )
         val indicatorBackgroundStrokeWidth: Float = 100F
@@ -56,8 +60,10 @@ fun HomeCircularIndicator(budget:Float , expenses:Float) {
 
         Column(
             modifier = Modifier
-                .size(350.dp)
-                .fillMaxWidth()
+
+                .fillMaxWidth(0.8f)
+                .height(300.dp)
+
                 .drawBehind {
                     val componentSize = size / 1.25f
                     drawBackgroundCircularIndicator(
@@ -82,20 +88,20 @@ fun HomeCircularIndicator(budget:Float , expenses:Float) {
                 Text(
                     text = String.format("%.1f",(expenses)),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,
-                    color = Green.copy(alpha = 0.5f)
+                    fontSize = 20.sp,
+                    color = mint.copy(alpha = 0.5f)
                 )
                 Text(
-                    text = " / $budget",
+                    text = " / $income",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,
-                    color = Green
+                    fontSize = 20.sp,
+                    color = mint
                 )
             }
-            if(expenses>budget){
+            if(expenses>income){
                 Spacer(modifier=Modifier.height(10.dp))
-                Text(text = "+ ${expenses-budget}" ,
-                    fontSize = 25.sp ,
+                Text(text = "+ ${expenses-income}" ,
+                    fontSize = 20.sp ,
                     fontWeight = FontWeight.Bold ,
                     color=Color.Red,
                     textAlign = TextAlign.Center,

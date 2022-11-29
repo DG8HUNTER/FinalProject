@@ -12,13 +12,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -30,14 +30,11 @@ import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.*
-import com.google.common.math.DoubleMath.roundToInt
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import kotlin.math.roundToInt
 
 @Composable
 
@@ -135,11 +132,11 @@ fun ShoppingElements(userUi: String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 modifier = Modifier
@@ -196,11 +193,11 @@ fun ShoppingElements(userUi: String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ),
                 modifier = Modifier
@@ -211,9 +208,9 @@ fun ShoppingElements(userUi: String) {
                     backgroundColor = Color.LightGray.copy(0.08f),
                     unfocusedLabelColor = Color.LightGray,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Darkblue,
+                    focusedIndicatorColor = orange,
                     cursorColor = Color.LightGray,
-                    focusedLabelColor = Darkblue
+                    focusedLabelColor = orange
 
                 ),
 
@@ -221,6 +218,7 @@ fun ShoppingElements(userUi: String) {
                 )
 
         }
+
         item {
             OutlinedTextField(value = if (price != null) price.toString() else "", onValueChange = {
                 price = if (it.isNotEmpty()) it.toFloat() else null
@@ -254,11 +252,11 @@ fun ShoppingElements(userUi: String) {
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
                     }
                 ),
                 modifier = Modifier
@@ -327,11 +325,11 @@ fun ShoppingElements(userUi: String) {
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -363,11 +361,11 @@ fun ShoppingElements(userUi: String) {
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -411,6 +409,7 @@ fun ShoppingElements(userUi: String) {
                     day = LocalDate.now().dayOfMonth
                     month = LocalDate.now().monthValue
                     year = LocalDate.now().year
+                    focusManager.clearFocus()
 
                 }) {
                     Icon(
@@ -472,10 +471,10 @@ fun ShoppingElements(userUi: String) {
                                     for (document in documents) {
                                         Log.d("user", "${document.id} => ${document.data}")
                                         Log.d("data", document.data.toString())
-                                        shoppingExpenses = addTo(
-                                            shoppingExpenses,
-                                            document.data as HashMap<String, Any>
-                                        )
+                                       // shoppingExpenses = addTo(
+//                                            shoppingExpenses,
+//                                            document.data as HashMap<String, Any>
+//                                        )
                                     }
                                     Log.d("shoppingExpenses", shoppingExpenses.toString())
                                     Log.d("SSize", shoppingExpenses.size.toString())
@@ -670,6 +669,10 @@ fun ShoppingElements(userUi: String) {
                 }
 
             }
+        }
+        item{
+            Spacer(modifier=Modifier.height(150.dp))
+
         }
 
     }

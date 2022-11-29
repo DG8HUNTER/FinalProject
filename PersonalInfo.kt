@@ -36,7 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.ui.theme.Green
+import com.example.expensetrackerproject.ui.theme.mediumGray
+import com.example.expensetrackerproject.ui.theme.mint
+import com.example.expensetrackerproject.ui.theme.onSurface
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import org.w3c.dom.Text
@@ -94,13 +98,13 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
 
         val focusManager = LocalFocusManager.current
         val firstNameClearIcon =
-            animateColorAsState(targetValue = if (firstName != null) Color.LightGray else Color.Transparent)
+            animateColorAsState(targetValue = if (firstName != null) mediumGray else Color.Transparent)
         val lastNameClearIcon =
-            animateColorAsState(targetValue = if (lastName != null) Color.LightGray else Color.Transparent)
+            animateColorAsState(targetValue = if (lastName != null) mediumGray else Color.Transparent)
         val incomeClearIcon =
-            animateColorAsState(targetValue = if (income != null) Color.LightGray else Color.Transparent)
+            animateColorAsState(targetValue = if (income != null) mediumGray else Color.Transparent)
         var currencyClearIcon =
-            animateColorAsState(targetValue = if (currency != null) Color.LightGray else Color.Transparent)
+            animateColorAsState(targetValue = if (currency != null) mediumGray else Color.Transparent)
 //        var usersUpdated :Boolean  by remember {
 //            mutableStateOf(false)
 //        }
@@ -164,7 +168,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     Icon(
                         imageVector = Icons.Filled.Person,
                         contentDescription = "Person icon",
-                        tint = Color.LightGray
+                        tint = mediumGray
                     )
                 },
                 trailingIcon = {
@@ -191,12 +195,13 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.textFieldColors(
+                    textColor= onSurface,
                     backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.Gray,
-                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = mediumGray,
+                    focusedIndicatorColor = mint,
+                    cursorColor = onSurface,
+                    focusedLabelColor = mint,
+                    unfocusedLabelColor = mediumGray,
                 )
 
             )
@@ -214,6 +219,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
+            
             OutlinedTextField(value = if (lastName != null) lastName.toString() else "",
                 onValueChange = {
                     lastName = if (it.isNotEmpty()) it else null
@@ -230,7 +236,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     Icon(
                         imageVector = Icons.Filled.Person,
                         contentDescription = "Person icon",
-                        tint = Color.LightGray
+                        tint =  mediumGray
                     )
                 },
                 trailingIcon = {
@@ -257,12 +263,13 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.textFieldColors(
+                    textColor= onSurface,
                     backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.Gray,
-                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = mediumGray,
+                    focusedIndicatorColor = mint,
+                    cursorColor = onSurface,
+                    focusedLabelColor = mint,
+                    unfocusedLabelColor = mediumGray,
                 ),
                 isError = lastNameError
 
@@ -297,7 +304,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     Icon(
                         painter = painterResource(id = R.drawable.salary),
                         contentDescription = "salary icon",
-                        tint = Color.LightGray,
+                        tint =  mediumGray,
                         modifier = Modifier.size(24.dp)
                     )
                 },
@@ -326,12 +333,13 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.textFieldColors(
+                    textColor= onSurface,
                     backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.Gray,
-                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = mediumGray,
+                    focusedIndicatorColor = mint,
+                    cursorColor = onSurface,
+                    focusedLabelColor = mint,
+                    unfocusedLabelColor = mediumGray,
                 ),
                 isError = incomeError
 
@@ -368,7 +376,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     Icon(
                         painter = painterResource(id = R.drawable.currency),
                         contentDescription = "Currency icon",
-                        tint = Color.LightGray,
+                        tint = mediumGray,
                         modifier = Modifier.size(24.dp)
                     )
                 },
@@ -379,7 +387,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                         Icon(
                             imageVector = Icons.Filled.ArrowDropDown,
                             contentDescription = "down arrow",
-                            tint = Color.LightGray
+                            tint =  mediumGray
                         )
 
                         if (isExpanded) {
@@ -389,7 +397,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                             }) {
                                 currencies.forEach { cur ->
                                     DropdownMenuItem(onClick = { currency = cur }) {
-                                        Text(text = cur, fontSize = 15.sp)
+                                        Text(text = cur, fontSize = 15.sp , color= mediumGray)
 
                                     }
                                 }
@@ -414,12 +422,13 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.textFieldColors(
+                    textColor= onSurface,
                     backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.Gray,
-                    unfocusedLabelColor = Color.LightGray,
+                    unfocusedIndicatorColor = mediumGray,
+                    focusedIndicatorColor = mint,
+                    cursorColor = onSurface,
+                    focusedLabelColor = mint,
+                    unfocusedLabelColor = mediumGray,
                 ),
                 isError = currencyError
             )
@@ -471,7 +480,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                                 db.collection("UsersInfo").document(userUi)
                                     .set(userInfo)
                                     .addOnSuccessListener {
-
+                                        mainActivityViewModel.setValue("Home","_selectedButton")
                                         navController.navigate(route = "MainPage/$userUi") {
                                             popUpTo(0)
 
@@ -508,6 +517,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                                 usersInfoDocRef.update("currency", currency)
 
                                     .addOnSuccessListener {
+                                        mainActivityViewModel.setValue("Home","_selectedButton")
                                         navController.navigate(route = "MainPage/$userUi") {
                                             popUpTo(0)
 
@@ -560,7 +570,7 @@ fun PersonalInfo(navController: NavController,userUi:String,screen:String) {
                     .fillMaxWidth()
                     .height(55.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = Green, shape = RoundedCornerShape(10.dp)),
+                    .background(color = mint, shape = RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(

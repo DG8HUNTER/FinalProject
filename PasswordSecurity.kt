@@ -31,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
+import com.example.expensetrackerproject.ui.theme.mediumGray
+import com.example.expensetrackerproject.ui.theme.mint
+import com.example.expensetrackerproject.ui.theme.onSurface
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -57,7 +60,7 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
         mutableStateOf(null)
     }
     val iconColor by animateColorAsState(
-        targetValue = if (oldPassword != null) Color.Gray else Color.Transparent,
+        targetValue = if (oldPassword != null) mediumGray else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
 
@@ -101,7 +104,7 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
             text = "For your security please enter your old password",
             fontSize = 17.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.LightGray,
+            color = mediumGray,
             modifier = Modifier.fillMaxWidth(7f),
             textAlign = TextAlign.Center
         )
@@ -137,7 +140,7 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_lock),
                         contentDescription = "Lock icon",
-                        tint = Color.LightGray,
+                        tint = mediumGray,
 
                         )
                 },
@@ -173,12 +176,13 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
                     .clip(shape = RoundedCornerShape(5.dp))
                     .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                 colors = TextFieldDefaults.textFieldColors(
+                    textColor= onSurface,
                     backgroundColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.LightGray,
-                    focusedIndicatorColor = Color.Gray,
-                    cursorColor = Color.LightGray,
-                    focusedLabelColor = Color.Gray,
-                    unfocusedLabelColor = Color.LightGray
+                    unfocusedIndicatorColor = mediumGray,
+                    focusedIndicatorColor = mint,
+                    cursorColor = onSurface,
+                    focusedLabelColor = mint,
+                    unfocusedLabelColor = mediumGray,
 
                 ), isError = oldPasswordRequirementError
             )
@@ -260,7 +264,7 @@ fun PasswordSecurity(navController: NavController, userUi:String) {
                                 .height(55.dp)
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .background(
-                                    color = com.example.expensetrackerproject.ui.theme.Green,
+                                    color = mint,
                                     shape = RoundedCornerShape(10.dp)
                                 ),
                             contentAlignment = Alignment.Center,

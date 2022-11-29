@@ -12,27 +12,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensetrackerproject.R
-import com.example.expensetrackerproject.addTo
 import com.example.expensetrackerproject.ui.theme.Darkblue
-import com.example.expensetrackerproject.ui.theme.lightBlue
-import com.example.expensetrackerproject.ui.theme.pink
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -110,7 +106,7 @@ fun FoodElements(userUi:String){
                     )
                 } ,
                 leadingIcon = {
-                    Icon(painter = painterResource(id = R.drawable.food), contentDescription ="food icon", tint = Color.LightGray )
+                    Icon(painter = painterResource(id = R.drawable.foodbag), contentDescription ="food icon", tint = Color.LightGray )
 
                 } ,
                 trailingIcon = {
@@ -122,11 +118,11 @@ fun FoodElements(userUi:String){
                 } ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ) ,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
                     }
                 ) ,
                 modifier= Modifier
@@ -167,11 +163,11 @@ fun FoodElements(userUi:String){
                 }  ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ) ,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
                     }
                 ) ,
                 modifier = Modifier
@@ -205,18 +201,18 @@ fun FoodElements(userUi:String){
                     Icon(painter = painterResource(id = R.drawable.ic_dollar), contentDescription ="dollar icon" , tint = Color.LightGray)
                 } ,
                 trailingIcon = {
-                    IconButton(onClick = {quantity=null }) {
+                    IconButton(onClick = {price=null }) {
                         Icon(imageVector = Icons.Filled.Clear, contentDescription ="Clear icon" , tint=priceClearIcon.value )
 
                     }
                 }  ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
                 ) ,
                 keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Next)
                     }
                 ) ,
                 modifier = Modifier
@@ -272,11 +268,11 @@ fun FoodElements(userUi:String){
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions (
-                        onDone={
-                            focusManager.clearFocus()
+                        onNext={
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -303,11 +299,11 @@ fun FoodElements(userUi:String){
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     keyboardActions = KeyboardActions (
-                        onDone={
-                            focusManager.clearFocus()
+                        onNext={
+                            focusManager.moveFocus(FocusDirection.Right)
                         }
                     )
                 )
@@ -341,11 +337,10 @@ fun FoodElements(userUi:String){
                         }
                     )
                 )
-
-
                 IconButton(onClick = {day= LocalDate.now().dayOfMonth
                     month= LocalDate.now().monthValue
                     year= LocalDate.now().year
+                    focusManager.clearFocus()
 
                 }) {
                     Icon(painter = painterResource(id = R.drawable.ic_today), contentDescription ="today icon", tint = Darkblue )
@@ -396,7 +391,7 @@ fun FoodElements(userUi:String){
                                 for (document in documents) {
                                     Log.d("user", "${document.id} => ${document.data}")
                                     Log.d("data" , document.data.toString())
-                                    foodExpenses=addTo(foodExpenses , document.data as HashMap<String,Any>)
+//                                    foodExpenses=addTo(foodExpenses , document.data as HashMap<String,Any>)
                                 }
                                 Log.d("travelExpenses" , foodExpenses.toString())
                                 Log.d("Size" , foodExpenses.size.toString())
@@ -509,6 +504,9 @@ fun FoodElements(userUi:String){
                 }
 
             }
+        }
+        item{
+            Spacer(modifier=Modifier.height(150.dp))
         }
 
     }

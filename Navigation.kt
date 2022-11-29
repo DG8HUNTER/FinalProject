@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.expensetrackerproject.*
 import com.example.expensetrackerproject.Categories.Categories
+import com.example.expensetrackerproject.Categories.LandingPage
 import com.example.expensetrackerproject.Home.DisplayExpenses
 import com.example.expensetrackerproject.Home.Home
 import com.example.expensetrackerproject.Settings.Settings
@@ -20,10 +21,13 @@ fun Navigation(navController: NavController) {
 
     NavHost(
         navController = navController as NavHostController,
-        startDestination ="FirstScreen",
+        startDestination ="LandingPage",
     ) {
         composable(route="FirstScreen"){
             FirstScreen(navController=navController)
+        }
+        composable(route="LandingPage"){
+            LandingPage(navController=navController)
         }
 
         composable(route = "WelcomeScreen") {
@@ -38,15 +42,7 @@ fun Navigation(navController: NavController) {
         composable(route = "SignInScreen") {
             SignIn(navController = navController)
         }
-        composable(route = "Home/{userUi}", arguments = listOf(
-            navArgument(name = "userUi") {
-                type = NavType.StringType
-                nullable = false
-            }
-        )
-        ) { backStackEntry ->
-            Home(navController=navController,userUi = backStackEntry.arguments?.get("userUi").toString())
-        }
+
         composable(route = "ResetPassword?userUi={userUi}&oldPassword={oldPassword}/{page}", arguments = listOf(
             navArgument(name="page"){
                 type= NavType.StringType
@@ -102,19 +98,16 @@ fun Navigation(navController: NavController) {
                 userUi = navBackStackEntry.arguments?.get("userUi").toString(), screen = navBackStackEntry.arguments?.get("screen").toString())
         }
 
- composable(route="DisplayExpenses/{category}/{userUi}" , arguments = listOf(
+ composable(route="DisplayExpenses/{category}" , arguments = listOf(
      navArgument(name="category"){
          type= NavType.StringType
          nullable=false
-     } ,
-     navArgument(name = "userUi"){
-         type= NavType.StringType
-         nullable=false
      }
+
  )){
      navBackStackEntry ->
      DisplayExpenses(navController =navController, category =navBackStackEntry.arguments?.get("category").toString() ,
-         userUi =navBackStackEntry.arguments?.get("userUi").toString() )
+        )
 
  }
         composable(route="PasswordSecurity/{userUi}", arguments = listOf(

@@ -43,6 +43,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
 import com.example.expensetrackerproject.ui.theme.Green
+import com.example.expensetrackerproject.ui.theme.mediumGray
+import com.example.expensetrackerproject.ui.theme.mint
+import com.example.expensetrackerproject.ui.theme.onSurface
 import com.google.firebase.auth.EmailAuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.EmailAuthProvider.*
@@ -81,7 +84,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
         mutableStateOf(false)
     }
     val newPasswordClearIcon by animateColorAsState(
-        targetValue = if (newPassword != null) Color.Gray else Color.Transparent,
+        targetValue = if (newPassword != null) mediumGray else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
 
@@ -93,7 +96,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
 
     }
     val passwordVerificationClearIcon by animateColorAsState(
-        targetValue = if (passwordVerification != null) Color.Gray else Color.Transparent,
+        targetValue = if (passwordVerification != null) mediumGray else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
     var newPasswordError by remember{
@@ -110,7 +113,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
         mutableStateOf(null)
     }
     val clearIconColor = animateColorAsState(
-        targetValue = if (!isEmailEmpty) Color.LightGray else Color.Transparent,
+        targetValue = if (!isEmailEmpty) mediumGray else Color.Transparent,
         animationSpec = tween(1000, easing = FastOutSlowInEasing)
     )
     Column(
@@ -141,7 +144,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
 
             }
             Text(
-                text = "Password Reset",
+                text = if(page=="SignInScreen")"Password Reset" else "Password Change" ,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -158,7 +161,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                     text = "Enter your email address we will send you an email to reset your password.",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.LightGray,
+                    color = mediumGray,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -222,12 +225,13 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             shape = RoundedCornerShape(5.dp)
                         ),
                     colors = TextFieldDefaults.textFieldColors(
+                        textColor= onSurface,
                         backgroundColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.LightGray,
-                        focusedIndicatorColor = Color.Gray,
-                        cursorColor = Color.LightGray,
-                        focusedLabelColor = Color.Gray,
-                        unfocusedLabelColor = Color.LightGray,
+                        unfocusedIndicatorColor = mediumGray,
+                        focusedIndicatorColor = mint,
+                        cursorColor = mediumGray,
+                        focusedLabelColor = mint,
+                        unfocusedLabelColor = mediumGray,
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -279,7 +283,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
                                 contentDescription = "Lock icon",
-                                tint = Color.LightGray,
+                                tint = mediumGray,
 
                                 )
                         },
@@ -335,13 +339,13 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray
-
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
                         ) , isError = newPasswordError
 
                     )
@@ -380,7 +384,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_lock),
                                 contentDescription = "Lock icon",
-                                tint = Color.LightGray,
+                                tint = mediumGray,
 
                                 )
                         },
@@ -422,12 +426,13 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                             .clip(shape = RoundedCornerShape(5.dp))
                             .background(color = Color.Transparent, shape = RoundedCornerShape(5.dp)),
                         colors = TextFieldDefaults.textFieldColors(
+                            textColor= onSurface,
                             backgroundColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.LightGray,
-                            focusedIndicatorColor = Color.Gray,
-                            cursorColor = Color.LightGray,
-                            focusedLabelColor = Color.Gray,
-                            unfocusedLabelColor = Color.LightGray
+                            unfocusedIndicatorColor = mediumGray,
+                            focusedIndicatorColor = mint,
+                            cursorColor = onSurface,
+                            focusedLabelColor = mint,
+                            unfocusedLabelColor = mediumGray,
 
                         ) , isError = passwordVError
                     )
@@ -515,6 +520,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
 
 
                                 Log.d("ui",userUi.toString())
+                                mainActivityViewModel.setValue("Home","_selectedButton")
                                 navController.navigate(route="MainPage/$userUi"){
                                     popUpTo(0)
 
@@ -547,7 +553,7 @@ fun PasswordReset(navController: NavController, page:String,userUi:String?,oldPa
                 .height(55.dp)
                 .clip(shape = RoundedCornerShape(10.dp))
                 .background(
-                    color = com.example.expensetrackerproject.ui.theme.Green,
+                    color = mint,
                     shape = RoundedCornerShape(10.dp)
                 ),
             contentAlignment = Alignment.Center,

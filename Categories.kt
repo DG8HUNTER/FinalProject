@@ -37,16 +37,14 @@ import javax.annotation.meta.When
 
 @Composable
 
-fun Categories(userUi:String) {
+fun Categories(userUi:String, categorySelected:String) {
     val db = Firebase.firestore
     val interactionSource = remember { MutableInteractionSource() }
     val categories: List<Categorie> =
         listOf(Categorie.Travel, Categorie.Food, Categorie.Shopping, Categorie.Rent)
-    var clickedBox: String by remember {
-        mutableStateOf("Travel")
-    }
+
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(key1 = clickedBox) {
+    LaunchedEffect(key1 = true) {
         mainActivityViewModel.setValue(null, "country")
         mainActivityViewModel.setValue(null, "name")
         mainActivityViewModel.setValue(null,"location")
@@ -86,69 +84,68 @@ fun Categories(userUi:String) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
+            .fillMaxSize().padding(15.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text(text = "Categories", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            items(items = categories) { Category ->
-
-
-                Box(modifier = Modifier
-                    .size(95.dp)
-                    .graphicsLayer {
-                        translationY =
-                            if (clickedBox == Category.name) 1f * direction else 0f * direction
-                    }
-                    .clickable(interactionSource = interactionSource, indication = null) {
-                        clickedBox = Category.name
-                        Log.d("Box", clickedBox)
-                    }
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .background(
-                        color = Category.boxBackgroundColor,
-                        shape = RoundedCornerShape(15.dp)
-                    ), contentAlignment = Alignment.Center) {
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = Color.Transparent),
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Icon(
-                            painter = painterResource(id = Category.icon),
-                            contentDescription = "${Category.name} icon",
-                            tint = Category.boxContentColor
-                        )
-
-                        Text(
-                            text = Category.name,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Category.boxContentColor
-                        )
-
-                    }
-
-
-                }
-
-            }
-
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(text = clickedBox, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+//        Text(text = "Categories", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+//        LazyRow(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(150.dp),
+//            horizontalArrangement = Arrangement.spacedBy(15.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            items(items = categories) { Category ->
+//
+//
+//                Box(modifier = Modifier
+//                    .size(95.dp)
+//                    .graphicsLayer {
+//                        translationY =
+//                            if (clickedBox == Category.name) 1f * direction else 0f * direction
+//                    }
+//                    .clickable(interactionSource = interactionSource, indication = null) {
+//                        clickedBox = Category.name
+//                        Log.d("Box", clickedBox)
+//                    }
+//                    .clip(shape = RoundedCornerShape(15.dp))
+//                    .background(
+//                        color = Category.boxBackgroundColor,
+//                        shape = RoundedCornerShape(15.dp)
+//                    ), contentAlignment = Alignment.Center) {
+//
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .background(color = Color.Transparent),
+//                        verticalArrangement = Arrangement.spacedBy(5.dp),
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//
+//                        Icon(
+//                            painter = painterResource(id = Category.icon),
+//                            contentDescription = "${Category.name} icon",
+//                            tint = Category.boxContentColor
+//                        )
+//
+//                        Text(
+//                            text = Category.name,
+//                            fontSize = 18.sp,
+//                            fontWeight = FontWeight.Medium,
+//                            color = Category.boxContentColor
+//                        )
+//
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//        }
+//        Spacer(modifier = Modifier.height(10.dp))
+//        Text(text = clickedBox, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
 
 //       when(clickedBox){
 //           "Travel"-> TravelElement(userUi=userUi)
@@ -158,34 +155,29 @@ fun Categories(userUi:String) {
 //       }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
 
                 OTextField(
-                    name = when (clickedBox) {
+                    name = when (categorySelected) {
                         "Travel" -> "country"
                         else -> "name"
                     },
-                    placeHolder = when (clickedBox) {
+                    placeHolder = when (categorySelected) {
                         "Travel" -> "Enter country"
                         else -> "Enter name "
                     },
-                    color = when (clickedBox) {
-                        "Travel" -> Categorie.Travel.boxContentColor
-                        "Food" -> Categorie.Food.boxContentColor
-                        "Shopping" -> Categorie.Shopping.boxContentColor
-                        else -> Categorie.Rent.boxContentColor
-                    },
-                    leadingIcon = when (clickedBox) {
+
+                    leadingIcon = when (categorySelected) {
                         "Travel" -> R.drawable.flag
                         "Food" -> Categorie.Food.icon
                         "Shopping" -> Categorie.Shopping.icon
                         else -> Categorie.Rent.icon
                     },
                     trailingIcon = Icons.Filled.Clear,
-                    colorAnimation = when(clickedBox){
+                    colorAnimation = when(categorySelected){
                         "Travel"->countryClearIcon.value
                         else ->nameClearIcon.value
                                                      },
@@ -196,29 +188,18 @@ fun Categories(userUi:String) {
                 OTextField(
                     name ="location",
                     placeHolder ="Enter the location",
-                    color =when(clickedBox){
-                        "Travel" ->Categorie.Travel.boxContentColor
-                        "Food" -> Categorie.Food.boxContentColor
-                        "Shopping" -> Categorie.Shopping.boxContentColor
-                        else -> Categorie.Rent.boxContentColor
-
-                                           } ,
                     leadingIcon =R.drawable.ic_location ,
                     trailingIcon = Icons.Filled.Clear,
                     colorAnimation =locationClearIcon.value ,
                     focusManager = focusManager
                 )
             }
-            if (clickedBox != "Travel") {
+            if (categorySelected != "Travel") {
                 item {
                     OTextField(
                         name = "quantity",
                         placeHolder = "Enter Quantity",
-                        color = when (clickedBox) {
-                            "Food" -> Categorie.Food.boxContentColor
-                            "Shopping" -> Categorie.Shopping.boxContentColor
-                            else -> Categorie.Rent.boxContentColor
-                        },
+
                         leadingIcon = R.drawable.basket,
                         trailingIcon = Icons.Filled.Clear,
                         colorAnimation = quantityClearIcon.value,
@@ -232,12 +213,6 @@ fun Categories(userUi:String) {
                 OTextField(
                     name = "price",
                     placeHolder = "Enter price",
-                    color = when (clickedBox) {
-                        "Travel" -> Categorie.Travel.boxContentColor
-                        "Food" -> Categorie.Food.boxContentColor
-                        "Shopping" -> Categorie.Shopping.boxContentColor
-                        else -> Categorie.Rent.boxContentColor
-                    },
                     leadingIcon = R.drawable.ic_dollar,
                     trailingIcon = Icons.Filled.Clear,
                     colorAnimation = priceClearIcon.value,
@@ -246,13 +221,13 @@ fun Categories(userUi:String) {
             }
             item {
                 DateTextField(
-                    color = when (clickedBox) {
+                    color = when (categorySelected) {
                         "Travel" -> Categorie.Travel.boxContentColor
                         "Food" -> Categorie.Food.boxContentColor
                         "Shopping" -> Categorie.Shopping.boxContentColor
                         else -> Categorie.Rent.boxContentColor
                     }, focusManager = focusManager, lightColor =
-                    when (clickedBox) {
+                    when (categorySelected) {
                         "Travel" -> Categorie.Travel.boxBackgroundColor
                         "Food" -> Categorie.Food.boxBackgroundColor
                         "Shopping" -> Categorie.Shopping.boxBackgroundColor
@@ -262,12 +237,7 @@ fun Categories(userUi:String) {
             }
             item {
                 Buttons(
-                    db = db, userUi = userUi, category = clickedBox, color = when (clickedBox) {
-                        "Travel" -> Categorie.Travel.boxBackgroundColor
-                        "Food" -> Categorie.Food.boxBackgroundColor
-                        "Shopping" -> Categorie.Shopping.boxBackgroundColor
-                        else -> Categorie.Rent.boxBackgroundColor
-                    }
+                    db = db, userUi = userUi, category = categorySelected
                 )
             }
             item {

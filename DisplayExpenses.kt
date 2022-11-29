@@ -31,23 +31,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensetrackerproject.Categories.MainActivityViewModel
 import com.example.expensetrackerproject.Categories.mainActivityViewModel
 import com.example.expensetrackerproject.R
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
 
-@SuppressLint("MutableCollectionMutableState")
+@SuppressLint("MutableCollectionMutableState", "SuspiciousIndentation")
 @Composable
 
-fun DisplayExpenses(navController: NavController,category:String , userUi:String) {
+fun DisplayExpenses(navController: NavController,category:String ) {
     val db = Firebase.firestore
+    val auth =Firebase.auth
+    val userUi= auth.currentUser?.uid.toString()
     var launched:Boolean by remember {
         mutableStateOf(false)
     }
@@ -68,7 +73,13 @@ var value:Float by remember {
     var expense:Float by remember{
         mutableStateOf(0f)
     }
-    val docRef = db.collection("expenses").orderBy("tempStamp", Query.Direction.DESCENDING)
+
+    val nextMonth :Int = if(mainActivityViewModel.monthOfYear.value==12) 1 else mainActivityViewModel.monthOfYear.value!!+1
+    val nextOrCurrentYear :Int = if(mainActivityViewModel.monthOfYear.value==12) mainActivityViewModel.yearNum.value!!+1 else mainActivityViewModel.yearNum.value!!
+    val docRef = db.collection("expenses")
+        .orderBy("tempStamp", Query.Direction.DESCENDING)
+        .whereGreaterThanOrEqualTo("tempStamp", SimpleDateFormat("dd-MM-yyyy").parse("${1}-${mainActivityViewModel.monthOfYear.value!!}-${mainActivityViewModel.yearNum.value!!}"))
+        .whereLessThan("tempStamp",SimpleDateFormat("dd-MM-yyyy").parse("${1}-${nextMonth}-${nextOrCurrentYear}"))
     docRef.get()
         .addOnSuccessListener { documents ->
 //            expenses = mutableListOf()
@@ -412,7 +423,7 @@ var value:Float by remember {
 fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:SwipeAction) {
 
     SwipeableActionsBox(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(5.dp),
         swipeThreshold = 100.dp,
         endActions = listOf(delete)
     ) {
@@ -444,7 +455,8 @@ fun ExpenseViewHolder(category: String,expense:HashMap<String,Any> , delete:Swip
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
+                modifier=Modifier.fillMaxWidth(0.65f)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
