@@ -172,47 +172,56 @@ Sinon, l'opération de changement de mot de passe de l'utilisateur démarre et r
 
  
 
-Dans Home:
-La valeur de consommation du budget est liée à un diagramme semi-circulaire qui se remplit en fonction de cette valeur, donnant à l'utilisateur une image plus concrète de la valeur consommée et de la valeur restante de son budget.
 
-Sous ce diagramme semi-circulaire se trouvent 4 bâtons horizontaux.
+Dans Home:   
 
-Le premier bâton est lié aux  dépenses  de déplacements (déplacements internes ou externes). Ce bâton représente le pourcentage dépensé sur les déplacements en function de la totalité  des dépenses effectuées par l'utilisateur et posséde  la couleur rouge qui est la couleur propre à la catégorie «Travel ». 
-
-Le deuxième bâton est lié aux dépenses alimentaires de l'utilisateur. Ce bâton représente le pourcentage dépensé sur les aliments ou la nourriture en fonction de la totalité des dépenses effectuées par l'utilisateur et possède la couleur bleue qui est la couleur propre à la catégorie « Food».
-
-Le troisième bâton est lié aux dépenses de magazinage de l'utilisateur. Ce bâton représente le pourcentage dépensé sur le shopping en fonction de la totalité des dépenses effectuées par l'utilisateur et possède la couleur orange  qui est la couleur propre à la catégorie « Shopping »
-
-Le quatrième bâton est lié aux dépenses de location  de l'utilisateur. Ce bâton représente le pourcentage dépensé sur les locations  en fonction de la totalité des dépenses effectuées par l'utilisateur et possède la couleur violet qui est la couleur propre à la catégorie « Rent ».
-
-Lorsque l'utilisateur clique sur l'un des bâtons, une nouvelle page apparaît à l'écran contenant toutes les dépenses effectuées sur la catégorie avec les informations liées à chacune (Nom , lieu, quantité, coûts, date) ce qui permet à l'utilisateur de passer en revue ses dépenses sur chaque catégorie.
-
+la barre en haut de la page d'accueil se compose de 2 onglets: "General" et "Statistics". Le contenu de la page "Home" est identifié en fonction de l'onglet choisi par l'utilisateur.
+Par défaut, l'onglet "General" est sélectionné. Dans ce cas, le contenu de la page d'accueil se compose de:
+- Une phrase d'accueil de l'utilisateur se compose de "Hello" en plus du nom de l'utilisateur.
+- Une carte de crédit animée avec les éléments suivants:
+ la devise accompagnée   du revenu de l'utilisateur.
+ une barre de progression linéaire animée et peuplée basée sur le pourcentage dépensé par l'utilisateur sur toutes les catégories en fonction de son revenu.
+L'expression "Today Expenses" ainsi que le total dépensé par l'utilisateur dans toutes les catégories au cours des jours en cours accompagnée de la devise.
+Si l'utilisateur n'a effectué aucune dépense dans la journée en cours : la mention « No expenses for this day yet » accompagnée d'un bouton « add» permettant à l'utilisateur de mettre en place une depense apparaîtront à l'écran.
+Dans le cas contraire, les dépenses de l'utilisateur pour la journée en cours apparaîtront à l'écran dans une « Lazy column » permettant à l'utilisateur de faire défiler vers le haut ou vers le bas si le nombre de dépenses engagées dépasse la capacité d'affichage de l'écran.
+Si l'utilisateur balaye vers la gauche, la dépense sera supprimée et une diminution se produira sur la dépense totale du jours en cours.
 
 
-Chaque ligne correspond à une dépense effectuée sur une catégorie spécifique.
-Chaque dépense a les caractéristiques suivantes :
-Au début : Une icône faisant référence à la catégorie de cette dépense.
-Entre :
--Le nom de la dépense ou le nom du pays si la dépense relève de la catégorie "Travel".
+
+Si l'utilisateur clique sur l'onglet Statistiques, le contenu de la page d'accueil sera composé de:
+-Un diagarmme semi-circulaire rempli en fonction de la valeur dépensée par l'utilisateur dans toutes les catégories de dépenses en fonction de ses revenus.
+Ce diagramme fournit à l'utilisateur une image plus réaliste du pourcentage consommé de son revenu ainsi que de la valeur totale consommée de son budget.
+-Des cartes d’information se référant chacune à une catégorie.
+Chaque carte comporte les éléments suivants:
+- une icône faisant référence à la catégorie à laquelle elle se réfère.
+- Le nom de cette catégorie.
+- le pourcentage dépensé pour cette catégorie par rapport au total des dépenses toutes catégories confondues.
+- une barre de progression linéaire animée et peuplée basée sur le pourcentage dépensé par l'utilisateur sur cette catégorie en fonction du montant total dépensé par l'utilisateur.
+- Un texte cliquable "View Expenses.
+Lorsque l'utilisateur clique sur ce texte, une nouvelle page apparaît à l'écran contenant toutes les dépenses effectuées sur la catégorie avec les informations liées à chacune (Nom, lieu, quantité, coûts, date) ce qui permet à l'utilisateur de revoir ses dépenses sur chaque Catégorie. Chaque ligne correspond à une dépense effectuée sur la catégorie.
+Chaque dépense a les caractéristiques suivantes:
+Au début: Une icône faisant référence à la catégorie de cette dépense.
+Entre:
+-Le nom de la dépense ou le nom du pays si la dépense relève de la catégorie "Voyage".
 - la date de cette dépense.
--Le montant dans le cas où la dépense n'entre pas dans la catégorie "Travel".
--Frais à payer sur cette dépense.
-
+-Le montant dans le cas où la dépense n'entre pas dans la catégorie "Voyage".
+-Frais payer sur cette dépense.
 À la fin:
 Une icône de corbeille indiquant que l'utilisateur peut balayer vers la gauche pour supprimer la dépense.
 
 Si l'utilisateur balaye vers la gauche, la dépense sera supprimée et une diminution se produira sur la dépense totale pour la catégorie de cette dépense ainsi que sur la dépense totale de l'utilisateur.
 
-Ces dépenses sont dans une "LazyColumn". Cela signifie que l'utilisateur peut faire défiler vers le haut ou vers le bas si le montant de la dépense dépasse le montant maximum pouvant apparaître à l'écran.
+Ces dépenses sont dans une colonne déroulante. Cela signifie que l'utilisateur peut faire défiler vers le haut ou vers le bas si le montant de la dépense dépasse le montant maximum pouvant apparaître à l'écran.
 
-Sous les dépenses de chaque catégorie se trouve une barre.
-Cette barre donne à l'utilisateur deux informations :
-La première information concerne la valeur dépensée sur la catégorie concernée et cette valeur est la somme de toutes les dépenses effectuées sur cette catégorie et qui se trouve en haut de cette barre.
+Sous la catégorie des dépenses se trouve un bar.
+Cette barre donne à l'utilisateur deux informations:
+La première information concerne la valeur dépensée sur la catégorie concernée et cette valeur est la somme de toutes les dépenses effectuées sur cette catégorie et qui se trouve dans la colonne déroulante en haut de cette barre.
 Le deuxième élément d'information est le total des dépenses de l'utilisateur dans toutes les catégories.
 
 
 
-Dans Category :
+
+Dans Category:
 
 En cliquant sur le bouton "Category", l'utilisateur pourra ajouter une dépense.
 
@@ -232,6 +241,35 @@ Au dessous de ces champs deux bouttons : “Add” et “Reset”.
 Concernant le bouton « Add » : Si l'utilisateur a renseigné tous les champs par les informations liées à la dépense, l'opération de l'ajout a réussi.
 
 Concernant le bouton « Reset » : Si l'utilisateur clique sur ce bouton, toutes les informations renseignées par l'utilisateur dans ces champs seront effacées.
+
+
+Dans Expenses :
+Si l'utilisateur clique sur « Dépenses » qui se trouve dans la barre de navigation inférieure de l'application, une nouvelle page apparaît à l'écran. Cette page est une page de recherche des dépenses effectuées par l'utilisateur. Il est divisé en deux parties : une partie supérieure et une partie inférieure.
+La partie supérieure de cette page se compose de :
+Un slider : Permettant à l'utilisateur de choisir le mois qu'il souhaite. La valeur du curseur est initialisée par la valeur du mois en cours.
+Un champ "Année" : permettant à l'utilisateur de choisir l'année qu'il souhaite et ce champ est initialisé par la valeur de l'année en cours.
+L'utilisateur peut diminuer ou ajouter l'année en utilisant les boutons avant et après ce champ.
+
+À côté de ce champ se trouve un autre champ. Ce champ fait référence à la catégorie de dépenses dont l'utilisateur souhaite voir les dépenses liées au cours du mois et de l'année choisis. Ce champ est accompagné d'un menu déroulant avec les valeurs suivantes :
+All, Travel ,Food, Shopping et Rent.
+Le choix d'une catégorie se fait en cliquant sur l'une de ces valeurs.
+La valeur du champ catégorie est initialisée par la valeur "All".
+La valeur "All" fait référence à toutes les catégories de dépenses.
+
+- Le total des dépenses animées sur la catégorie ou la valeur choisie.
+
+la partie inférieure de cette page :
+Lorsque cette page apparaîtra, une communication s'établira automatiquement avec la base de données de l'application permettant d'obtenir toutes les dépenses effectuées par l'utilisateur durant le mois de l'année initialiseur sur toutes les catégories de dépenses.
+En cas de présence de dépenses, cette partie sera constituée d'une colonne roulante contenant les dépenses constatées.
+Dans le cas contraire, cette partie contiendra au milieu la mention "No expenses found" indiquant l'absence de dépenses au cours du mois de l'année d'initialisation sur la catégorie d'initialisation.
+
+Dans le cas où l'utilisateur change au moins une des trois valeurs : mois, année ou catégorie une communication automatique démarre avec la base de données de l'application permettant d'obtenir toutes les dépenses effectuées par l'utilisateur au cours du mois de l'année choisie sur la valeur  choisie.
+Les dépenses en cas de présence apparaîtront dans la colonne roulante par ordre décroissant selon leur date de la plus récente à la plus ancienne durant le mois de l'année choisie.
+
+La valeur du total dans la partie supérieure change automatiquement en fonction des dépenses totales dans la colonne déroulante dans la partie inférieure de cette page qui appartiennent au mois de l'année choisi et par rapport à la catégorie choisie.
+
+Si l'utilisateur glisse vers la gauche sur l'une des dépenses, la dépense sera supprimée et une diminution se produira sur la dépense totale qui se trouve en haut de cette page.
+
 
 Dans Settings:
 La page des paramètres se compose de deux parties :
